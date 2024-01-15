@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBook.Client", "OpenBook
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBook.Shared", "OpenBook\Shared\OpenBook.Shared.csproj", "{D185CE9C-807C-4899-BFA7-2E556423AEFD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBook.Domain", "OpenBook.Domain\OpenBook.Domain.csproj", "{B2153F64-4878-448C-9DCA-85DF0348C232}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBook.App", "OpenBook.App\OpenBook.App.csproj", "{760AB5B7-8A09-4360-8E5B-0A9B8E7371F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBook.Adapter", "OpenBook.Adapter\OpenBook.Adapter.csproj", "{5CEA2A32-9148-4A9D-915B-CF1F9F127AC3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +33,18 @@ Global
 		{D185CE9C-807C-4899-BFA7-2E556423AEFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D185CE9C-807C-4899-BFA7-2E556423AEFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D185CE9C-807C-4899-BFA7-2E556423AEFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2153F64-4878-448C-9DCA-85DF0348C232}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2153F64-4878-448C-9DCA-85DF0348C232}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2153F64-4878-448C-9DCA-85DF0348C232}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2153F64-4878-448C-9DCA-85DF0348C232}.Release|Any CPU.Build.0 = Release|Any CPU
+		{760AB5B7-8A09-4360-8E5B-0A9B8E7371F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{760AB5B7-8A09-4360-8E5B-0A9B8E7371F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{760AB5B7-8A09-4360-8E5B-0A9B8E7371F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{760AB5B7-8A09-4360-8E5B-0A9B8E7371F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CEA2A32-9148-4A9D-915B-CF1F9F127AC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CEA2A32-9148-4A9D-915B-CF1F9F127AC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CEA2A32-9148-4A9D-915B-CF1F9F127AC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CEA2A32-9148-4A9D-915B-CF1F9F127AC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
