@@ -16,6 +16,7 @@
 - Поиск, как по авторам, так и по книгам ВСЕ
 - Фильтры к поиску ВСЕ
 - редактор md
+- подтверждение почты
 
 ```mermaid
 erDiagram
@@ -45,6 +46,7 @@ erDiagram
         string Email
         string Password
         string Name
+        bool IsVerif
         int RoleId FK
     }
     Book{
@@ -77,13 +79,17 @@ erDiagram
     Chapter{
         int Id PK
         string Name
-        string Conent
+        string Content
         int Number
+        int BookId FK
     }
     Review{
         int Id PK
         int BookId FK
         int UserId FK
+        string Text
+        DateTime CreateDate
+        bool IsEdited
     }
     Cycle{
         int Id PK
