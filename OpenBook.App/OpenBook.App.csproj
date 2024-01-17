@@ -10,8 +10,12 @@
     <Folder Include="Data\RepositoryPattern\" />
     <Folder Include="Data\Transaction\" />
     <Folder Include="Interactors\" />
-    <Folder Include="Mappers\" />
     <Folder Include="Storage\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenBook.Domain\OpenBook.Domain.csproj" />
+    <ProjectReference Include="..\OpenBook\Shared\OpenBook.Shared.csproj" />
   </ItemGroup>
 
 </Project>
