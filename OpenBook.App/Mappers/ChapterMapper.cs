@@ -23,6 +23,7 @@ namespace OpenBook.App.Mappers
                 Name = chapter.Name,
                 Content = chapter.Content,
                 Number = chapter.Number,
+                IsPublic = chapter.IsPublic,
                 BookId = chapter.BookId,
                 Book = chapter.Book?.ToDto(),
             };
@@ -43,6 +44,7 @@ namespace OpenBook.App.Mappers
                 Name = chapterDto.Name,
                 Content = chapterDto.Content,
                 Number = chapterDto.Number,
+                IsPublic = chapterDto.IsPublic,
                 BookId = chapterDto.BookId,
                 Book = chapterDto.Book?.ToEntity(),
             };

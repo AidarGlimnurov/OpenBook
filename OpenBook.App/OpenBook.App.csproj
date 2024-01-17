@@ -7,10 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\RepositoryPattern\" />
-    <Folder Include="Data\Transaction\" />
     <Folder Include="Interactors\" />
-    <Folder Include="Storage\" />
   </ItemGroup>
 
   <ItemGroup>
