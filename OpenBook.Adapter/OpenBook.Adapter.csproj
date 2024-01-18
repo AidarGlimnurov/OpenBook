@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Repository\" />
     <Folder Include="Transaction\" />
   </ItemGroup>
 
@@ -16,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OpenBook.App\OpenBook.App.csproj" />
     <ProjectReference Include="..\OpenBook.Domain\OpenBook.Domain.csproj" />
   </ItemGroup>
 
