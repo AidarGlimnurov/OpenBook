@@ -78,10 +78,10 @@ namespace OpenBook.Adapter.Repository
             }
         }
 
-        public async Task Published(int bookId)
+        public async Task Published(int bookId, bool action)
         {
             var book = await context.Books.FirstOrDefaultAsync(b => b.Id == bookId);
-            book.IsPublished = true;
+            book.IsPublished = action;
         }
 
         public async Task RemoveGenre(int bookId, int genreId)

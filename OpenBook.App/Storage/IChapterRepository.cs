@@ -9,7 +9,7 @@ namespace OpenBook.App.Storage
 {
     public interface IChapterRepository : IRepository<Chapter>
     {
-        Task Published(int chapterId);
+        Task Published(int chapterId, bool action);
         IAsyncEnumerable<Chapter> GetForBook(int bookId, int start, int? count, bool? isPublic);
     }
 }
