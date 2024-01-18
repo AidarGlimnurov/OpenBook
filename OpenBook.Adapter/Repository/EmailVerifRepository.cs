@@ -32,7 +32,7 @@ namespace OpenBook.Adapter.Repository
             if (emailVerif != null)
             {
                 var user = await context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email);
-                user.IsVerification = true;
+                user.IsVerified = true;
                 context.Update(user);
                 context.SaveChanges();
                 return emailVerif;

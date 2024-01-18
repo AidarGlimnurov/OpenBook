@@ -11,6 +11,5 @@ namespace OpenBook.App.Storage
     {
         IAsyncEnumerable<Review> GetForUser(int userId, int start, int? count);
         IAsyncEnumerable<Review> GetForBook(int bookId, int start, int? count);
-        Task GetForBook(Review review);
     }
 }
