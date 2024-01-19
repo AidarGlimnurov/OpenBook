@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interactors\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\OpenBook.Domain\OpenBook.Domain.csproj" />
     <ProjectReference Include="..\OpenBook\Shared\OpenBook.Shared.csproj" />
   </ItemGroup>
