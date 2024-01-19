@@ -12,22 +12,22 @@ using System.Threading.Tasks;
 
 namespace OpenBook.App.Interactors
 {
-    public class BasketInteractor
+    public class ChapterInteractor
     {
-        private IBasketRepository basketRepository;
+        private IChapterRepository chapterRepository;
         private IUnitWork unitWork;
 
-        public BasketInteractor(IBasketRepository basketRepository, IUnitWork unitWork)
+        public ChapterInteractor(IChapterRepository chapterRepository, IUnitWork unitWork)
         {
-            this.basketRepository = basketRepository;
+            this.chapterRepository = chapterRepository;
             this.unitWork = unitWork;
         }
-        public async Task<Response> CreateWithEntity(BasketDto basket)
+        public async Task<Response> CreateWithEntity(ChapterDto chapter)
         {
-            var response = new Response<BasketDto>();
+            var response = new Response<ChapterDto>();
             try
             {
-                await basketRepository.CreateWithEntity(basket.ToEntity());
+                await chapterRepository.CreateWithEntity(chapter.ToEntity());
                 response.IsSuccess = true;
                 await unitWork.Commit();
             }
@@ -39,13 +39,13 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
-        public async Task<Response<BasketDto>> Read(int id)
+        public async Task<Response<ChapterDto>> Read(int id)
         {
-            var response = new Response<BasketDto>();
+            var response = new Response<ChapterDto>();
             try
             {
-                var basket = await basketRepository.Read(id);
-                response.Value = basket.ToDto();
+                var book = await chapterRepository.Read(id);
+                response.Value = book.ToDto();
                 response.IsSuccess = true;
             }
             catch (Exception ex)
@@ -56,12 +56,12 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
-        public async Task<Response> UpdateWithEntity(BasketDto basket)
+        public async Task<Response> UpdateWithEntity(ChapterDto chapter)
         {
-            var response = new Response<BasketDto>();
+            var response = new Response<ChapterDto>();
             try
             {
-                await basketRepository.UpdateWithEntity(basket.ToEntity());
+                await chapterRepository.UpdateWithEntity(chapter.ToEntity());
                 response.IsSuccess = true;
                 await unitWork.Commit();
             }
@@ -75,10 +75,10 @@ namespace OpenBook.App.Interactors
         }
         public async Task<Response> Delete(int id)
         {
-            var response = new Response<BasketDto>();
+            var response = new Response<ChapterDto>();
             try
             {
-                await basketRepository.Delete(id);
+                await chapterRepository.Delete(id);
                 response.IsSuccess = true;
                 await unitWork.Commit();
             }
@@ -90,12 +90,12 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
-        public async Task<Response> Create(int userId)
+        public async Task<Response> Published(int chapterId, bool action)
         {
-            var response = new Response<BasketDto>();
+            var response = new Response<ChapterDto>();
             try
             {
-                await basketRepository.Create(userId);
+                await chapterRepository.Published(chapterId, action);
                 response.IsSuccess = true;
                 await unitWork.Commit();
             }
@@ -107,53 +107,19 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
-        public async Task<Response> AddBook(int userId, int bookId)
+        public async Task<Response<IEnumerable<ChapterDto>>> GetForBook(int bookId, int start, int? count, bool? isPublic)
         {
-            var response = new Response<BasketDto>();
+            var response = new Response<IEnumerable<ChapterDto>>();
             try
             {
-                await basketRepository.AddBook(userId, bookId);
-                response.IsSuccess = true;
-                await unitWork.Commit();
-            }
-            catch (Exception ex)
-            {
-                response.ErrorMessage = "Внутренняя ошибка!";
-                response.IsSuccess = false;
-                response.ErrorInfo = ex.Message;
-            }
-            return response;
-        }
-        public async Task<Response> RemoveBook(int userId, int bookId)
-        {
-            var response = new Response<BasketDto>();
-            try
-            {
-                await basketRepository.RemoveBook(userId, bookId);
-                response.IsSuccess = true;
-                await unitWork.Commit();
-            }
-            catch (Exception ex)
-            {
-                response.ErrorMessage = "Внутренняя ошибка!";
-                response.IsSuccess = false;
-                response.ErrorInfo = ex.Message;
-            }
-            return response;
-        }
-        public async Task<Response<IEnumerable<BookDto>>> GetBooks(int userId, int start, int count)
-        {
-            var response = new Response<IEnumerable<BookDto>>();
-            try
-            {
-                var data = basketRepository.GetBooks(userId, start, count);
+                var data = chapterRepository.GetForBook(bookId, start, count, isPublic);
 
-                List<BookDto> books = new();
+                List<ChapterDto> chapters = new();
                 await foreach (var item in data)
                 {
-                    books.Add(item.ToDto());
+                    chapters.Add(item.ToDto());
                 }
-                response.Value = books.ToList();
+                response.Value = chapters.ToList();
                 response.IsSuccess = true;
             }
             catch (Exception ex)

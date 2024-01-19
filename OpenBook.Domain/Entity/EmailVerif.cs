@@ -13,5 +13,10 @@ namespace OpenBook.Domain.Entity
         public string Code { get; set; } = string.Empty;
         public bool IsAcivate { get; set; } = false;
         public DateTime CreatAt { get; set; } = DateTime.Now;
+
+        public object ToEntity()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

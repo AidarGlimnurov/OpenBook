@@ -42,7 +42,7 @@ namespace OpenBook.Adapter.Repository
             }
         }
 
-        public Task<User> GetByEmailPassword(string email, string password)
+        public async Task<User> GetByEmailPassword(string email, string password)
         {
             if (email != null && password != null)
             {
