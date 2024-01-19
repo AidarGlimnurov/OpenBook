@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OpenBook.App.Storage
 {
-    public interface ISubscribeRepository : IRepository<Review>
+    public interface ISubscribeRepository : IRepository<Subscribe>
     {
         Task SubForAuthor(int authorId, int userId);
         Task UnsubForAuthor(int authorId, int userId);
