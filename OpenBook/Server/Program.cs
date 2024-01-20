@@ -1,4 +1,12 @@
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using OpenBook.Adapter;
+using OpenBook.Adapter.Repository;
+using OpenBook.Adapter.Transaction;
+using OpenBook.App.Data.Transaction;
+using OpenBook.App.Interactors;
+using OpenBook.App.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,12 +15,57 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+var connectDBStringSQLite = builder.Configuration.GetConnectionString("SQLiteDbConnection")
+    ?? throw new InvalidOperationException("Connection string 'SQLiteDbConnection' not found."); ;
+var connectDBStringPostgre = builder.Configuration.GetConnectionString("PostgreDbConnection")
+    ?? throw new InvalidOperationException("Connection string 'PostgreDbConnection' not found.");
+
+//	временно SQLite DB для Swaggera
+builder.Services.AddDbContext<OpenBookContext>(options => options.UseSqlite(connectDBStringSQLite));
+
+builder.Services.AddTransient<IUnitWork, UnitWork>();
+
+builder.Services.AddScoped<BasketInteractor>();
+builder.Services.AddScoped<BookInteractor>();
+builder.Services.AddScoped<ChapterInteractor>();
+builder.Services.AddScoped<CycleInteractor>();
+builder.Services.AddScoped<EmailVerifInteractor>();
+builder.Services.AddScoped<GenrreInteractor>();
+builder.Services.AddScoped<PostInteractor>();
+builder.Services.AddScoped<ReviewInteractor>();
+builder.Services.AddScoped<RoleInteractor>();
+builder.Services.AddScoped<SubscribeInteractor>();
+builder.Services.AddScoped<UserInteractor>();
+
+builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<IChapterRepository, ChapterRepository>();
+builder.Services.AddScoped<ICycleRepository, CycleRepository>();
+builder.Services.AddScoped<IEmailVerifRepository, EmailVerifRepository>();
+builder.Services.AddScoped<IGenreRepository, GenreRepository>();
+builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<ISubscribeRepository, SubsriberRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+//	Add Swagger
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "OpenBook_Service", Version = "v1" });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "OpenBook Blazor API v1.0");
+    });
 }
 else
 {

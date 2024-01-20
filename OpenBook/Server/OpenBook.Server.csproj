@@ -8,9 +8,15 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.15" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\OpenBook.Adapter\OpenBook.Adapter.csproj" />
+    <ProjectReference Include="..\..\OpenBook.App\OpenBook.App.csproj" />
     <ProjectReference Include="..\Client\OpenBook.Client.csproj" />
     <ProjectReference Include="..\Shared\OpenBook.Shared.csproj" />
   </ItemGroup>
