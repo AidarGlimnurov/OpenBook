@@ -1,4 +1,5 @@
 ﻿using OpenBook.App.Data.Transaction;
+using OpenBook.App.Mappers;
 using OpenBook.App.Storage;
 using OpenBook.Domain.Entity;
 using OpenBook.Shared.Dtos;
@@ -29,7 +30,7 @@ namespace OpenBook.App.Interactors
             {
                 Random random = new Random();
                 var code = random.Next(100000, 1000000).ToString();
-                await repos.CreateWithEmail(email, code);
+                await emailVerifRepository.CreateWithEmail(email, code);
                 await unitWork.Commit();
                 return new Response() { IsSuccess = true, Info = code };
             }
@@ -49,10 +50,10 @@ namespace OpenBook.App.Interactors
             try
             {
                 Random random = new Random();
-                var emailVerif = await repos.Verification(email, code);
+                var emailVerif = await emailVerifRepository.Verification(email, code);
                 if (emailVerif != null)
                 {
-                    await repos.DeleteAsync(emailVerif.Id);
+                    await emailVerifRepository.Delete(emailVerif.Id);
                 }
                 await unitWork.Commit();
                 return new Response<EmailVerifDto>()

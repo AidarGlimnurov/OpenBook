@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenBook.Domain.Entity
+namespace OpenBook.Shared.Dtos
 {
-    public class EmailVerif
+    public class EmailVerifDto
     {
         public int Id { get; set; }
         public string Email { get; set; } = string.Empty;

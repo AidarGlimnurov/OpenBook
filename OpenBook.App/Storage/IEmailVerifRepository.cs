@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OpenBook.App.Storage
 {
-    public interface IEmailVerifRepository
+    public interface IEmailVerifRepository : IRepository<EmailVerif>
     {
         public Task CreateWithEmail(string email, string code);
         public Task<EmailVerif> Verification(string email, string code);
