@@ -22,7 +22,7 @@ namespace OpenBook.Server.Controllers
         {
             return await interactor.CreateWithEmail(email);
         }
-        [HttpGet("CreateWithEntity")]
+        [HttpGet("Verification")]
         public async Task<Response<EmailVerifDto>> Verification(string email, string code)
         {
             return await interactor.Verification(email, code);
