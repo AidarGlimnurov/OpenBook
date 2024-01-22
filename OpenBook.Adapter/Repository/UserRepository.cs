@@ -23,6 +23,7 @@ namespace OpenBook.Adapter.Repository
                 User = user,
             };
             context.Add(basket);
+            return Task.CompletedTask;
         }
 
         public async IAsyncEnumerable<User> GetAll(int start, int? count)
