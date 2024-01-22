@@ -12,5 +12,6 @@ namespace OpenBook.App.Storage
         public IAsyncEnumerable<User> GetAll(int start, int? count);
         public Task<User> GetByEmailPassword(string email, string password);
         public Task<User> GetByEmail(string email);
+        public Task CreateWithBasket(User user);
     }
 }

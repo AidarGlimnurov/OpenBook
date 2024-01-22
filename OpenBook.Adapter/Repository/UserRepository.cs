@@ -15,6 +15,16 @@ namespace OpenBook.Adapter.Repository
         {
         }
 
+        public Task CreateWithBasket(User user)
+        {
+            context.Add(user);
+            Basket basket = new Basket()
+            {
+                User = user,
+            };
+            context.Add(basket);
+        }
+
         public async IAsyncEnumerable<User> GetAll(int start, int? count)
         {
             if (count == null) count = 100;
