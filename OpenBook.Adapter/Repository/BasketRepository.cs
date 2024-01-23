@@ -40,21 +40,18 @@ namespace OpenBook.Adapter.Repository
 
         public async IAsyncEnumerable<Book> GetBooks(int userId, int start, int count)
         {
-            if (count == null) count = 100;
-
-            var basket = await context.Baskets.FirstOrDefaultAsync(b => b.UserId == userId);
+            if (count == null || count == 0) count = 100;
 
             int skip = start;
             int take = count;
 
             var books = context.BookBaskets.Include(bb => bb.Basket)
                 .Include(bb => bb.Book).ThenInclude(b => b.Cycle)
-                .Where(bb => bb.Basket.UserId == userId).Select(bb => bb.Book)
-                .Skip(skip).Take(take);
+                .Where(bb => bb.Basket.UserId == userId).Skip(skip).Take(take).ToArray();
 
             foreach (var item in books)
             {
-                yield return item;
+                yield return item.Book;
             }
         }
 

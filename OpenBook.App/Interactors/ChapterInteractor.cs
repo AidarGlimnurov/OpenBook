@@ -15,18 +15,40 @@ namespace OpenBook.App.Interactors
     public class ChapterInteractor
     {
         private IChapterRepository chapterRepository;
+        private IBookRepository bookRepository;
         private IUnitWork unitWork;
 
-        public ChapterInteractor(IChapterRepository chapterRepository, IUnitWork unitWork)
+        public ChapterInteractor(IChapterRepository chapterRepository, IBookRepository bookRepository, IUnitWork unitWork)
         {
             this.chapterRepository = chapterRepository;
             this.unitWork = unitWork;
+        }
+        public async Task<Response> Create(ChapterDto chapter)
+        {
+            var response = new Response<ChapterDto>();
+            try
+            {
+                await chapterRepository.Create(chapter.ToEntity());
+                response.IsSuccess = true;
+                await unitWork.Commit();
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
         }
         public async Task<Response> CreateWithEntity(ChapterDto chapter)
         {
             var response = new Response<ChapterDto>();
             try
             {
+                if (chapter.Book == null || chapter.Book.Id == 0)
+                {
+                    chapter.Book = bookRepository.Read(chapter.BookId.Value).Result.ToDto();
+                }
                 await chapterRepository.CreateWithEntity(chapter.ToEntity());
                 response.IsSuccess = true;
                 await unitWork.Commit();

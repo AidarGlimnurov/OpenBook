@@ -15,6 +15,15 @@ namespace OpenBook.Adapter.Repository
         {
         }
 
+        public async Task Create(Post post)
+        {
+            if (post.User == null || post.User.Id == 0)
+            {
+                post.User = await context.Users.FirstOrDefaultAsync(u => u.Id == post.UserId);
+            }
+            context.Add(post);
+        }
+
         public async IAsyncEnumerable<Post> GetAll(int start, int? count)
         {
             if (count == null) count = 100;

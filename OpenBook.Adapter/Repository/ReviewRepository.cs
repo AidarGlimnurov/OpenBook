@@ -16,6 +16,19 @@ namespace OpenBook.Adapter.Repository
         {
         }
 
+        public async Task Create(Review review)
+        {
+            if (review.Book == null || review.Book.Id == 0)
+            {
+                review.Book = await context.Books.FirstOrDefaultAsync(r => r.Id == review.BookId);
+            }
+            if (review.User == null || review.User.Id == 0)
+            {
+                review.User = await context.Users.FirstOrDefaultAsync(u => u.Id == review.UserId);
+            }
+            context.Add(review);
+        }
+
         public async IAsyncEnumerable<Review> GetForBook(int bookId, int start, int? count)
         {
             if (count == null) count = 100;
@@ -23,7 +36,7 @@ namespace OpenBook.Adapter.Repository
             int skip = start;
             int take = count.Value;
 
-            var reviews = context.Reviews.Include(r=>r.User).Include(r=>r.Book)
+            var reviews = context.Reviews.Include(r => r.User).Include(r => r.Book)
                 .Where(r => r.BookId == bookId).Take(take);
 
             foreach (var item in reviews)

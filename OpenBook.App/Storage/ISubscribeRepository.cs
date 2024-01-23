@@ -10,6 +10,7 @@ namespace OpenBook.App.Storage
 {
     public interface ISubscribeRepository : IRepository<Subscribe>
     {
+        Task Create(Subscribe subscribe);
         Task SubForAuthor(int authorId, int userId);
         Task UnsubForAuthor(int authorId, int userId);
         IAsyncEnumerable<Subscribe> GetFollowers(int authorId);

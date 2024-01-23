@@ -9,7 +9,7 @@ namespace OpenBook.Domain.Entity
     public class Book
     {
         public int Id { get; set; }
-        public byte[] Cover { get; set; }
+        public byte[]? Cover { get; set; } = new byte[10];
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Author { get; set; } = string.Empty;
@@ -18,6 +18,6 @@ namespace OpenBook.Domain.Entity
         public int? UserId { get; set; }
         public User? User { get; set; } = new User();
         public int? CycleId { get; set; }
-        public Cycle? Cycle { get; set; } = new Cycle();
+        public Cycle? Cycle { get; set; }
     }
 }

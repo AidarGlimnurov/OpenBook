@@ -15,11 +15,13 @@ namespace OpenBook.App.Interactors
     public class BookInteractor
     {
         private IBookRepository bookRepository;
+        private IUserRepository userRepository;
         private IUnitWork unitWork;
 
-        public BookInteractor(IBookRepository bookRepository, IUnitWork unitWork)
+        public BookInteractor(IBookRepository bookRepository, IUserRepository userRepository, IUnitWork unitWork)
         {
             this.bookRepository = bookRepository;
+            this.userRepository = userRepository;
             this.unitWork = unitWork;
         }
         public async Task<Response> CreateWithEntity(BookDto book)
@@ -28,6 +30,23 @@ namespace OpenBook.App.Interactors
             try
             {
                 await bookRepository.CreateWithEntity(book.ToEntity());
+                response.IsSuccess = true;
+                await unitWork.Commit();
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
+        public async Task<Response> Create(BookDto book)
+        {
+            var response = new Response<BookDto>();
+            try
+            {
+                await bookRepository.Create(book.ToEntity());
                 response.IsSuccess = true;
                 await unitWork.Commit();
             }

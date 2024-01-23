@@ -15,6 +15,15 @@ namespace OpenBook.Adapter.Repository
         {
         }
 
+        public async Task Create(Chapter chapter)
+        {
+            if (chapter.Book == null || chapter.Book.Id == 0)
+            {
+                chapter.Book = await context.Books.FirstOrDefaultAsync(b => b.Id == chapter.BookId);
+            }
+            context.Add(chapter);
+        }
+
         public async IAsyncEnumerable<Chapter> GetForBook(int bookId, int start, int? count, bool? isPublic)
         {
             if (count == null) count = 100;
@@ -23,7 +32,7 @@ namespace OpenBook.Adapter.Repository
             int take = count.Value;
 
             var chapters = context.Chapters.Include(c => c.Book)
-                .Where(c => c.BookId == bookId && isPublic == isPublic).Skip(skip).Take(take);
+                .Where(c => c.BookId == bookId && c.IsPublic == isPublic).Skip(skip).Take(take);
 
             foreach (var item in chapters)
             {

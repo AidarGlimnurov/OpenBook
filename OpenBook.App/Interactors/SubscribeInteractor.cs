@@ -22,12 +22,29 @@ namespace OpenBook.App.Interactors
             this.subscribeRepository = subscribeRepository;
             this.unitWork = unitWork;
         }
-        public async Task<Response> CreateWithEntity(SubscribeDto role)
+        public async Task<Response> Create(SubscribeDto sub)
         {
             var response = new Response<SubscribeDto>();
             try
             {
-                await subscribeRepository.CreateWithEntity(role.ToEntity());
+                await subscribeRepository.Create(sub.ToEntity());
+                response.IsSuccess = true;
+                await unitWork.Commit();
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
+        public async Task<Response> CreateWithEntity(SubscribeDto sub)
+        {
+            var response = new Response<SubscribeDto>();
+            try
+            {
+                await subscribeRepository.CreateWithEntity(sub.ToEntity());
                 response.IsSuccess = true;
                 await unitWork.Commit();
             }
@@ -56,12 +73,12 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
-        public async Task<Response> UpdateWithEntity(SubscribeDto role)
+        public async Task<Response> UpdateWithEntity(SubscribeDto sub)
         {
             var response = new Response<SubscribeDto>();
             try
             {
-                await subscribeRepository.UpdateWithEntity(role.ToEntity());
+                await subscribeRepository.UpdateWithEntity(sub.ToEntity());
                 response.IsSuccess = true;
                 await unitWork.Commit();
             }

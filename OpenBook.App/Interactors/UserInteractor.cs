@@ -15,11 +15,13 @@ namespace OpenBook.App.Interactors
     public class UserInteractor
     {
         private IUserRepository userRepository;
+        private IRoleRepository roleRepository;
         private IUnitWork unitWork;
 
-        public UserInteractor(IUserRepository userRepository, IUnitWork unitWork)
+        public UserInteractor(IUserRepository userRepository, IUnitWork unitWork, IRoleRepository roleRepository)
         {
             this.userRepository = userRepository;
+            this.roleRepository = roleRepository;
             this.unitWork = unitWork;
         }
         public async Task<Response> CreateWithEntity(UserDto user)

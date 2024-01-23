@@ -15,15 +15,18 @@ namespace OpenBook.Adapter.Repository
         {
         }
 
-        public Task CreateWithBasket(User user)
+        public async Task CreateWithBasket(User user)
         {
+            if (user.Role == null || user.Role.Id == 0)
+            {
+                user.Role = await context.Roles.FirstOrDefaultAsync(r => r.Id == user.RoleId);
+            }
             context.Add(user);
             Basket basket = new Basket()
             {
                 User = user,
             };
             context.Add(basket);
-            return Task.CompletedTask;
         }
 
         public async IAsyncEnumerable<User> GetAll(int start, int? count)

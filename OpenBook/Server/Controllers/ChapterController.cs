@@ -17,6 +17,11 @@ namespace OpenBook.Server.Controllers
         {
             this.interactor = interactor;
         }
+        [HttpPost("Create")]
+        public async Task<Response> Create([FromBody] ChapterDto chapter)
+        {
+            return await interactor.Create(chapter);
+        }
         [HttpPost("CreateWithEntity")]
         public async Task<Response> CreateWithEntity([FromBody] ChapterDto chapter)
         {

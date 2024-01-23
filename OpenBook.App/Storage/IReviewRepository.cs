@@ -9,6 +9,7 @@ namespace OpenBook.App.Storage
 {
     public interface IReviewRepository : IRepository<Review>
     {
+        Task Create(Review review);
         IAsyncEnumerable<Review> GetForUser(int userId, int start, int? count);
         IAsyncEnumerable<Review> GetForBook(int bookId, int start, int? count);
     }

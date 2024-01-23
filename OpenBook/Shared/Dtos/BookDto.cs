@@ -9,7 +9,7 @@ namespace OpenBook.Shared.Dtos
     public class BookDto
     {
         public int Id { get; set; }
-        public byte[] Cover { get; set; }
+        public byte[]? Cover { get; set; } = new byte[10];
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Author { get; set; } = string.Empty;
@@ -18,6 +18,6 @@ namespace OpenBook.Shared.Dtos
         public int? UserId { get; set; }
         public UserDto? User { get; set; } = new UserDto();
         public int? CycleId { get; set; }
-        public CycleDto? Cycle { get; set; } = new CycleDto();
+        public CycleDto? Cycle { get; set; }
     }
 }

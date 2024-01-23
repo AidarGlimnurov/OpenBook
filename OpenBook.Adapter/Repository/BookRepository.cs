@@ -30,6 +30,15 @@ namespace OpenBook.Adapter.Repository
             context.BookGenres.Add(bookGenre);
         }
 
+        public async Task Create(Book book)
+        {
+            if (book.User == null || book.User.Id == 0)
+            {
+                book.User = await context.Users.FirstOrDefaultAsync(u => u.Id == book.UserId);
+            }
+            context.Add(book);
+        }
+
         public async IAsyncEnumerable<Book> GetBooks(int start, int? count)
         {
             if (count == null) count = 100;
@@ -54,7 +63,7 @@ namespace OpenBook.Adapter.Repository
             int take = count.Value;
 
             var books = context.Books.Include(b => b.User)
-               .Include(b => b.Cycle).Where(b => b.UserId == userId && isPublic == isPublic).Skip(skip).Take(take);
+               .Include(b => b.Cycle).Where(b => b.UserId == userId && b.IsPublished == isPublic).Skip(skip).Take(take);
 
             foreach (var item in books)
             {

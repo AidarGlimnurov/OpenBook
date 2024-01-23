@@ -22,6 +22,23 @@ namespace OpenBook.App.Interactors
             this.reviewRepository = reviewRepository;
             this.unitWork = unitWork;
         }
+        public async Task<Response> Create(ReviewDto review)
+        {
+            var response = new Response<ReviewDto>();
+            try
+            {
+                await reviewRepository.Create(review.ToEntity());
+                response.IsSuccess = true;
+                await unitWork.Commit();
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
         public async Task<Response> CreateWithEntity(ReviewDto review)
         {
             var response = new Response<ReviewDto>();
@@ -61,6 +78,7 @@ namespace OpenBook.App.Interactors
             var response = new Response<ReviewDto>();
             try
             {
+                review.IsEdited = true;
                 await reviewRepository.UpdateWithEntity(review.ToEntity());
                 response.IsSuccess = true;
                 await unitWork.Commit();

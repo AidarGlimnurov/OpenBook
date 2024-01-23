@@ -9,6 +9,7 @@ namespace OpenBook.App.Storage
 {
     public interface IPostRepository : IRepository<Post>
     {
+        Task Create(Post post);
         IAsyncEnumerable<Post> GetAll(int start, int? count);
         IAsyncEnumerable<Post> GetForUser(int userId, int start, int? count);
     }

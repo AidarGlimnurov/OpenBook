@@ -22,6 +22,23 @@ namespace OpenBook.App.Interactors
             this.postRepository = postRepository;
             this.unitWork = unitWork;
         }
+        public async Task<Response> Create(PostDto post)
+        {
+            var response = new Response<PostDto>();
+            try
+            {
+                await postRepository.Create(post.ToEntity());
+                response.IsSuccess = true;
+                await unitWork.Commit();
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
         public async Task<Response> CreateWithEntity(PostDto post)
         {
             var response = new Response<PostDto>();

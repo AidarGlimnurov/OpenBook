@@ -11,12 +11,17 @@ namespace OpenBook.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookInteractor : ControllerBase
+    public class BookController : ControllerBase
     {
         private BookInteractor interactor;
-        public BookInteractor(BookInteractor interactor)
+        public BookController(BookInteractor interactor)
         {
             this.interactor = interactor;
+        }
+        [HttpPost("Create")]
+        public async Task<Response> Create([FromBody] BookDto book)
+        {
+            return await interactor.Create(book);
         }
         [HttpPost("CreateWithEntity")]
         public async Task<Response> CreateWithEntity([FromBody] BookDto book)
