@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBook.Server", "OpenBook\Server\OpenBook.Server.csproj", "{D21395BE-0254-4782-9298-902D7D9AD79A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBook.Server", "OpenBook\Server\OpenBook.Server.csproj", "{D21395BE-0254-4782-9298-902D7D9AD79A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBook.Client", "OpenBook\Client\OpenBook.Client.csproj", "{758FF94B-9EF8-4057-8610-0DE27E3217EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBook.Client", "OpenBook\Client\OpenBook.Client.csproj", "{758FF94B-9EF8-4057-8610-0DE27E3217EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBook.Shared", "OpenBook\Shared\OpenBook.Shared.csproj", "{D185CE9C-807C-4899-BFA7-2E556423AEFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBook.Shared", "OpenBook\Shared\OpenBook.Shared.csproj", "{D185CE9C-807C-4899-BFA7-2E556423AEFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBook.Domain", "OpenBook.Domain\OpenBook.Domain.csproj", "{B2153F64-4878-448C-9DCA-85DF0348C232}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBook.Domain", "OpenBook.Domain\OpenBook.Domain.csproj", "{B2153F64-4878-448C-9DCA-85DF0348C232}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBook.App", "OpenBook.App\OpenBook.App.csproj", "{760AB5B7-8A09-4360-8E5B-0A9B8E7371F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBook.App", "OpenBook.App\OpenBook.App.csproj", "{760AB5B7-8A09-4360-8E5B-0A9B8E7371F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBook.Adapter", "OpenBook.Adapter\OpenBook.Adapter.csproj", "{5CEA2A32-9148-4A9D-915B-CF1F9F127AC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBook.Adapter", "OpenBook.Adapter\OpenBook.Adapter.csproj", "{5CEA2A32-9148-4A9D-915B-CF1F9F127AC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
