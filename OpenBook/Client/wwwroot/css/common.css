@@ -1,0 +1,69 @@
+﻿﻿@font-face {
+    font-family: "Lalezar";
+    src: url("../fonts/Lalezar-Regular.ttf");
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main {
+    flex: 1 0 auto;
+}
+
+.page {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    text-align: center;
+    height: 30px;
+    background: #24305E;
+    width: 100%;
+}
+
+/* Новые стили для затемнения фона */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Затемнение */
+    z-index: 9999;
+}
+
+/* Новые стили для анимации меню */
+.menu {
+    position: fixed;
+    top: 0;
+    left: -200px; /* Скрыто влево за пределами экрана */
+    width: 300px;
+    height: 100%;
+    background: #F8E9A1;
+    z-index: 10000;
+    transition: left 0.3s ease; /* Анимация движения */
+}
+
+    .menu.active {
+        left: 0; /* Показать меню */
+    }
+
+.container {
+    display: flex;
+    flex-direction: column;
+}

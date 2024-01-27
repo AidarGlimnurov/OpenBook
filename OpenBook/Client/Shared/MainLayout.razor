@@ -1,9 +1,10 @@
 ﻿@inherits LayoutComponentBase
-
+@inject HttpClient client
+@inject NavigationManager Navigation
 <div class="page">
     <div class="wrapper">
 
-        <header class="header">
+
             <div style="height:120px; background:#F8E9A1; width:100%">
                 <button @onclick="ToggleMenu" style="position: absolute; top: 40px; left: 50px; background: #F8E9A1; border:none; height:50px; width: 50px">
                     <img src="../image/burgerDark.svg" alt="Меню">
@@ -13,7 +14,7 @@
                    <h1 style="text-align: center; font-family:Lalezar; font-size:48pt;">Wallenrodsk</h1>
                 </NavLink>
             </div>
-        </header>
+
 
         <main class="main">
             @Body
@@ -38,3 +39,51 @@
         </div>
     </div>         
 </div>
+@code {
+    Model model = new();
+
+    public void GoToHome()
+    {
+        Navigation.NavigateTo($"");
+    }
+    public void GoToProfile()
+    {
+        Navigation.NavigateTo($"profile/{1}");//todo поменять id
+    }
+    public void GoToBook()
+    {
+        Navigation.NavigateTo($"books");
+    }
+    public void GoToFavorite()
+    {
+        Navigation.NavigateTo($"favorites/{1}");//todo поменять id
+    }
+    public void GoToLogin()
+    {
+        Navigation.NavigateTo($"login");//todo поменять id
+    }
+
+    private bool menuActive = false;
+    private string overlayDisplay = "none";
+    private string leftNumb = "-300px";
+
+    private void ToggleMenu()
+    {
+        menuActive = !menuActive;
+        overlayDisplay = menuActive ? "block" : "none";
+        leftNumb = "0px";
+
+    }
+
+    private void CloseMenu()
+    {
+        menuActive = false;
+        overlayDisplay = "none";
+        leftNumb = "-300px";
+    }
+
+    class Model
+    {
+        public string Info { get; set; }
+    }
+}
