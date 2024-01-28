@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OpenBook.Adapter;
 using OpenBook.Adapter.Repository;
@@ -7,8 +9,28 @@ using OpenBook.Adapter.Transaction;
 using OpenBook.App.Data.Transaction;
 using OpenBook.App.Interactors;
 using OpenBook.App.Storage;
+using OpenBook.Server;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Authorization
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(options =>
+{
+   options.RequireHttpsMetadata = false;
+   options.TokenValidationParameters = new TokenValidationParameters
+   {
+       ValidateIssuer = true,
+       ValidIssuer = AuthOptions.ISSUER,
+
+       ValidateAudience = true,
+       ValidAudience = AuthOptions.AUDIENCE,
+       ValidateLifetime = true,
+
+       IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+       ValidateIssuerSigningKey = true,
+   };
+});
 
 // Add services to the container.
 

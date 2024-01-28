@@ -1,7 +1,130 @@
 ﻿@page "/SignIn"
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@using System.Net.Http.Headers;
+@using OpenBook.Shared.SupportData;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject HttpClient client
+@inject NavigationManager navigation 
+<style>
+    .container {
+        border: 2px solid black;
+        border-radius: 10px;
+        padding: 20px;
+        width: 300px;
+        margin: auto;
+        margin-top: 50px;
+    }
 
-<h3>SignIn</h3>
+    .input-group {
+        margin-bottom: 15px;
+    }
+
+    .rounded-button {
+        border-radius: 5px;
+        padding: 10px;
+        width: 100%;
+        cursor: pointer;
+        background-color: #3498db;
+        color: white;
+        border: none;
+    }
+
+    .rounded-button:disabled {
+        background-color: #95a5a6;
+        cursor: not-allowed;
+    }
+
+    .password-toggle {
+        cursor: pointer;
+        color: #3498db;
+        text-decoration: underline;
+    }
+</style>
+
+<h3 style="text-align:center">Авторизация</h3>
+
+<div class="container">
+    <div class="input-group">
+        <input type="text" id="login" @bind="authView.Email" placeholder="Email"/>
+    </div>
+
+    <div class="input-group">
+        <input type="@passwordInputType" id="password" @bind="authView.Password" placeholder="Пароль"/>
+        <button @onclick="TogglePasswordVisibility" class="password-toggle">
+            <img style="width:20px; height:15px;" src="@eyeIconPath" alt="Глаз">
+        </button>
+    </div>
+
+    <button class="rounded-button" @onclick="Authorize">Войти</button>
+    <a href="SignUp">Нет аккаунта? Регистрация</a>
+</div>
 
 @code {
+    AuthView authView = new AuthView();
+    AuthInfo authInfo = new AuthInfo();
+    Response response;
 
+
+    private bool showPassword = false;
+
+    private string eyeIconPath => showPassword ? "../image/OpenEye.svg" : "../image/CloseEye.svg";
+
+    private string passwordInputType => showPassword ? "text" : "password";
+
+    private void TogglePasswordVisibility()
+    {
+        showPassword = !showPassword;
+    }
+
+    private bool isAuthenticated = false;
+    private async Task Authorize()
+    {
+        try
+        {
+            var response = await AuthenticateAsync(authView.Email, authView.Password);
+            if (response.IsSuccessStatusCode)
+            {
+                var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>();
+
+                // Можно сохранить токен в безопасном месте, например, в Cookie или localStorage.
+                authInfo.Key = tokenResponse.Access_token;
+                // Установка Bearer токена в заголовке Authorization
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authInfo.Key);
+                isAuthenticated = true;
+
+                await localStorage.SetItemAsync(AuthInfo.CookieName, authInfo);
+
+                navigation.NavigateTo("Profile");
+            }
+            else
+            {
+                isAuthenticated = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            isAuthenticated = false;
+        }
+    }
+    private async Task<HttpResponseMessage> AuthenticateAsync(string username, string password)
+    {
+        var requestBody = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("username", username),
+            new KeyValuePair<string, string>("password", password),
+    });
+
+        UserDto user = new()
+            {
+                Email = username,
+                Password = password,
+            };
+
+        return await client.PostAsJsonAsync("https://localhost:7190/api/Auth/Token", user);
+    }
+    public class TokenResponse
+    {
+        public string Access_token { get; set; }
+    }
 }

@@ -1,7 +1,107 @@
 ﻿@page "/SignUp"
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@inject HttpClient client
+@inject NavigationManager navigation 
+<style>
+    .container {
+        border: 2px solid black;
+        border-radius: 10px;
+        padding: 20px;
+        width: 300px;
+        margin: auto;
+        margin-top: 50px;
+    }
 
-<h3>SingUp</h3>
+    .input-group {
+        margin-bottom: 15px;
+    }
+
+    .rounded-button {
+        border-radius: 5px;
+        padding: 10px;
+        width: 100%;
+        cursor: pointer;
+        background-color: #3498db;
+        color: white;
+        border: none;
+    }
+
+    .rounded-button:disabled {
+        background-color: #95a5a6;
+        cursor: not-allowed;
+    }
+
+    .password-toggle {
+        cursor: pointer;
+        color: #3498db;
+        text-decoration: underline;
+    }
+</style>
+
+<h3 style="text-align:center">Регистрация</h3>
+
+<div class="container">
+    <div class="input-group">
+        <input type="text" id="login" @bind="user.Email" placeholder="Email"/>
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="alias" @bind="user.Name" placeholder="Имя"/>
+    </div>
+
+    <div class="input-group">
+        <input type="@passwordInputType" id="password" @bind="user.Password" placeholder="Пароль"/>
+        <button @onclick="TogglePasswordVisibility" class="password-toggle">
+            <img style="width:20px; height:15px;" src="@eyeIconPath" alt="Глаз">
+        </button>
+    </div>
+
+    <div class="input-group">
+        <input type="@passwordInputType" id="confirmPassword" @bind="confirmPassword" placeholder="Повторите пароль"/>
+        <button @onclick="TogglePasswordVisibility" class="password-toggle">
+            <img style="width:20px; height:15px;" src="@eyeIconPath" alt="Глаз">
+        </button>
+    </div>
+
+    <button class="rounded-button" @onclick="Register" disabled="@(!IsFormValid)">Регистрация</button>
+</div>
 
 @code {
+    Response response;
+    private UserDto user = new();
 
+    private string confirmPassword;
+    private bool showPassword = false;
+
+    private string eyeIconPath => showPassword ? "../image/OpenEye.svg" : "../image/CloseEye.svg";
+
+    private bool IsFormValid =>
+        !string.IsNullOrWhiteSpace(user.Email)
+        && !string.IsNullOrWhiteSpace(user.Name)
+        && !string.IsNullOrWhiteSpace(user.Password)
+        && !string.IsNullOrWhiteSpace(confirmPassword)
+        && user.Password == confirmPassword;
+
+    private string passwordInputType => showPassword ? "text" : "password";
+
+    private void TogglePasswordVisibility()
+    {
+        showPassword = !showPassword;
+    }
+
+    private async Task Register()
+    {
+        if (IsFormValid)
+        {
+            user.RoleId = 2;
+            using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/User/CreateWithBasket", user);
+            TestResponse.EnsureSuccessStatusCode();
+            response = await TestResponse.Content.ReadFromJsonAsync<Response>();
+            if (response.IsSuccess)
+            {
+                navigation.NavigateTo("SignIn");
+            }
+        }
+    }
 }
