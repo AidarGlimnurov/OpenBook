@@ -42,12 +42,12 @@ namespace OpenBook.Server.Controllers
             return await interactor.Delete(id);
         }
         [HttpGet("GetAll")]
-        public async Task<Response<IEnumerable<PostDto>>> GetAll(int start, int? count)
+        public async Task<Response<DataPage<PostDto>>> GetAll(int start, int? count)
         {
             return await interactor.GetAll(start, count);
         }
         [HttpGet("GetForUser")]
-        public async Task<Response<IEnumerable<PostDto>>> GetForUser(int userId, int start, int? count)
+        public async Task<Response<DataPage<PostDto>>> GetForUser(int userId, int start, int? count)
         {
             return await interactor.GetForUser(userId, start, count);
         }

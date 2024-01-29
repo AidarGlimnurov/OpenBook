@@ -129,9 +129,9 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
-        public async Task<Response<IEnumerable<ChapterDto>>> GetForBook(int bookId, int start, int? count, bool? isPublic)
+        public async Task<Response<DataPage<ChapterDto>>> GetForBook(int bookId, int start, int? count, bool? isPublic)
         {
-            var response = new Response<IEnumerable<ChapterDto>>();
+            var response = new Response<DataPage<ChapterDto>>();
             try
             {
                 var data = chapterRepository.GetForBook(bookId, start, count, isPublic);
@@ -141,7 +141,8 @@ namespace OpenBook.App.Interactors
                 {
                     chapters.Add(item.ToDto());
                 }
-                response.Value = chapters.ToList();
+                response.Value.Data = chapters.ToArray();
+                response.Value.Start = start;
                 response.IsSuccess = true;
             }
             catch (Exception ex)

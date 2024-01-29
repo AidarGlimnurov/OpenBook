@@ -54,7 +54,7 @@ namespace OpenBook.Server.Controllers
             return await interactor.RemoveBook(userId, bookId);
         }
         [HttpGet("GetBooks")]
-        public async Task<Response<IEnumerable<BookDto>>> GetBooks(int userId, int start, int count)
+        public async Task<Response<DataPage<BookDto>>> GetBooks(int userId, int start, int count)
         {
             return await interactor.GetBooks(userId, start, count);
         }

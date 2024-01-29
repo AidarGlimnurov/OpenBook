@@ -141,9 +141,9 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
-        public async Task<Response<IEnumerable<BookDto>>> GetBooks(int userId, int start, int count)
+        public async Task<Response<DataPage<BookDto>>> GetBooks(int userId, int start, int count)
         {
-            var response = new Response<IEnumerable<BookDto>>();
+            var response = new Response<DataPage<BookDto>>();
             try
             {
                 var data = basketRepository.GetBooks(userId, start, count);
@@ -153,7 +153,8 @@ namespace OpenBook.App.Interactors
                 {
                     books.Add(item.ToDto());
                 }
-                response.Value = books.ToList();
+                response.Value.Data = books.ToArray();
+                response.Value.Start = start;
                 response.IsSuccess = true;
             }
             catch (Exception ex)

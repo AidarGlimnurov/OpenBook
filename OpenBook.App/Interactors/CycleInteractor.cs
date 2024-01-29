@@ -90,9 +90,9 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
-        public async Task<Response<IEnumerable<CycleDto>>> GetAll(int start, int? count)
+        public async Task<Response<DataPage<CycleDto>>> GetAll(int start, int? count)
         {
-            var response = new Response<IEnumerable<CycleDto>>();
+            var response = new Response<DataPage<CycleDto>>();
             try
             {
                 var data = cycleRepository.GetAll(start, count);
@@ -102,7 +102,8 @@ namespace OpenBook.App.Interactors
                 {
                     cycle.Add(item.ToDto());
                 }
-                response.Value = cycle.ToList();
+                response.Value.Data = cycle.ToArray();
+                response.Value.Start = start;
                 response.IsSuccess = true;
             }
             catch (Exception ex)

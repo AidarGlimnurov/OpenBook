@@ -48,7 +48,7 @@ namespace OpenBook.Server.Controllers
             return await interactor.Published(chapterId, action);
         }
         [HttpGet("GetForBook")]
-        public async Task<Response<IEnumerable<ChapterDto>>> GetForBook(int bookId, int start, int? count, bool? isPublic)
+        public async Task<Response<DataPage<ChapterDto>>> GetForBook(int bookId, int start, int? count, bool? isPublic)
         {
             return await interactor.GetForBook(bookId, start, count, isPublic);
         }

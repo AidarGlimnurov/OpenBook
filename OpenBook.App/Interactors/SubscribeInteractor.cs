@@ -141,9 +141,9 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
-        public async Task<Response<IEnumerable<SubscribeDto>>> GetFollowers(int authorId)
+        public async Task<Response<DataPage<SubscribeDto>>> GetFollowers(int authorId)
         {
-            var response = new Response<IEnumerable<SubscribeDto>>();
+            var response = new Response<DataPage<SubscribeDto>>();
             try
             {
                 var data = subscribeRepository.GetFollowers(authorId);
@@ -153,7 +153,7 @@ namespace OpenBook.App.Interactors
                 {
                     subsribes.Add(item.ToDto());
                 }
-                response.Value = subsribes.ToList();
+                response.Value.Data = subsribes.ToArray();
                 response.IsSuccess = true;
             }
             catch (Exception ex)
@@ -164,9 +164,9 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
-        public async Task<Response<IEnumerable<SubscribeDto>>> GetSubs(int userId)
+        public async Task<Response<DataPage<SubscribeDto>>> GetSubs(int userId)
         {
-            var response = new Response<IEnumerable<SubscribeDto>>();
+            var response = new Response<DataPage<SubscribeDto>>();
             try
             {
                 var data = subscribeRepository.GetSubs(userId);
@@ -176,7 +176,7 @@ namespace OpenBook.App.Interactors
                 {
                     subsribes.Add(item.ToDto());
                 }
-                response.Value = subsribes.ToList();
+                response.Value.Data = subsribes.ToArray();
                 response.IsSuccess = true;
             }
             catch (Exception ex)

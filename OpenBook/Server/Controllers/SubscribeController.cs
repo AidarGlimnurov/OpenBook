@@ -52,12 +52,12 @@ namespace OpenBook.Server.Controllers
             return await interactor.UnsubForAuthor(authorId, userId);
         }
         [HttpGet("GetFollowers")]
-        public async Task<Response<IEnumerable<SubscribeDto>>> GetFollowers(int authorId)
+        public async Task<Response<DataPage<SubscribeDto>>> GetFollowers(int authorId)
         {
             return await interactor.GetFollowers(authorId);
         }
         [HttpGet("GetSubs")]
-        public async Task<Response<IEnumerable<SubscribeDto>>> GetSubs(int userId)
+        public async Task<Response<DataPage<SubscribeDto>>> GetSubs(int userId)
         {
             return await interactor.GetSubs(userId);
         }

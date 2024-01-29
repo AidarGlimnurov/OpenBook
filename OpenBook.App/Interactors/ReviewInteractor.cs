@@ -108,9 +108,9 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
-        public async Task<Response<IEnumerable<ReviewDto>>> GetForUser(int userId, int start, int? count)
+        public async Task<Response<DataPage<ReviewDto>>> GetForUser(int userId, int start, int? count)
         {
-            var response = new Response<IEnumerable<ReviewDto>>();
+            var response = new Response<DataPage<ReviewDto>>();
             try
             {
                 var data = reviewRepository.GetForUser(userId, start, count);
@@ -120,7 +120,8 @@ namespace OpenBook.App.Interactors
                 {
                     cycle.Add(item.ToDto());
                 }
-                response.Value = cycle.ToList();
+                response.Value.Data = cycle.ToArray();
+                response.Value.Start = start;
                 response.IsSuccess = true;
             }
             catch (Exception ex)
@@ -131,9 +132,9 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
-        public async Task<Response<IEnumerable<ReviewDto>>> GetForBook(int bookId, int start, int? count)
+        public async Task<Response<DataPage<ReviewDto>>> GetForBook(int bookId, int start, int? count)
         {
-            var response = new Response<IEnumerable<ReviewDto>>();
+            var response = new Response<DataPage<ReviewDto>>();
             try
             {
                 var data = reviewRepository.GetForBook(bookId, start, count);
@@ -143,7 +144,8 @@ namespace OpenBook.App.Interactors
                 {
                     cycle.Add(item.ToDto());
                 }
-                response.Value = cycle.ToList();
+                response.Value.Data = cycle.ToArray();
+                response.Value.Start = start;
                 response.IsSuccess = true;
             }
             catch (Exception ex)

@@ -42,7 +42,7 @@ namespace OpenBook.Server.Controllers
             return await interactor.Delete(id);
         }
         [HttpGet("GetAll")]
-        public async Task<Response<IEnumerable<UserDto>>> GetAll(int start, int? count)
+        public async Task<Response<DataPage<UserDto>>> GetAll(int start, int? count)
         {
             return await interactor.GetAll(start, count);
         }

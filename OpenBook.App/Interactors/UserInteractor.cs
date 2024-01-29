@@ -109,9 +109,9 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
-        public async Task<Response<IEnumerable<UserDto>>> GetAll(int start, int? count)
+        public async Task<Response<DataPage<UserDto>>> GetAll(int start, int? count)
         {
-            var response = new Response<IEnumerable<UserDto>>();
+            var response = new Response<DataPage<UserDto>>();
             try
             {
                 var data = userRepository.GetAll(start, count);
@@ -121,7 +121,8 @@ namespace OpenBook.App.Interactors
                 {
                     users.Add(item.ToDto());
                 }
-                response.Value = users.ToList();
+                response.Value.Data = users.ToArray();
+                response.Value.Start = start;
                 response.IsSuccess = true;
             }
             catch (Exception ex)
