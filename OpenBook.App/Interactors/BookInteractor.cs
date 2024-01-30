@@ -109,12 +109,12 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
-        public async Task<Response<DataPage<BookDto>>> GetBooks(int start, int? count)
+        public async Task<Response<DataPage<BookDto>>> GetBooks(int start, int? count, bool? isPublic, string? name)
         {
             var response = new Response<DataPage<BookDto>>();
             try
             {
-                var data = bookRepository.GetBooks(start, count);
+                var data = bookRepository.GetBooks(start, count, isPublic, name);
 
                 List<BookDto> books = new();
                 await foreach (var item in data)

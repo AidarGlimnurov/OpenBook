@@ -39,7 +39,7 @@ namespace OpenBook.Adapter.Repository
             context.Add(book);
         }
 
-        public async IAsyncEnumerable<Book> GetBooks(int start, int? count)
+        public async IAsyncEnumerable<Book> GetBooks(int start, int? count, bool? isPublic, string? name)
         {
             if (count == null) count = 100;
 
@@ -47,7 +47,12 @@ namespace OpenBook.Adapter.Repository
             int take = count.Value;
 
             var books = context.Books.Include(b => b.User)
-                .Include(b => b.Cycle).Skip(skip).Take(take);
+                .Include(b => b.Cycle).Where(b => b.IsPublished == isPublic).Skip(skip).Take(take);
+
+            if (name != null)
+            {
+                books = books.Where(b => b.Name.Contains(name));
+            }
 
             foreach (var item in books)
             {

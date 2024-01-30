@@ -44,9 +44,9 @@ namespace OpenBook.Server.Controllers
             return await interactor.Delete(id);
         }
         [HttpGet("GetBooks")]
-        public async Task<Response<DataPage<BookDto>>> GetBooks(int start, int? count)
+        public async Task<Response<DataPage<BookDto>>> GetBooksGetBooks(int start, int? count, bool? isPublic, string? name)
         {
-            return await interactor.GetBooks(start, count);
+            return await interactor.GetBooks(start, count, isPublic, name);
         }
         [HttpGet("GetBooksForAuthor")]
         public async Task<Response<DataPage<BookDto>>> GetBooksForAuthor(int userId, int start, int? count, bool? isPublic)
@@ -69,7 +69,7 @@ namespace OpenBook.Server.Controllers
             return await interactor.RemoveGenre( bookId,  genreId);
         }
         [HttpGet("GetBooksForCycle")]
-        public async Task<Response<IEnumerable<BookDto>>> GetBooksForCycle(int cycleId, int start, int? count)
+        public async Task<Response<DataPage<BookDto>>> GetBooksForCycle(int cycleId, int start, int? count)
         {
             return await interactor.GetBooksForCycle(cycleId, start, count);
         }
