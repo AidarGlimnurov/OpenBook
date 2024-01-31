@@ -121,7 +121,14 @@ namespace OpenBook.App.Interactors
                 {
                     books.Add(item.ToDto());
                 }
-                response.Value.Data = books.ToArray();
+                if (books.Count != 0)
+                {
+                    response.Value.Data = books.ToArray();
+                }
+                else
+                {
+                    throw new Exception("Таких элементов нет!");
+                }
                 response.Value.Start = start;
                 response.IsSuccess = true;
             }

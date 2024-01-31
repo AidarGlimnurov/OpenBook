@@ -56,7 +56,7 @@ else
     string name = string.Empty;
     protected override async Task OnInitializedAsync()
     {
-        books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooks?start={start}&count={count}&isPublic=true");
+        books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooks?start={start}&count={count}&isPublic=true&name=!-+");
     }
 
     private void ToBook(int id)
@@ -70,7 +70,7 @@ else
         PageNumber++;
         if (name == "")
         {
-            books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooks?start={start}&count={count}&isPublic=true");
+            books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooks?start={start}&count={count}&isPublic=true&name=!-+");
         }
         else
         {
@@ -83,7 +83,7 @@ else
         PageNumber--;
         if (name == "")
         {
-            books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooks?start={start}&count={count}&isPublic=true");
+            books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooks?start={start}&count={count}&isPublic=true&name=!-+");
         }
         else
         {
@@ -94,7 +94,7 @@ else
     {
         if (name == "")
         {
-            books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooks?start={start}&count={count}");
+            books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooks?start={start}&count={count}&name=!-+");
         }
         else
         {

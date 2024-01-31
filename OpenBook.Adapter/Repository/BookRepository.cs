@@ -49,7 +49,7 @@ namespace OpenBook.Adapter.Repository
             var books = context.Books.Include(b => b.User)
                 .Include(b => b.Cycle).Where(b => b.IsPublished == isPublic).Skip(skip).Take(take);
 
-            if (name != null)
+            if (name != null || name !="!-+")
             {
                 books = books.Where(b => b.Name.Contains(name));
             }
