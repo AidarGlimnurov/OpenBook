@@ -1,5 +1,32 @@
-﻿<h3>BookCreate</h3>
+﻿@page "/BookEditor"
+<style>
+    .container {
+      display: flex;
+      flex-direction:row;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      padding: 20px;
+    }
 
+    .box {
+      flex: 1 1 45%; /* Чтобы блоки были примерно равной ширины и занимали 45% ширины родительского контейнера */
+      background-color: #ccc;
+      margin-bottom: 20px;
+      padding: 10px;
+    }
+
+    .full-width-box {
+      flex: 1 1 100%; /* Чтобы этот блок занимал 100% ширины родительского контейнера */
+      background-color: #ddd;
+      padding: 20px;
+    }
+</style>
+<h3>BookCreate</h3>
+  <div class="container">
+    <div class="box">Box 1</div>
+    <div class="box">Box 2</div>
+  </div>
+  <div class="full-width-box">Full Width Box</div>
 @code {
 
 }

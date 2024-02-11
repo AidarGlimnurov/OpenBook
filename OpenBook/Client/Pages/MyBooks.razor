@@ -101,15 +101,13 @@
     <span>опубл.</span>
     <br>
 </div>
-<button @onclick="Create" class="btn btn-primary" style="margin:10px; display: flex; justify-content: center;">Создать книгу</button>
-<div class="toggle-container">
-    <label>
-        <input type="radio" name="bookType" checked /> Опубликованные
-    </label>
-    <label>
-        <input type="radio" name="bookType" /> Неопубликованные
-    </label>
+
+<div class="checkSlider">
+    <button @onclick="Create" class="btn btn-primary" style="margin:10px;">
+        Создать книгу
+    </button>
 </div>
+
 @if (books == null)
 {
     <span>Загрузка...</span>
@@ -138,6 +136,28 @@ else
         </div>
     }
 }
+
+    <div style="text-align: left; font-size:15pt;">
+        @if (books.Value.Start > 0)
+        {
+            <button class="oi oi-arrow-left  btn btn-secondary" @onclick="GetLastPage" style="background:#F8E9A1; border: none;"></button>
+        }
+        else
+        {
+            <button class="oi oi-arrow-left btn btn-secondary" disabled style="background:#F8E9A1; border: none;"></button>
+        }
+    </div>
+    <div style="background:#F8E9A1; font-size:15pt;">@PageNumber</div>
+    <div style="text-align: right; font-size:15pt;">
+        @if (books.Value.Count == 10)
+        {
+            <button class="oi oi-arrow-right btn btn-secondary" @onclick="GetNextPage" style="background:#F8E9A1; border: none;"></button>
+        }
+        else
+        {
+            <button class="oi oi-arrow-right  btn btn-secondary" disabled style="background:#F8E9A1; border: none;"></button>
+        }
+    </div>
 @code {
     int Id = 1;//ToDo заменить
     Response<DataPage<BookDto>> books;
@@ -151,7 +171,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooksForAuthor?userId={Id}&start={start}&count={count}&isPublic=false");
+        GetUnPublic();
     }
 
     void TogglePublishStatus(ChangeEventArgs args)
@@ -186,5 +206,31 @@ else
     void Create()
     {
         navigation.NavigateTo("bookeditor/0");
+    }
+    public async Task GetNextPage()
+    {
+        start += 10;
+        PageNumber++;
+        if (IsPublished)
+        {
+            GetPublic();
+        }
+        else
+        {
+            GetUnPublic();
+        }
+    }
+    public async Task GetLastPage()
+    {
+        start -= 10;
+        PageNumber--;
+        if (IsPublished)
+        {
+            GetPublic();
+        }
+        else
+        {
+            GetUnPublic();
+        }
     }
 }

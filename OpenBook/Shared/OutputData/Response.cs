@@ -20,7 +20,12 @@ namespace OpenBook.Shared.OutputData
     }
 
     public class Response<T> : Response
+        where T : class, new()
     {
+        public Response()
+        {
+            Value = new T();
+        }
         public T? Value { get; set; }
     }
 }
