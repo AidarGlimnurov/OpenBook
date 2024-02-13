@@ -43,34 +43,77 @@
 </style>
 
 <h3 style="text-align:center">Авторизация</h3>
-
-<div class="container">
-    <div class="input-group">
-        <input type="text" id="login" @bind="authView.Email" placeholder="Email"/>
+@if (isAuth == null)
+{
+       <span>Загрузка...</span>
+}
+else
+{
+    <div class="container">
+    @if (isAuth == true)
+    {
+        <button class="rounded-button" @onclick="LogOut">Выйти</button> 
+        <a href="SignUp">Зарегистрировать новый аккаунт</a>
+    }
+    else
+    {
+        <div class="input-group">
+            <input type="text" id="login" @bind="authView.Email" placeholder="Email"/>
+        </div>
+        
+        <div class="input-group">
+            <input type="@passwordInputType" id="password" @bind="authView.Password" placeholder="Пароль"/>
+            <button @onclick="TogglePasswordVisibility" class="password-toggle">
+                <img style="width:20px; height:15px;" src="@eyeIconPath" alt="Глаз">
+            </button>
+        </div>
+        
+        <button class="rounded-button" @onclick="Authorize">Войти</button>
+        <a href="SignUp">Нет аккаунта? Регистрация</a>        
+    }
     </div>
-
-    <div class="input-group">
-        <input type="@passwordInputType" id="password" @bind="authView.Password" placeholder="Пароль"/>
-        <button @onclick="TogglePasswordVisibility" class="password-toggle">
-            <img style="width:20px; height:15px;" src="@eyeIconPath" alt="Глаз">
-        </button>
-    </div>
-
-    <button class="rounded-button" @onclick="Authorize">Войти</button>
-    <a href="SignUp">Нет аккаунта? Регистрация</a>
-</div>
+}
 
 @code {
+    bool? isAuth = null;
     AuthView authView = new AuthView();
     AuthInfo authInfo = new AuthInfo();
     Response response;
-
 
     private bool showPassword = false;
 
     private string eyeIconPath => showPassword ? "../image/OpenEye.svg" : "../image/CloseEye.svg";
 
     private string passwordInputType => showPassword ? "text" : "password";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
+            if (cookieContent != null && await CheckAuth())
+            {
+                isAuth = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            isAuth = false;
+        }
+    }
+
+    async Task<bool> CheckAuth()
+    {
+        var resp = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+        return resp.IsSuccess;
+    }
+
+    private async Task LogOut()
+    {
+        await localStorage.ClearAsync();
+        navigation.NavigateTo("");
+    }
 
     private void TogglePasswordVisibility()
     {
@@ -125,6 +168,6 @@
     }
     public class TokenResponse
     {
-        public string Access_token { get; set; }
+        public string? Access_token { get; set; }
     }
 }

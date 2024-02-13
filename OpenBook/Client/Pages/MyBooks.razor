@@ -1,8 +1,11 @@
 ﻿@page "/mybooks"
 @using OpenBook.Shared.Dtos;
 @using OpenBook.Shared.OutputData;
+@using OpenBook.Shared.SupportData;
+@using System.Net.Http.Headers;
 @inject HttpClient client
 @inject NavigationManager navigation
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 <h3 style="text-align:center">Мои Книги</h3>
 <style>
@@ -110,57 +113,57 @@
 
 @if (books == null)
 {
-    <span>Загрузка...</span>
+        <span>Загрузка...</span>
 }
 else
 {
     @foreach (var book in books.Value.Data)
     {
-         <div class="container">
-            <div class="d-flex flex-wrap" style="width:100%">
-                <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" style="background:gray; height: 20%; width: 15%;" >
-                <div class="book-details">
-                    <div class="book-title">@book.Name</div>
-                    <div class="book-chapters">Главы: ?</div>
+                 <div class="container">
+                    <div class="d-flex flex-wrap" style="width:100%">
+                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" style="background:gray; height: 20%; width: 15%;" >
+                        <div class="book-details">
+                            <div class="book-title">@book.Name</div>
+                            <div class="book-chapters">Главы: ?</div>
+                        </div>
+                        <div class="book-actions" style="text-align:right;">
+                            <button class="btn btn-warning" @onclick="() => EditBook(book.Id)">
+                                <img src="../image/Pencil.svg" alt="Edit" style="width:20px;height:20px;">
+                            </button>
+                            <br>
+                            <button class="btn btn-danger" @onclick="() => DeleteBook(book.Id)">
+                                <img src="../image/Delete.svg" alt="Delete" style="width:20px;height:20px;">
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="book-actions" style="text-align:right;">
-                    <button class="btn btn-warning" @onclick="() => EditBook(book.Id)">
-                        <img src="../image/Pencil.svg" alt="Edit" style="width:20px;height:20px;">
-                    </button>
-                    <br>
-                    <button class="btn btn-danger" @onclick="() => DeleteBook(book.Id)">
-                        <img src="../image/Delete.svg" alt="Delete" style="width:20px;height:20px;">
-                    </button>
-                </div>
+    }
+        <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin: 15px">
+            <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
+            @if (books.Value.Start > 0)
+            {
+                        <button class="oi oi-arrow-left  btn btn-secondary" @onclick="GetLastPage" style="background:#F8E9A1; border: none;  height: 100%"></button>
+            }
+            else
+            {
+                        <button class="oi oi-arrow-left btn btn-secondary" disabled style="background:#F8E9A1; border: none;  height: 100%"></button>
+            }
+            </div>
+            <div style=" font-size:15pt;">@PageNumber</div>
+            <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
+            @if (books.Value.Count == 10)
+            {
+                        <button class="oi oi-arrow-right btn btn-secondary" @onclick="GetNextPage" style="background:#F8E9A1; border: none; height: 100%"></button>
+            }
+            else
+            {
+                        <button class="oi oi-arrow-right  btn btn-secondary" disabled style="background:#F8E9A1; border: none;  height: 100%"></button>
+            }
             </div>
         </div>
-    }
 }
-
-    <div style="text-align: left; font-size:15pt;">
-        @if (books.Value.Start > 0)
-        {
-            <button class="oi oi-arrow-left  btn btn-secondary" @onclick="GetLastPage" style="background:#F8E9A1; border: none;"></button>
-        }
-        else
-        {
-            <button class="oi oi-arrow-left btn btn-secondary" disabled style="background:#F8E9A1; border: none;"></button>
-        }
-    </div>
-    <div style="background:#F8E9A1; font-size:15pt;">@PageNumber</div>
-    <div style="text-align: right; font-size:15pt;">
-        @if (books.Value.Count == 10)
-        {
-            <button class="oi oi-arrow-right btn btn-secondary" @onclick="GetNextPage" style="background:#F8E9A1; border: none;"></button>
-        }
-        else
-        {
-            <button class="oi oi-arrow-right  btn btn-secondary" disabled style="background:#F8E9A1; border: none;"></button>
-        }
-    </div>
 @code {
-    int Id = 1;//ToDo заменить
-    Response<DataPage<BookDto>> books;
+    Response<DataPage<BookDto>>? books;
     int pageCount = 0;
     int start = 0;
     int count = 10;
@@ -169,21 +172,33 @@ else
 
     bool IsPublished { get; set; } = false;
 
+    Response<UserDto>? response = new();
+
     protected override async Task OnInitializedAsync()
     {
-        GetUnPublic();
+        try
+        {
+            var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
+            response = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+            await GetBooks(false);
+        }
+        catch (Exception ex)
+        {
+            navigation.NavigateTo("SignIn");
+        }
     }
 
-    void TogglePublishStatus(ChangeEventArgs args)
+    async Task TogglePublishStatus(ChangeEventArgs args)
     {
         IsPublished = !IsPublished;
         if (IsPublished)
         {
-            GetPublic();
+            await GetBooks(true);
         }
         else
         {
-            GetUnPublic();
+            await GetBooks(false);
         }
     }
     void EditBook(int bookId)
@@ -195,13 +210,9 @@ else
     {
         await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Book/Delete?id={bookId}");
     }
-    async Task GetPublic()
+    async Task GetBooks(bool isPub)
     {
-        books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooksForAuthor?userId={Id}&start={start}&count={count}&isPublic=true");
-    }
-    async Task GetUnPublic()
-    {
-        books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooksForAuthor?userId={Id}&start={start}&count={count}&isPublic=false");
+        books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooksForAuthor?userId={response.Value.Id}&start={start}&count={count}&isPublic={isPub}");
     }
     void Create()
     {
@@ -213,11 +224,11 @@ else
         PageNumber++;
         if (IsPublished)
         {
-            GetPublic();
+            await GetBooks(true);
         }
         else
         {
-            GetUnPublic();
+            await GetBooks(false);
         }
     }
     public async Task GetLastPage()
@@ -226,11 +237,11 @@ else
         PageNumber--;
         if (IsPublished)
         {
-            GetPublic();
+            await GetBooks(true);
         }
         else
         {
-            GetUnPublic();
+            await GetBooks(false);
         }
     }
 }

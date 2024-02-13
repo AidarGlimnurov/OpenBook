@@ -1,0 +1,153 @@
+﻿@page "/profile"
+
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@using System.Net.Http.Headers;
+@using OpenBook.Shared.SupportData;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager navigation
+@inject HttpClient client
+
+<h3 style="text-align: center">Личный кабинет</h3>
+@if (user == null)
+{
+        <span>Загрузка...</span>
+}
+else
+{
+    if (!editMode)
+    {
+        <div class="jumbotron jumbotron-fluid" style="background-color:ivory">
+            <div class="container">
+                <span>Имя:</span>
+                <p >@user.Value.Name</p>
+                <br>
+
+                <span>Почта:</span>
+                <p>@user.Value.Email</p>
+                <br>
+
+                <span>Роль:</span>
+                <p>@user.Value.Role.Name</p>
+
+                <p>
+            @if (user.Value.IsVerified)
+            {
+                            <span style="color: green;">Ваш аккаунт верифицирован</span>
+            }
+            else
+            {
+                            <span>Ваш аккаунт не верифицирован!</span>
+                            <br>
+                            <button>Пройти верификацию</button>
+            }
+                </p>
+
+                <p>
+                    <button>Изменить пароль</button>
+                </p>
+
+                <p>
+                    <button @onclick="EditChange">Изменить</button>
+                </p>
+        @if (user.Value.Role.Name == "Admin" || user.Value.Role.Name == "SuperAdmin")
+        {
+                        <p>
+                            <button @onclick="GoToAdminPanel">Админ панель</button>
+                        </p>                    
+        }
+                <p>
+                    <button @onclick="(() => GoToEditBooks(0))">Создать книгу</button>
+                </p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="jumbotron">
+            <span>Имя:</span>
+            <input type="text" id="login" @bind="user.Value.Name" placeholder="Name" />
+            <br>
+
+            <span>Почта:</span>
+            <p>@user.Value.Email</p>
+            <br>
+
+            <span>Роль:</span>
+            <p>@user.Value.Role.Name</p>
+
+            <p>
+        @if (user.Value.IsVerified)
+        {
+                        <span style="color: green;">Ваш аккаунт верифицирован</span>
+        }
+        else
+        {
+                        <span>Ваш аккаунт не верифицирован!</span>
+                        <br>
+                        <button>Пройти верификацию</button>
+        }
+            </p>
+
+            <p>
+                <button>Изменить пароль</button>
+            </p>
+
+            <button @onclick="EditChange">Изменить</button>
+        </div>
+    }
+}
+
+@code {
+    bool? isAuth = null;
+    AuthView authView = new AuthView();
+    AuthInfo authInfo = new AuthInfo();
+    Response? response;
+
+    Response<UserDto>? user;
+
+    bool editMode = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
+            if (cookieContent != null && await CheckAuth())
+            {
+                isAuth = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            isAuth = false;
+            navigation.NavigateTo("SignIn");
+        }
+    }
+    async Task<bool> CheckAuth()
+    {
+        user = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+        return user.IsSuccess;
+    }
+    async Task EditChange()
+    {
+        if (editMode)
+        {
+            using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/User/UpdateWithEntity", user);
+            editMode = false;
+        }
+        else
+        {
+            editMode = true;
+        }
+    }
+    void GoToAdminPanel()
+    {
+        navigation.NavigateTo("adminpanel");
+    }
+    void GoToEditBooks(int id)
+    {
+        navigation.NavigateTo($"BookEditor/{id}");
+    }
+}

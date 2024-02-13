@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using OpenBook.App.Interactors;
 using OpenBook.Shared.Dtos;
+using OpenBook.Shared.OutputData;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -18,6 +20,18 @@ namespace OpenBook.Server.Controllers
         {
             this.userInteractor = interactor;
             this.verifInteractor = emailVerifInteractor;
+        }
+
+        [Authorize]
+        [HttpGet("GetUserInfo")]
+        public async Task<Response<UserDto>> GetUserId()
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
+            var a = 1;
+            var user = await userInteractor.GetByEmail(email);
+            user.Value.Password = string.Empty;
+            user.IsSuccess = true;
+            return user;
         }
         [HttpPost("Token")]
         public async Task<IActionResult> Token(UserDto userPerson)
