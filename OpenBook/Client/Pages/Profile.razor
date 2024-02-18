@@ -75,24 +75,21 @@ else
                         <button>Пройти верификацию</button>
                     }
                 </p>
-            </div>
-    
-        </div>
-        <div class="columnContainer">
-            <p>
-                <button>Изменить пароль</button>
-            </p>
-    
-    
-            @if (user.Value.Role.Name == "Admin" || user.Value.Role.Name == "SuperAdmin")
-            {
+                <p>
+                    <button>Изменить пароль</button>
+                </p>
+
+
+                @if (user.Value.Role.Name == "Admin" || user.Value.Role.Name == "SuperAdmin")
+                {
                     <p>
                         <button @onclick="GoToAdminPanel">Админ панель</button>
                     </p>                    
-            }
-            <p>
-                <button @onclick="(() => GoToEditBooks(0))">Создать книгу</button>
-            </p>
+                }
+                <p>
+                    <button @onclick="(() => GoToEditBooks(0))">Создать книгу</button>
+                </p>
+            </div>
         </div>
     </div>
 }
