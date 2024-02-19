@@ -1,4 +1,4 @@
-﻿@page "/ChapterEditor/{Id}"
+﻿@page "/ChapterEditor/{Id}/{Number}"
 @using OpenBook.Shared.Dtos;
 @using OpenBook.Shared.OutputData;
 @using OpenBook.Shared.SupportData;
@@ -6,15 +6,57 @@
 @inject HttpClient client
 @inject NavigationManager navigation
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
-
+<button class="btn btn-primary" @onclick="Save">Сохранить</button>
 <div>
+    <input type="text" placeholder="Название" @bind="chapter.Name">
+    <p>@chapter.Number</p>
 </div>
+<div class="col-md-12">
+    <MarkdownEditor @bind-Value="@markdownValue" 
+                    ValueHTMLChanged="@OnMarkdownValueHTMLChanged" />
 
+    <hr />
+
+    <h3>Result</h3>
+    @((MarkupString)markdownHtml)
+</div>
 @code {
     [Parameter]
     public string Id { get; set; }
+    [Parameter]
+    public string Number { get; set; }
 
-    ChapterDto chapter;
+    ChapterDto chapter = new();
 
+    async Task Save()
+    {
+        var a = 0;
+    }
 
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id == "0")
+        {
+            chapter.Number = Convert.ToInt32(Number);
+        }
+        else
+        {
+            var resp = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Chapter/Read?id={Id}");
+        }
+    }
+
+    string markdownValue = "#Markdown Editor\nThis is a test";
+    string markdownHtml;
+
+    Task OnMarkdownValueChanged(string value)
+    {
+        return Task.CompletedTask;
+    }
+
+    Task OnMarkdownValueHTMLChanged(string value)
+    {
+        markdownHtml = value;
+        return Task.CompletedTask;
+    }
+    //https://www.nuget.org/packages/PSC.Blazor.Components.MarkdownEditor
 }

@@ -180,26 +180,28 @@ else
                             вниз
                         </th>
                     </tr>
-
-                    @foreach(var chapter in chapters.Value.Data)
+                    @if (chapters != null)
                     {
-                        <tr>
-                            <td>
-                                @chapter.Number
-                            </td>
-                            <td>
-                                <button>@chapter.Name</button>
-                            </td>
-                            <td>
-                                <input type="checkbox">
-                            </td>
-                            <td>
-                                <button>&#8593;</button>
-                            </td>
-                            <td>
-                                <button>&#8595;</button>
-                            </td>
-                        </tr>
+                        @foreach(var chapter in chapters.Value.Data)
+                        {
+                            <tr>
+                                <td>
+                                    @chapter.Number
+                                </td>
+                                <td>
+                                    <button>@chapter.Name</button>
+                                </td>
+                                <td>
+                                    <input type="checkbox">
+                                </td>
+                                <td>
+                                    <button>&#8593;</button>
+                                </td>
+                                <td>
+                                    <button>&#8595;</button>
+                                </td>
+                            </tr>
+                        }                        
                     }
                     <tr>
                         <td>
@@ -257,7 +259,7 @@ else
 
     void GoToChapterEditor()
     {
-        navigation.NavigateTo("ChapterEditor/0");
+        navigation.NavigateTo("ChapterEditor/0/1");
     }
 
     async Task<bool> CheckAuth()
