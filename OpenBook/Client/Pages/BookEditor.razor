@@ -1,28 +1,30 @@
 ﻿@page "/BookEditor/{Id}"
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@using OpenBook.Shared.SupportData;
+@using System.Net.Http.Headers;
+@inject HttpClient client
+@inject NavigationManager navigation
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 <style>
     .headBox{
         text-align: center;
+
     }
     .container {
       display: flex;
+      flex: 1 1;
       flex-direction:row;
       flex-wrap: wrap;
       justify-content: space-between;
       padding: 20px;
+      width: 100%;
     }
-
     .box {
-      flex: 1 1 45%; /* Чтобы блоки были примерно равной ширины и занимали 45% ширины родительского контейнера */
       background-color: #ccc;
-      margin-bottom: 20px;
       padding: 10px;
     }
 
-    .full-width-box {
-      flex: 1 1 100%; /* Чтобы этот блок занимал 100% ширины родительского контейнера */
-      background-color: #ddd;
-      padding: 20px;
-    }
 
     /* The switch - the box around the slider */
     .switch {
@@ -90,38 +92,218 @@
         align-items: center; /* Центрирование по вертикали */
         justify-content: center; /* Равномерное распределение по горизонтали */
     }
+
+    .content {
+        width: 50%;
+    }
 </style>
-
-<div class="mainBox">
-    <div class="headBox">
-        <div class="checkSlider">
-            <span>неопубл.</span>
-            <label class="switch">
-               <input type="checkbox" @onchange="SwitchAction">
-              <span class="slider round"></span>
-            </label>
-            <span>опубл.</span>
-            <br>
+@if (Id != "0" && book.Name == null)
+{
+    <span>Загрузка...</span>
+}
+else
+{
+    <div class="mainBox">
+        <div class="headBox">
+            <div class="checkSlider">
+                <span>неопубл.</span>
+                <label class="switch">
+                   <input type="checkbox" @onchange="SwitchAction">
+                  <span class="slider round"></span>
+                </label>
+                <span>опубл.</span>
+                <br>
+            </div>
+            <div>
+                @if (Id == "0")
+                {
+                    <button class="btn btn-primary" style="margin: 3px;" @onclick = "CreateBook">Создать</button>
+                }
+                else
+                {
+                    <button class="btn btn-primary" style="margin: 3px;" @onclick = "UpdateBook">Сохранить</button>
+                }
+            </div>
         </div>
-        <div>
-            <button class="btn btn-primary" style="margin: 3px;">Сохранить</button>
+        <div class="box">
+            <div class="container">
+                <div class="content" style="text-align: center">
+                    <img style="width: 90%; height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)">
+                    <button class="btn btn-secondary">
+                        <InputFile OnChange="HandleFileChange" />
+                    </button>
+                </div>
+
+                <div class="content">
+                    <input type="text" placeholder="Название" @bind="book.Name">
+                    <br>
+
+                    <input type="text" placeholder="Автор" @bind="book.Author">
+                    <br>
+
+                    <select>
+                    </select>
+
+                    <select>
+                    </select>
+                </div>
+            </div>
+
+            <div class="description" style="width: 100%">
+                <input type="text" style="width: 100%" placeholder="Описание" @bind="book.Description">
+            </div>
         </div>
-    </div>
-    <div class="box">
 
-    </div>
-    <div class="box">
+        @if (Id == "0")
+        {
+            <span>...</span>
+        }
+        else
+        {
+            <h4 style="text-align: center; padding-top: 10px; margin: 0px">Главы</h4>
+            <div class="box">
+                <table class="table">
+                    <tr>
+                        <th>
+                            №
+                        </th>
+                        <th>
+                            Название
+                        </th>
+                        <th>
+                            публ.
+                        </th>
+                        <th>
+                            наверх
+                        </th>
+                        <th>
+                            вниз
+                        </th>
+                    </tr>
 
+                    @foreach(var chapter in chapters.Value.Data)
+                    {
+                        <tr>
+                            <td>
+                                @chapter.Number
+                            </td>
+                            <td>
+                                <button>@chapter.Name</button>
+                            </td>
+                            <td>
+                                <input type="checkbox">
+                            </td>
+                            <td>
+                                <button>&#8593;</button>
+                            </td>
+                            <td>
+                                <button>&#8595;</button>
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                            <button class="btn btn-success" @onclick="GoToChapterEditor">Добавить главу</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>        
+        }
     </div>
-</div>
+}
 @code {
     [Parameter]
     public string Id { get; set; }
 
+    Response<DataPage<ChapterDto>> chapters;
+    Response<DataPage<CycleDto>> Cycle;
+    Response<DataPage<GenreDto>> Genre;
+
+    BookDto book = new();
+
     bool isPublic = false;
+
+    Response response;
+
+    Response<UserDto>? user = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
+            user = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+            if (Id == "0")
+            {
+                book.UserId = user.Value.Id;
+            }
+            else
+            {
+                var resp = await client.GetFromJsonAsync<Response<BookDto>>($"https://localhost:7190/api/Book/Read?id={Id}");
+                book = resp.Value;
+                chapters = await client.GetFromJsonAsync<Response<DataPage<ChapterDto>>>($"https://localhost:7190/api/Chapter/GetForBook?id={Id}");
+            }
+            //Genre = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetForBook?id={Id}");
+            //ToDo доделать добавление/удаление жанров и циклов
+        }
+        catch (Exception ex)
+        {
+            navigation.NavigateTo("SignIn");
+        }
+    }
+
+    void GoToChapterEditor()
+    {
+        navigation.NavigateTo("ChapterEditor/0");
+    }
+
+    async Task<bool> CheckAuth()
+    {
+        var resp = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+        return resp.IsSuccess;
+    }
 
     void SwitchAction()
     {
         isPublic = !isPublic;
+
+    }
+    async Task UpdateBook()
+    {
+
+    }
+    async Task CreateBook()
+    {
+        using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Book/Create", book);
+        TestResponse.EnsureSuccessStatusCode();
+        response = await TestResponse.Content.ReadFromJsonAsync<Response>();
+        if (response.IsSuccess)
+        {
+            navigation.NavigateTo("mybooks");
+        }
+        if (!response.IsSuccess)
+        {
+            navigation.NavigateTo("");
+        }
+    }
+    private IBrowserFile selectedImage;
+    private string uploadMessage;
+
+    private async Task HandleFileChange(InputFileChangeEventArgs e)
+    {
+        selectedImage = e.File;
+        if (selectedImage != null)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await selectedImage.OpenReadStream().CopyToAsync(memoryStream);
+                var imageBytes = memoryStream.ToArray();
+
+                book.Cover = imageBytes;
+            }
+        }
     }
 }
