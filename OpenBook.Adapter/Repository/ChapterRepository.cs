@@ -31,9 +31,19 @@ namespace OpenBook.Adapter.Repository
             int skip = start;
             int take = count.Value;
 
-            var chapters = context.Chapters.Include(c => c.Book)
-                .Where(c => c.BookId == bookId && c.IsPublic == isPublic).Skip(skip).Take(take);
+            IQueryable<Chapter>? chapters;
 
+            if (isPublic == null)
+            {
+                chapters = context.Chapters.Include(c => c.Book)
+                    .Where(c => c.BookId == bookId).Skip(skip).Take(take);
+            }
+            else
+            {
+                chapters = context.Chapters.Include(c => c.Book)
+                    .Where(c => c.BookId == bookId && c.IsPublic == isPublic).Skip(skip).Take(take);
+            }
+            var a = chapters.ToArray();
             foreach (var item in chapters)
             {
                 yield return item;

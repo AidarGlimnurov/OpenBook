@@ -1,4 +1,4 @@
-﻿@page "/ChapterEditor/{Id}/{Number}"
+﻿@page "/ChapterEditor/{Id}/{Number}/{BookId}"
 @using OpenBook.Shared.Dtos;
 @using OpenBook.Shared.OutputData;
 @using OpenBook.Shared.SupportData;
@@ -6,18 +6,18 @@
 @inject HttpClient client
 @inject NavigationManager navigation
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
-<button class="btn btn-primary" @onclick="Save">Сохранить</button>
+<div style="height: 100%; text-align: center;">
+    <button class="btn btn-primary" @onclick="Save" style="margin: 5px">Сохранить</button>
+</div>
 <div>
-    <input type="text" placeholder="Название" @bind="chapter.Name">
-    <p>@chapter.Number</p>
+    <input type="text" style="margin-top: 5px; margin-bottom: 5px;  " placeholder="Название" @bind="chapter.Name">
+    <p>Номер главы: @chapter.Number</p>
 </div>
 <div class="col-md-12">
-    <MarkdownEditor @bind-Value="@markdownValue" 
+    <MarkdownEditor @bind-Value="@chapter.Content" 
                     ValueHTMLChanged="@OnMarkdownValueHTMLChanged" />
 
     <hr />
-
-    <h3>Result</h3>
     @((MarkupString)markdownHtml)
 </div>
 @code {
@@ -25,12 +25,37 @@
     public string Id { get; set; }
     [Parameter]
     public string Number { get; set; }
+    [Parameter]
+    public string BookId { get; set; }
 
     ChapterDto chapter = new();
 
     async Task Save()
     {
-        var a = 0;
+        chapter.Number = chapter.Number ?? Convert.ToInt32(Number);//ToDo в сущности Number стал int?
+        chapter.IsPublic = Id == "0" ? false : chapter.IsPublic;
+        chapter.BookId = chapter.BookId ?? Convert.ToInt32(BookId);
+
+        if (Id == "0")
+        {
+            using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Chapter/Create", chapter);
+            TestResponse.EnsureSuccessStatusCode();
+            var response = await TestResponse.Content.ReadFromJsonAsync<Response>();
+            if (response.IsSuccess)
+            {
+                navigation.NavigateTo($"BookEditor/{BookId}");
+            }
+        }
+        else
+        {
+            using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Chapter/UpdateWithEntity", chapter);
+            TestResponse.EnsureSuccessStatusCode();
+            var response = await TestResponse.Content.ReadFromJsonAsync<Response>();
+            if (response.IsSuccess)
+            {
+                Console.WriteLine("Успешно сохранено!");
+            }
+        }
     }
 
     protected override async Task OnInitializedAsync()
@@ -45,7 +70,6 @@
         }
     }
 
-    string markdownValue = "#Markdown Editor\nThis is a test";
     string markdownHtml;
 
     Task OnMarkdownValueChanged(string value)

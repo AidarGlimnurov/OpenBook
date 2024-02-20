@@ -36,62 +36,62 @@
 <h3 style="text-align: center">Личный кабинет</h3>
 @if (user == null)
 {
-    <span>Загрузка...</span>
+        <span>Загрузка...</span>
 }
 else
 {
-    <div class="mainContainer">
-        <div class="rowContainer">
-            <div class="innerDiv">
+        <div class="mainContainer">
+            <div class="rowContainer">
+                <div class="innerDiv">
                 @if (!editMode)
                 {
-                    <p style="font-weight: 300; font-size: x-large">@user.Value.Name</p>
-                    <br>
-                    <button @onclick="EditChange">Изменить</button>                        
+                            <p style="font-weight: 300; font-size: x-large">@user.Value.Name</p>
+                            <br>
+                            <button @onclick="EditChange">Изменить</button>                        
                 }
                 else
                 {
-                    <p style="font-weight: 300; font-size: x-large">@user.Value.Name</p>
-                    <button @onclick="EditChange">Сохранить</button>                            
+                            <p style="font-weight: 300; font-size: x-large">@user.Value.Name</p>
+                            <button @onclick="EditChange">Сохранить</button>                            
                 }
-    
-                <span>Почта:</span>
-                <p>@user.Value.Email</p>
-                <br>
-            </div>
-            <div  class="innerDiv">
-                <span>Роль:</span>
-                <p>@user.Value.Role.Name</p>
-    
-                <p>
+
+                    <span>Почта:</span>
+                    <p>@user.Value.Email</p>
+                    <br>
+                </div>
+                <div  class="innerDiv">
+                    <span>Роль:</span>
+                    <p>@user.Value.Role.Name</p>
+
+                    <p>
                     @if (user.Value.IsVerified)
                     {
-                        <span style="color: green;">Ваш аккаунт верифицирован</span>
+                                <span style="color: green;">Ваш аккаунт верифицирован</span>
                     }
                     else
                     {
-                        <span>Ваш аккаунт не верифицирован!</span>
-                        <br>
-                        <button>Пройти верификацию</button>
+                                <span>Ваш аккаунт не верифицирован!</span>
+                                <br>
+                                <button>Пройти верификацию</button>
                     }
-                </p>
-                <p>
-                    <button>Изменить пароль</button>
-                </p>
+                    </p>
+                    <p>
+                        <button>Изменить пароль</button>
+                    </p>
 
 
                 @if (user.Value.Role.Name == "Admin" || user.Value.Role.Name == "SuperAdmin")
                 {
-                    <p>
-                        <button @onclick="GoToAdminPanel">Админ панель</button>
-                    </p>                    
+                            <p>
+                                <button @onclick="GoToAdminPanel">Админ панель</button>
+                            </p>                    
                 }
-                <p>
-                    <button @onclick="(() => GoToEditBooks(0))">Создать книгу</button>
-                </p>
+                    <p>
+                        <button @onclick="(() => GoToEditBooks(0))">Мои книги</button>
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
 }
 
 @code {
@@ -144,6 +144,6 @@ else
     }
     void GoToEditBooks(int id)
     {
-        navigation.NavigateTo($"BookEditor/{id}");
+        navigation.NavigateTo($"mybooks");
     }
 }

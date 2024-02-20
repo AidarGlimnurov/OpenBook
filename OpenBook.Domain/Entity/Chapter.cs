@@ -11,7 +11,7 @@ namespace OpenBook.Domain.Entity
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
-        public int Number { get; set; }
+        public int? Number { get; set; }
         public bool IsPublic { get; set; }
         public int? BookId { get; set; }
         public Book? Book { get; set; } = new Book();
