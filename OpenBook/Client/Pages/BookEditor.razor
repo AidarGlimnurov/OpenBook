@@ -160,58 +160,58 @@ else
         }
         else
         {
-                    <h4 style="text-align: center; padding-top: 10px; margin: 0px">Главы</h4>
-                    <div class="box">
-                        <table class="table">
-                            <tr>
-                                <th>
-                                    №
-                                </th>
-                                <th>
-                                    Название
-                                </th>
-                                <th>
-                                    публ.
-                                </th>
-                                <th>
-                                    наверх
-                                </th>
-                                <th>
-                                    вниз
-                                </th>
-                            </tr>
-                    @if (chapters != null)
-                    {
-                        @foreach (var chapter in chapters.Value.Data)
-                        {
-                                            <tr>
-                                                <td>
-                                    @chapter.Number
-                                                </td>
-                                                <td>
-                                                    <button @onclick="(()=>GoToChapterEditor(chapter.Id, chapter.Number.Value))">@chapter.Name</button>
-                                                </td>
-                                                <td>
-                                                    <input type="checkbox">
-                                                </td>
-                                                <td>
-                                                    <button>&#8593;</button>
-                                                </td>
-                                                <td>
-                                                    <button>&#8595;</button>
-                                                </td>
-                                            </tr>
-                        }                        
-                    }
-                            <tr>
-                                <td>
-                                </td>
-                                <td>
-                                    <button class="btn btn-success" @onclick="(()=>GoToChapterEditor(0, chapters.Value.Data.Length + 1))">Добавить главу</button>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>        
+            <h4 style="text-align: center; padding-top: 10px; margin: 0px">Главы</h4>
+            <div class="box">
+                <table class="table">
+                    <tr>
+                        <th>
+                            №
+                        </th>
+                        <th>
+                            Название
+                        </th>
+                        <th>
+                            публ.
+                        </th>
+                        <th>
+                            наверх
+                        </th>
+                        <th>
+                            вниз
+                        </th>
+                    </tr>
+            @if (chapters != null)
+            {
+                @foreach (var chapter in chapters.Value.Data)
+                {
+                                    <tr>
+                                        <td>
+                            @chapter.Number
+                                        </td>
+                                        <td>
+                                            <button @onclick="(()=>GoToChapterEditor(chapter.Id, chapter.Number.Value))">@chapter.Name</button>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox">
+                                        </td>
+                                        <td>
+                                            <button>&#8593;</button>
+                                        </td>
+                                        <td>
+                                            <button>&#8595;</button>
+                                        </td>
+                                    </tr>
+                }                        
+            }
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                            <button class="btn btn-success" @onclick="(()=>GoToChapterEditor(0, chapters.Value.Data.Length + 1))">Добавить главу</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>        
         }
         </div>
 }
@@ -246,7 +246,7 @@ else
             {
                 var resp = await client.GetFromJsonAsync<Response<BookDto>>($"https://localhost:7190/api/Book/Read?id={Id}");
                 book = resp.Value;
-                chapters = await client.GetFromJsonAsync<Response<DataPage<ChapterDto>>>($"https://localhost:7190/api/Chapter/GetForBook?id={Id}&start={0}");
+                chapters = await client.GetFromJsonAsync<Response<DataPage<ChapterDto>>>($"https://localhost:7190/api/Chapter/GetForBook?bookId={Id}&start={0}");
             }
         }
         catch (Exception ex)

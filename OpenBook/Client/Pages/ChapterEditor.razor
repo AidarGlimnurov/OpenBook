@@ -14,7 +14,7 @@
     <p>Номер главы: @chapter.Number</p>
 </div>
 <div class="col-md-12">
-    <MarkdownEditor @bind-Value="@chapter.Content" 
+    <MarkdownEditor @bind="@chapter.Content" 
                     ValueHTMLChanged="@OnMarkdownValueHTMLChanged" />
 
     <hr />
@@ -66,7 +66,10 @@
         }
         else
         {
-            var resp = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Chapter/Read?id={Id}");
+            var resp = await client.GetFromJsonAsync<Response<ChapterDto>>($"https://localhost:7190/api/Chapter/Read?id={Id}");
+            chapter = resp.Value;
+            OnMarkdownValueHTMLChanged(chapter.Content);
+            int a = 0;
         }
     }
 

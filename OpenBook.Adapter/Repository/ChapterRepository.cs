@@ -43,7 +43,7 @@ namespace OpenBook.Adapter.Repository
                 chapters = context.Chapters.Include(c => c.Book)
                     .Where(c => c.BookId == bookId && c.IsPublic == isPublic).Skip(skip).Take(take);
             }
-            var a = chapters.ToArray();
+            chapters = chapters.OrderBy(c => c.Number);
             foreach (var item in chapters)
             {
                 yield return item;
