@@ -14,7 +14,7 @@
     <p>Номер главы: @chapter.Number</p>
 </div>
 <div class="col-md-12">
-    <MarkdownEditor @bind="@chapter.Content" 
+    <MarkdownEditor @bind-Value="@chapter.Content" 
                     ValueHTMLChanged="@OnMarkdownValueHTMLChanged" />
 
     <hr />
