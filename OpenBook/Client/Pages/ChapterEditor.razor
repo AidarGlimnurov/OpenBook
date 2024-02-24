@@ -58,7 +58,7 @@ else
         }
         else
         {
-            using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Chapter/UpdateWithEntity", chapter);
+            using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Chapter/Update", chapter);
             TestResponse.EnsureSuccessStatusCode();
             var response = await TestResponse.Content.ReadFromJsonAsync<Response>();
             if (response.IsSuccess)

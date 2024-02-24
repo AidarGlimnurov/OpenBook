@@ -55,5 +55,12 @@ namespace OpenBook.Adapter.Repository
             var chapter = await context.Chapters.FirstOrDefaultAsync(b => b.Id == chapterId);
             chapter.IsPublic = action;
         }
+
+        public async Task Update(Chapter chapter)
+        {
+            var book = await context.Books.FirstOrDefaultAsync(b => b.Id == chapter.BookId);
+            chapter.Book = book;
+            context.Update(chapter);
+        }
     }
 }

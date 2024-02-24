@@ -37,6 +37,11 @@ namespace OpenBook.Server.Controllers
         {
             return await interactor.UpdateWithEntity(chapter);
         }
+        [HttpPost("Update")]
+        public async Task<Response> Update([FromBody] ChapterDto chapter)
+        {
+            return await interactor.Update(chapter);
+        }
         [HttpGet("Delete")]
         public async Task<Response> Delete(int id)
         {

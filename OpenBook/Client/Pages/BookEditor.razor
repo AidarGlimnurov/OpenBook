@@ -117,11 +117,11 @@ else
                 <div>
                 @if (Id == "0")
                 {
-                            <button class="btn btn-primary" style="margin: 3px;" @onclick = "CreateBook">Создать</button>
+                    <button class="btn btn-primary" style="margin: 3px;" @onclick = "CreateBook">Создать</button>
                 }
                 else
                 {
-                            <button class="btn btn-primary" style="margin: 3px;" @onclick = "UpdateBook">Сохранить</button>
+                    <button class="btn btn-primary" style="margin: 3px;" @onclick = "UpdateBook">Сохранить</button>
                 }
                 </div>
             </div>
@@ -184,23 +184,37 @@ else
             {
                 @foreach (var chapter in chapters.Value.Data)
                 {
-                                    <tr>
-                                        <td>
+                    <tr>
+                        <td>
                             @chapter.Number
-                                        </td>
-                                        <td>
-                                            <button @onclick="(()=>GoToChapterEditor(chapter.Id, chapter.Number.Value))">@chapter.Name</button>
-                                        </td>
-                                        <td>
-                                            <input type="checkbox">
-                                        </td>
-                                        <td>
-                                            <button>&#8593;</button>
-                                        </td>
-                                        <td>
-                                            <button>&#8595;</button>
-                                        </td>
-                                    </tr>
+                        </td>
+                        <td>
+                            <button @onclick="(()=>GoToChapterEditor(chapter.Id, chapter.Number.Value))">@chapter.Name</button>
+                        </td>
+                        <td>
+                            <input type="checkbox">
+                        </td>
+                        <td>
+                            @if(chapter.Number == 1)
+                            {
+                                <button disabled>&#8593;</button>
+                            }
+                            else
+                            {
+                                <button @onclick="(()=>NumberChange(true, chapter.Number.Value))">&#8593;</button>
+                            }
+                        </td>
+                        <td>
+                            @if(chapter.Number == chapters.Value.Data.Length)
+                            {
+                                <button disabled>&#8595;</button>
+                            }
+                            else
+                            {
+                                <button @onclick="(()=>NumberChange(false, chapter.Number.Value))">&#8595;</button>
+                            }
+                        </td>
+                    </tr>
                 }                        
             }
                     <tr>
@@ -245,8 +259,8 @@ else
             else
             {
                 var resp = await client.GetFromJsonAsync<Response<BookDto>>($"https://localhost:7190/api/Book/Read?id={Id}");
+                await GetChapters();
                 book = resp.Value;
-                chapters = await client.GetFromJsonAsync<Response<DataPage<ChapterDto>>>($"https://localhost:7190/api/Chapter/GetForBook?bookId={Id}&start={0}");
             }
         }
         catch (Exception ex)
@@ -254,7 +268,10 @@ else
             navigation.NavigateTo("SignIn");
         }
     }
-
+    async Task GetChapters()
+    {
+        chapters = await client.GetFromJsonAsync<Response<DataPage<ChapterDto>>>($"https://localhost:7190/api/Chapter/GetForBook?bookId={Id}&start={0}");
+    }
     void GoToChapterEditor(int Id, int Number)
     {
         navigation.NavigateTo($"ChapterEditor/{Id}/{Number}/{book.Id}");
@@ -304,6 +321,28 @@ else
 
                 book.Cover = imageBytes;
             }
+        }
+    }
+    private async Task NumberChange(bool isUp, int number)
+    {
+        if (isUp)
+        {
+            chapters.Value.Data[number - 1].Number--;
+            chapters.Value.Data[number - 2].Number++;
+            using HttpResponseMessage Response = await client.PostAsJsonAsync("https://localhost:7190/api/Chapter/Update", chapters.Value.Data[number - 2]);
+        }
+        else
+        {
+            chapters.Value.Data[number - 1].Number++;
+            chapters.Value.Data[number].Number--;
+            using HttpResponseMessage Response = await client.PostAsJsonAsync("https://localhost:7190/api/Chapter/Update", chapters.Value.Data[number]);
+        }
+        using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Chapter/Update", chapters.Value.Data[number - 1]);
+        TestResponse.EnsureSuccessStatusCode();
+        var response = await TestResponse.Content.ReadFromJsonAsync<Response>();
+        if (response.IsSuccess)
+        {
+            await GetChapters();
         }
     }
 }
