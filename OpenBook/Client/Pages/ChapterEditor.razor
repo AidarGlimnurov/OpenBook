@@ -13,13 +13,20 @@
     <input type="text" style="margin-top: 5px; margin-bottom: 5px;  " placeholder="Название" @bind="chapter.Name">
     <p>Номер главы: @chapter.Number</p>
 </div>
-<div class="col-md-12">
-    <MarkdownEditor @bind-Value="@chapter.Content" 
-                    ValueHTMLChanged="@OnMarkdownValueHTMLChanged" />
+@if (Id != "0" && !isLoadChpter)
+{
+    <div>Загрузка...</div>
+}
+else
+{
+    <div class="col-md-12">
+        <MarkdownEditor @bind-Value="@chapter.Content" 
+                        ValueHTMLChanged="@OnMarkdownValueHTMLChanged" />
 
-    <hr />
-    @((MarkupString)markdownHtml)
-</div>
+        <hr />
+        @((MarkupString)markdownHtml)
+    </div>
+}
 @code {
     [Parameter]
     public string Id { get; set; }
@@ -29,6 +36,8 @@
     public string BookId { get; set; }
 
     ChapterDto chapter = new();
+
+    bool isLoadChpter = false;
 
     async Task Save()
     {
@@ -69,11 +78,12 @@
             var resp = await client.GetFromJsonAsync<Response<ChapterDto>>($"https://localhost:7190/api/Chapter/Read?id={Id}");
             chapter = resp.Value;
             OnMarkdownValueHTMLChanged(chapter.Content);
-            int a = 0;
+            isLoadChpter = true;
         }
     }
 
     string markdownHtml;
+    string markdownStr = "# Ukfdf 1";
 
     Task OnMarkdownValueChanged(string value)
     {
