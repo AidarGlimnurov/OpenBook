@@ -12,6 +12,7 @@
 <div>
     <input type="text" style="margin-top: 5px; margin-bottom: 5px;  " placeholder="Название" @bind="chapter.Name">
     <p>Номер главы: @chapter.Number</p>
+    <p><a href="bookeditor/@BookId">Вернуться к книге</a></p>
 </div>
 @if (Id != "0" && !isLoadChpter)
 {
