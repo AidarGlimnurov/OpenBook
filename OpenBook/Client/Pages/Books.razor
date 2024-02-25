@@ -12,39 +12,39 @@
 }
 else
 {
-        <input id="name" class="input-medium search-query" style="width: 80%" @bind="name"/>
-        <button @onclick="Search" class="oi oi-magnifying-glass" style="height: 30px"></button>
+    <input id="name" class="input-medium search-query" style="width: 80%" @bind="name"/>
+    <button @onclick="Search" class="oi oi-magnifying-glass" style="height: 30px"></button>
     foreach (var book in books.Value.Data)
     {
-                <div style="width: 23%; height: 15%; margin: 8px; display: inline-block; text-align: center;">
-                    <a href="product/@book.Id">
-                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" style="background:gray; height: 100%; width: 95%;" >
-                        <label style="color: black">@book.Name</label>
-                    </a>
-                </div>
+        <div style="width: 23%; height: 15%; margin: 8px; display: inline-block; text-align: center;">
+            <a href="product/@book.Id">
+                <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" style="background:gray; height: 100%; width: 95%;" >
+                <label style="color: black">@book.Name</label>
+            </a>
+        </div>
     }
 
-        <div style="text-align: left; font-size:15pt;">
+    <div style="text-align: left; font-size:15pt;">
         @if (books.Value.Start > 0)
         {
-                    <button class="oi oi-arrow-left  btn btn-secondary" @onclick="GetLastPage" style="background:#F8E9A1; border: none;"></button>
+            <button class="oi oi-arrow-left  btn btn-secondary" @onclick="GetLastPage" style="background:#F8E9A1; border: none;"></button>
         }
         else
         {
-                    <button class="oi oi-arrow-left btn btn-secondary" disabled style="background:#F8E9A1; border: none;"></button>
+            <button class="oi oi-arrow-left btn btn-secondary" disabled style="background:#F8E9A1; border: none;"></button>
         }
         </div>
         <div style="background:#F8E9A1; font-size:15pt;">@PageNumber</div>
         <div style="text-align: right; font-size:15pt;">
         @if (books.Value.Count == 10)
         {
-                    <button class="oi oi-arrow-right btn btn-secondary" @onclick="GetNextPage" style="background:#F8E9A1; border: none;"></button>
+            <button class="oi oi-arrow-right btn btn-secondary" @onclick="GetNextPage" style="background:#F8E9A1; border: none;"></button>
         }
         else
         {
-                    <button class="oi oi-arrow-right  btn btn-secondary" disabled style="background:#F8E9A1; border: none;"></button>
+            <button class="oi oi-arrow-right  btn btn-secondary" disabled style="background:#F8E9A1; border: none;"></button>
         }
-        </div>
+    </div>
 }
 
 @code {

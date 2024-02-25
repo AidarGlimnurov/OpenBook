@@ -10,6 +10,7 @@ namespace OpenBook.App.Storage
     public interface IBookRepository : IRepository<Book>
     {
         Task Create(Book book);
+        Task Update(Book book);
         IAsyncEnumerable<Book> GetBooks(int start, int? count, bool? isPublic, string? name);
         IAsyncEnumerable<Book> GetBooksForAuthor(int userId, int start, int? count, bool? isPublic);
         Task Published(int bookId, bool action);

@@ -103,140 +103,140 @@
 }
 else
 {
-        <div class="mainBox">
-            <div class="headBox">
-                <div class="checkSlider">
-                    <span>неопубл.</span>
-                    <label class="switch">
-                       <input type="checkbox" @onchange="SwitchAction">
-                      <span class="slider round"></span>
-                    </label>
-                    <span>опубл.</span>
-                    <br>
-                </div>
-                <div>
-                @if (Id == "0")
-                {
-                    <button class="btn btn-primary" style="margin: 3px;" @onclick = "CreateBook">Создать</button>
-                }
-                else
-                {
-                    <button class="btn btn-primary" style="margin: 3px;" @onclick = "UpdateBook">Сохранить</button>
-                }
-                </div>
+    <div class="mainBox">
+        <div class="headBox">
+            <div class="checkSlider">
+                <span>неопубл.</span>
+                <label class="switch">
+                   <input type="checkbox" @bind="book.IsPublished">
+                  <span class="slider round"></span>
+                </label>
+                <span>опубл.</span>
+                <br>
             </div>
-            <div class="box">
-                <div class="container">
-                    <div class="content" style="text-align: center">
-                        <img style="width: 90%; height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)">
-                        <button class="btn btn-secondary">
-                            <InputFile OnChange="HandleFileChange" />
-                        </button>
-                    </div>
-
-                    <div class="content">
-                        <input type="text" placeholder="Название" @bind="book.Name">
-                        <br>
-
-                        <input type="text" placeholder="Автор" @bind="book.Author">
-                        <br>
-
-                    <select @bind="book.CycleId">
-                       <option selected>Выбрать</option>
-                        @if (Cycles != null)
-                        {
-                            @foreach (var cycle in Cycles.Value.Data)
-                            {
-                                   <option value="@cycle.Id">@cycle.Name</option>
-                            }                            
-                        }
-                    </select>
-                        <button class="btn btn-success" @onclick="GoToCycleEditor">+</button>
-
-                        <select>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="description" style="width: 100%">
-                    <input type="text" style="width: 100%" placeholder="Описание" @bind="book.Description">
-                </div>
-            </div>
-
-        @if (Id == "0")
-        {
-                    <span>...</span>
-        }
-        else
-        {
-            <h4 style="text-align: center; padding-top: 10px; margin: 0px">Главы</h4>
-            <div class="box">
-                <table class="table">
-                    <tr>
-                        <th>
-                            №
-                        </th>
-                        <th>
-                            Название
-                        </th>
-                        <th>
-                            публ.
-                        </th>
-                        <th>
-                            наверх
-                        </th>
-                        <th>
-                            вниз
-                        </th>
-                    </tr>
-            @if (chapters != null)
+            <div>
+            @if (Id == "0")
             {
-                @foreach (var chapter in chapters.Value.Data)
-                {
-                    <tr>
-                        <td>
-                            @chapter.Number
-                        </td>
-                        <td>
-                            <button @onclick="(()=>GoToChapterEditor(chapter.Id, chapter.Number.Value))">@chapter.Name</button>
-                        </td>
-                        <td>
-                            <input type="checkbox">
-                        </td>
-                        <td>
-                            @if(chapter.Number == 1)
-                            {
-                                <button disabled>&#8593;</button>
-                            }
-                            else
-                            {
-                                <button @onclick="(()=>NumberChange(true, chapter.Number.Value))">&#8593;</button>
-                            }
-                        </td>
-                        <td>
-                            @if(chapter.Number == chapters.Value.Data.Length)
-                            {
-                                <button disabled>&#8595;</button>
-                            }
-                            else
-                            {
-                                <button @onclick="(()=>NumberChange(false, chapter.Number.Value))">&#8595;</button>
-                            }
-                        </td>
-                    </tr>
-                }                        
+                <button class="btn btn-primary" style="margin: 3px;" @onclick = "CreateBook">Создать</button>
             }
-                    <tr>
-                        <td>
-                        </td>
-                        <td>
-                            <button class="btn btn-success" @onclick="(()=>GoToChapterEditor(0, chapters.Value.Data.Length + 1))">Добавить главу</button>
-                        </td>
-                    </tr>
-                </table>
-            </div>        
-        }
+            else
+            {
+                <button class="btn btn-primary" style="margin: 3px;" @onclick = "UpdateBook">Сохранить</button>
+            }
+            </div>
         </div>
+        <div class="box">
+            <div class="container">
+                <div class="content" style="text-align: center">
+                    <img style="width: 90%; height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)">
+                    <button class="btn btn-secondary">
+                        <InputFile OnChange="HandleFileChange" />
+                    </button>
+                </div>
+    
+                <div class="content">
+                    <input type="text" placeholder="Название" @bind="book.Name">
+                    <br>
+    
+                    <input type="text" placeholder="Автор" @bind="book.Author">
+                    <br>
+    
+                <select @bind="book.CycleId">
+                   <option selected>Выбрать</option>
+                    @if (Cycles != null)
+                    {
+                        @foreach (var cycle in Cycles.Value.Data)
+                        {
+                            <option value="@cycle.Id">@cycle.Name</option>
+                        }                            
+                    }
+                </select>
+                    <button class="btn btn-success" @onclick="GoToCycleEditor">+</button>
+    
+                    <select>
+                    </select>
+                </div>
+            </div>
+    
+            <div class="description" style="width: 100%">
+                <input type="text" style="width: 100%" placeholder="Описание" @bind="book.Description">
+            </div>
+        </div>
+    
+    @if (Id == "0")
+    {
+        <span>...</span>
+    }
+    else
+    {
+        <h4 style="text-align: center; padding-top: 10px; margin: 0px">Главы</h4>
+        <div class="box">
+            <table class="table">
+                <tr>
+                    <th>
+                        №
+                    </th>
+                    <th>
+                        Название
+                    </th>
+                    <th>
+                        публ.
+                    </th>
+                    <th>
+                        наверх
+                    </th>
+                    <th>
+                        вниз
+                    </th>
+                </tr>
+        @if (chapters != null)
+        {
+            @foreach (var chapter in chapters.Value.Data)
+            {
+                <tr>
+                    <td>
+                        @chapter.Number
+                    </td>
+                    <td>
+                        <button @onclick="(()=>GoToChapterEditor(chapter.Id, chapter.Number.Value))">@chapter.Name</button>
+                    </td>
+                    <td>
+                        <input type="checkbox">
+                    </td>
+                    <td>
+                        @if(chapter.Number == 1)
+                        {
+                            <button disabled>&#8593;</button>
+                        }
+                        else
+                        {
+                            <button @onclick="(()=>NumberChange(true, chapter.Number.Value))">&#8593;</button>
+                        }
+                    </td>
+                    <td>
+                        @if(chapter.Number == chapters.Value.Data.Length)
+                        {
+                            <button disabled>&#8595;</button>
+                        }
+                        else
+                        {
+                            <button @onclick="(()=>NumberChange(false, chapter.Number.Value))">&#8595;</button>
+                        }
+                    </td>
+                </tr>
+            }                        
+        }
+                <tr>
+                    <td>
+                    </td>
+                    <td>
+                        <button class="btn btn-success" @onclick="(()=>GoToChapterEditor(0, chapters.Value.Data.Length + 1))">Добавить главу</button>
+                    </td>
+                </tr>
+            </table>
+        </div>        
+    }
+    </div>
 }
 @code {
     [Parameter]
@@ -248,7 +248,7 @@ else
 
     BookDto book = new();
 
-    bool isPublic = false;
+    bool isPublic = true;
 
     Response? response;
 
@@ -300,7 +300,9 @@ else
     }
     async Task UpdateBook()
     {
-
+        using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Book/Update", book);
+        TestResponse.EnsureSuccessStatusCode();
+        response = await TestResponse.Content.ReadFromJsonAsync<Response>();
     }
     async Task CreateBook()
     {

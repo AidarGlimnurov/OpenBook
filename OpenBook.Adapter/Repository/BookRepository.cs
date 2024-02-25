@@ -105,5 +105,17 @@ namespace OpenBook.Adapter.Repository
 
             context.BookGenres.Remove(bookGenre);
         }
+
+        public async Task Update(Book book)
+        {
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Id == book.UserId);
+            book.User = user;
+            if (book.CycleId != null)
+            {
+                var cycle = await context.Cycles.FirstOrDefaultAsync(c => c.Id == book.CycleId);
+                book.Cycle = cycle;
+            }
+            context.Update(book);
+        }
     }
 }
