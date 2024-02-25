@@ -4,11 +4,9 @@
 @inject HttpClient client
 @inject NavigationManager navigation
 
-@*Здесь должен быть поиск*@
-
 @if (books == null)
 {
-            <label>Загрузка...</label>
+    <label>Загрузка...</label>
 }
 else
 {
@@ -17,33 +15,35 @@ else
     foreach (var book in books.Value.Data)
     {
         <div style="width: 23%; height: 15%; margin: 8px; display: inline-block; text-align: center;">
-            <a href="product/@book.Id">
+            <a href="book/@book.Id">
                 <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" style="background:gray; height: 100%; width: 95%;" >
                 <label style="color: black">@book.Name</label>
             </a>
         </div>
     }
 
-    <div style="text-align: left; font-size:15pt;">
-        @if (books.Value.Start > 0)
-        {
-            <button class="oi oi-arrow-left  btn btn-secondary" @onclick="GetLastPage" style="background:#F8E9A1; border: none;"></button>
-        }
-        else
-        {
-            <button class="oi oi-arrow-left btn btn-secondary" disabled style="background:#F8E9A1; border: none;"></button>
-        }
+    <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin: 15px">
+        <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
+            @if (books.Value.Start > 0)
+            {
+                <button class="oi oi-arrow-left  btn btn-secondary" @onclick="GetLastPage" style="background:#F8E9A1; border: none;  height: 100%"></button>
+            }
+            else
+            {
+                <button class="oi oi-arrow-left btn btn-secondary" disabled style="background:#F8E9A1; border: none;  height: 100%"></button>
+            }
         </div>
-        <div style="background:#F8E9A1; font-size:15pt;">@PageNumber</div>
-        <div style="text-align: right; font-size:15pt;">
-        @if (books.Value.Count == 10)
-        {
-            <button class="oi oi-arrow-right btn btn-secondary" @onclick="GetNextPage" style="background:#F8E9A1; border: none;"></button>
-        }
-        else
-        {
-            <button class="oi oi-arrow-right  btn btn-secondary" disabled style="background:#F8E9A1; border: none;"></button>
-        }
+        <div style=" font-size:15pt;">@PageNumber</div>
+        <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
+            @if (books.Value.Count == 10)
+            {
+                <button class="oi oi-arrow-right btn btn-secondary" @onclick="GetNextPage" style="background:#F8E9A1; border: none; height: 100%"></button>
+            }
+            else
+            {
+                <button class="oi oi-arrow-right  btn btn-secondary" disabled style="background:#F8E9A1; border: none;  height: 100%"></button>
+            }
+        </div>
     </div>
 }
 
@@ -102,7 +102,7 @@ else
         }
     }
 
-    private async Task GetBooks(int start, int count, string? name = "name=!-+")
+    private async Task GetBooks(int start, int count, string? name = "")//"!-!")
     {
         books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooks?start={start}&count={count}&isPublic=true&name={name}");
     }
