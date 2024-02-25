@@ -1,0 +1,134 @@
+﻿@page "/cycleeditor/{Id}/{BookId}"
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@using OpenBook.Shared.SupportData;
+@using System.Net.Http.Headers;
+@using System.Net.Http.Json;
+@inject HttpClient client
+@inject NavigationManager navigation
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<style>
+    .MainBox{
+      display: flex;
+      flex-direction: column;
+    }
+    .Box{
+      display: flex;
+      flex: 1 1;
+      flex-direction:row;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      padding: 20px;
+      width: 100%;
+    }
+    .content{
+        width: 50%;
+    }
+</style>
+
+@if (Id != "0" && cycle.Name == null)
+{
+        <span>Загрузка...</span>
+}
+else
+{
+    <div class="MainBox" style="background: gray;">
+        <div class="Box">
+            <div class="content" style="text-align: center">
+                <img style="width: 90%; height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(cycle.Cover)">
+                <button class="btn btn-secondary">
+                    <InputFile OnChange="HandleFileChange" />
+                </button>
+            </div>
+            <div class="content">
+                <input type="text" placeholder="Название"  @bind="cycle.Name">
+                <br>
+                <br>
+                <input type="text" placeholder="Описание" @bind="cycle.Description" style="width: 100%">
+            </div>
+        </div>   
+        <div style="display: flex; flex-flow:column; align-items:center">
+            <button @onclick = "Save">Сохранить</button>
+            @if (BookId != "0")
+            {
+                <a href="bookeditor/@BookId">Вернуться к книге</a>
+            }
+        </div>
+    </div>
+}
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    [Parameter]
+    public string BookId { get; set; }
+
+    CycleDto cycle = new();
+
+    Response? response;
+
+    Response<UserDto>? user = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
+            user = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+            if (Id == "0")
+            {
+                cycle.UserId = user.Value.Id;
+            }
+            else
+            {
+                var resp = await client.GetFromJsonAsync<Response<CycleDto>>($"https://localhost:7190/api/Cycle/Read?id={Id}");
+                cycle = resp.Value;
+            }
+        }
+        catch (Exception ex)
+        {
+            navigation.NavigateTo("SignIn");
+        }
+    }
+
+    async Task<bool> CheckAuth()
+    {
+        var resp = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+        return resp.IsSuccess;
+    }
+
+    async Task Save()
+    {
+        if (Id == "0")
+        {
+            using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Cycle/Create", cycle);
+            TestResponse.EnsureSuccessStatusCode();
+            var response = await TestResponse.Content.ReadFromJsonAsync<Response>();
+        }
+        else
+        {
+            using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Cycle/Update", cycle);
+            TestResponse.EnsureSuccessStatusCode();
+            var response = await TestResponse.Content.ReadFromJsonAsync<Response>();
+        }
+    }
+
+    private IBrowserFile selectedImage;
+    private string uploadMessage;
+
+    private async Task HandleFileChange(InputFileChangeEventArgs e)
+    {
+        selectedImage = e.File;
+        if (selectedImage != null)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await selectedImage.OpenReadStream().CopyToAsync(memoryStream);
+                var imageBytes = memoryStream.ToArray();
+
+                cycle.Cover = imageBytes;
+            }
+        }
+    }
+}
