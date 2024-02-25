@@ -21,6 +21,10 @@ namespace OpenBook.App.Mappers
             {
                 Id = cycle.Id,
                 Name = cycle.Name,
+                Cover = cycle.Cover,
+                Description = cycle.Description,
+                UserId = cycle.UserId,
+                User = cycle.User?.ToDto()
             };
 
             return cycleDto;
@@ -37,6 +41,10 @@ namespace OpenBook.App.Mappers
             {
                 Id = cycleDto.Id,
                 Name = cycleDto.Name,
+                Cover = cycleDto.Cover,
+                Description = cycleDto.Description,
+                UserId = cycleDto.UserId,
+                User = cycleDto.User?.ToEntity()
             };
 
             return cycle;

@@ -20,6 +20,11 @@ namespace OpenBook.Server.Controllers
         {
             return await interactor.CreateWithEntity(cycle);
         }
+        [HttpPost("Create")]
+        public async Task<Response> Create([FromBody] CycleDto cycle)
+        {
+            return await interactor.Create(cycle);
+        }
         [HttpGet("Read")]
         public async Task<Response<CycleDto>> Read(int id)
         {
@@ -27,6 +32,11 @@ namespace OpenBook.Server.Controllers
         }
         [HttpPost("UpdateWithEntity")]
         public async Task<Response> UpdateWithEntity([FromBody] CycleDto cycle)
+        {
+            return await interactor.UpdateWithEntity(cycle);
+        }
+        [HttpPost("Update")]
+        public async Task<Response> Update([FromBody] CycleDto cycle)
         {
             return await interactor.UpdateWithEntity(cycle);
         }
@@ -39,6 +49,11 @@ namespace OpenBook.Server.Controllers
         public async Task<Response<DataPage<CycleDto>>> GetAll(int start, int? count)
         {
             return await interactor.GetAll(start, count);
+        }
+        [HttpGet("GetAllForUser")]
+        public async Task<Response<DataPage<CycleDto>>> GetAllForUser(int userId, int start, int? count)
+        {
+            return await interactor.GetAllForUser(userId, start, count);
         }
     }
 }

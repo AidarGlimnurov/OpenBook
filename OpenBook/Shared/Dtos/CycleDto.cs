@@ -10,5 +10,10 @@ namespace OpenBook.Shared.Dtos
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public byte[]? Cover { get; set; } = new byte[10];
+        public string? Description { get; set; } = string.Empty;
+
+        public int? UserId { get; set; }
+        public UserDto? User { get; set; } = new UserDto();
     }
 }

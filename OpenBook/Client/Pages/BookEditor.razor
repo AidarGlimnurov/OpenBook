@@ -141,8 +141,17 @@ else
                         <input type="text" placeholder="Автор" @bind="book.Author">
                         <br>
 
-                        <select>
-                        </select>
+                    <select @bind="book.CycleId">
+                       <option selected>Выбрать</option>
+                        @if (Cycles == null)
+                        {
+                            @foreach (var cycle in Cycles.Value.Data)
+                            {
+                            
+                            }                            
+                        }
+                    </select>
+                        <button class="btn btn-success" @onclick="GoToCycleEditor">+</button>
 
                         <select>
                         </select>
@@ -233,15 +242,15 @@ else
     [Parameter]
     public string Id { get; set; }
 
-    Response<DataPage<ChapterDto>> chapters;
-    Response<DataPage<CycleDto>> Cycle;
-    Response<DataPage<GenreDto>> Genre;
+    Response<DataPage<ChapterDto>>? chapters;
+    Response<DataPage<CycleDto>>? Cycles;
+    Response<DataPage<GenreDto>>? Genre;
 
     BookDto book = new();
 
     bool isPublic = false;
 
-    Response response;
+    Response? response;
 
     Response<UserDto>? user = new();
 
@@ -260,6 +269,7 @@ else
             {
                 var resp = await client.GetFromJsonAsync<Response<BookDto>>($"https://localhost:7190/api/Book/Read?id={Id}");
                 await GetChapters();
+                Cycles = await client.GetFromJsonAsync<Response<DataPage<CycleDto>>>($"https://localhost:7190/api/Cycle/GetAllForUser?userId={user.Value.Id}&start={0}");
                 book = resp.Value;
             }
         }
@@ -325,24 +335,34 @@ else
     }
     private async Task NumberChange(bool isUp, int number)
     {
+        bool isSucces;
         if (isUp)
         {
             chapters.Value.Data[number - 1].Number--;
             chapters.Value.Data[number - 2].Number++;
-            using HttpResponseMessage Response = await client.PostAsJsonAsync("https://localhost:7190/api/Chapter/Update", chapters.Value.Data[number - 2]);
+            isSucces = await ToUpDown(chapters.Value.Data[number - 2]);
         }
         else
         {
             chapters.Value.Data[number - 1].Number++;
             chapters.Value.Data[number].Number--;
-            using HttpResponseMessage Response = await client.PostAsJsonAsync("https://localhost:7190/api/Chapter/Update", chapters.Value.Data[number]);
+            isSucces = await ToUpDown(chapters.Value.Data[number]);
         }
-        using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Chapter/Update", chapters.Value.Data[number - 1]);
-        TestResponse.EnsureSuccessStatusCode();
-        var response = await TestResponse.Content.ReadFromJsonAsync<Response>();
-        if (response.IsSuccess)
+        var isSucces1 = await ToUpDown(chapters.Value.Data[number - 1]);
+        if (isSucces && isSucces1)
         {
             await GetChapters();
         }
+    }
+    private async Task<bool> ToUpDown(ChapterDto chapter)
+    {
+        using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Chapter/Update", chapter);
+        TestResponse.EnsureSuccessStatusCode();
+        var response = await TestResponse.Content.ReadFromJsonAsync<Response>();
+        return response.IsSuccess;
+    }
+    void GoToCycleEditor()
+    {
+        navigation.NavigateTo("cycleeditor/0");
     }
 }

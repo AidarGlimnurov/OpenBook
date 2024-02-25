@@ -39,6 +39,23 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
+        public async Task<Response> Create(CycleDto cycle)
+        {
+            var response = new Response<CycleDto>();
+            try
+            {
+                await cycleRepository.Create(cycle.ToEntity());
+                response.IsSuccess = true;
+                await unitWork.Commit();
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
         public async Task<Response<CycleDto>> Read(int id)
         {
             var response = new Response<CycleDto>();
@@ -73,6 +90,23 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
+        public async Task<Response> Update(CycleDto cycle)
+        {
+            var response = new Response<CycleDto>();
+            try
+            {
+                await cycleRepository.Update(cycle.ToEntity());
+                response.IsSuccess = true;
+                await unitWork.Commit();
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
         public async Task<Response> Delete(int id)
         {
             var response = new Response<CycleDto>();
@@ -96,6 +130,30 @@ namespace OpenBook.App.Interactors
             try
             {
                 var data = cycleRepository.GetAll(start, count);
+
+                List<CycleDto> cycle = new();
+                await foreach (var item in data)
+                {
+                    cycle.Add(item.ToDto());
+                }
+                response.Value.Data = cycle.ToArray();
+                response.Value.Start = start;
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
+        public async Task<Response<DataPage<CycleDto>>> GetAllForUser(int userId, int start, int? count)
+        {
+            var response = new Response<DataPage<CycleDto>>();
+            try
+            {
+                var data = cycleRepository.GetAllForUser(userId, start, count);
 
                 List<CycleDto> cycle = new();
                 await foreach (var item in data)
