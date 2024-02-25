@@ -53,7 +53,8 @@ namespace OpenBook.Server.Controllers
         [HttpGet("GetAllForUser")]
         public async Task<Response<DataPage<CycleDto>>> GetAllForUser(int userId, int start, int? count)
         {
-            return await interactor.GetAllForUser(userId, start, count);
+
+            return await interactor.GetAllForUser(userId, start, count);      
         }
     }
 }
