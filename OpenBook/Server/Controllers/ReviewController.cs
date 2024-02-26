@@ -31,6 +31,11 @@ namespace OpenBook.Server.Controllers
         {
             return await interactor.Read(id);
         }
+        [HttpGet("GetForUserBook")]
+        public async Task<Response<ReviewDto>> GetForUserBook(int bookId, int userId)
+        {
+            return await interactor.GetForUserBook(bookId, userId);
+        }
         [HttpPost("UpdateWithEntity")]
         public async Task<Response> UpdateWithEntity([FromBody] ReviewDto review)
         {

@@ -60,5 +60,12 @@ namespace OpenBook.Adapter.Repository
                 yield return item;
             }
         }
+
+        public async Task<Review> GetForUserBook(int bookId, int userId)
+        {
+            var review = await context.Reviews.Include(r => r.User).Include(r => r.Book)
+                .FirstOrDefaultAsync(r => r.UserId == userId && r.BookId == bookId);
+            return review;
+        }
     }
 }
