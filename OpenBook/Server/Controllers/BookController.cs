@@ -33,6 +33,11 @@ namespace OpenBook.Server.Controllers
         {
             return await interactor.Read(id);
         }
+        [HttpGet("GetBook")]
+        public async Task<Response<BookDto>> GetBook(int id)
+        {
+            return await interactor.GetBook(id);
+        }
         [HttpPost("UpdateWithEntity")]
         public async Task<Response> UpdateWithEntity([FromBody] BookDto book)
         {
@@ -56,22 +61,22 @@ namespace OpenBook.Server.Controllers
         [HttpGet("GetBooksForAuthor")]
         public async Task<Response<DataPage<BookDto>>> GetBooksForAuthor(int userId, int start, int? count, bool? isPublic)
         {
-            return await interactor.GetBooksForAuthor( userId,  start,  count,  isPublic);
+            return await interactor.GetBooksForAuthor(userId, start, count, isPublic);
         }
         [HttpGet("Published")]
         public async Task<Response> Published(int bookId, bool action)
         {
-            return await interactor.Published( bookId,  action);
+            return await interactor.Published(bookId, action);
         }
         [HttpGet("AddGenre")]
         public async Task<Response> AddGenre(int bookId, int genreId)
         {
-            return await interactor.AddGenre( bookId,  genreId);
+            return await interactor.AddGenre(bookId, genreId);
         }
         [HttpGet("RemoveGenre")]
         public async Task<Response> RemoveGenre(int bookId, int genreId)
         {
-            return await interactor.RemoveGenre( bookId,  genreId);
+            return await interactor.RemoveGenre(bookId, genreId);
         }
         [HttpGet("GetBooksForCycle")]
         public async Task<Response<DataPage<BookDto>>> GetBooksForCycle(int cycleId, int start, int? count)

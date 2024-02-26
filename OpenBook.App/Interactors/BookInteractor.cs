@@ -75,6 +75,23 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
+        public async Task<Response<BookDto>> GetBook(int id)
+        {
+            var response = new Response<BookDto>();
+            try
+            {
+                var book = await bookRepository.GetBook(id);
+                response.Value = book.ToDto();
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
         public async Task<Response> UpdateWithEntity(BookDto book)
         {
             var response = new Response<BookDto>();

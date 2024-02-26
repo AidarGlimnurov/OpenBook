@@ -17,5 +17,6 @@ namespace OpenBook.App.Storage
         Task AddGenre(int bookId, int genreId);
         Task RemoveGenre(int bookId, int genreId);
         IAsyncEnumerable<Book> GetBooksForCycle(int cycleId, int start, int? count);
+        Task<Book> GetBook(int Id);
     }
 }

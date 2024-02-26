@@ -39,6 +39,12 @@ namespace OpenBook.Adapter.Repository
             context.Add(book);
         }
 
+        public async Task<Book> GetBook(int Id)
+        {
+            var book = await context.Books.Include(b => b.Cycle).Include(b => b.User).FirstOrDefaultAsync(b => b.Id == Id);
+            return book;
+        }
+
         public async IAsyncEnumerable<Book> GetBooks(int start, int? count, bool? isPublic, string? name)
         {
             if (count == null) count = 100;
