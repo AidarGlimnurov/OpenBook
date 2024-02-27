@@ -119,7 +119,7 @@ namespace OpenBook.App.Interactors
             var response = new Response<DataPage<GenreDto>>();
             try
             {
-                var data = genreRepository.GetAll(start, count);
+                var data = genreRepository.GetGenresForBook(bookId, start, count);
 
                 List<GenreDto> cycle = new();
                 await foreach (var item in data)

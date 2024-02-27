@@ -9,7 +9,6 @@
 <style>
     .headBox{
         text-align: center;
-
     }
     .container {
       display: flex;
@@ -140,21 +139,40 @@ else
     
                     <input type="text" placeholder="Автор" @bind="book.Author">
                     <br>
-    
-                <select @bind="book.CycleId">
-                   <option selected>Выбрать</option>
-                    @if (Cycles != null)
-                    {
-                        @foreach (var cycle in Cycles.Value.Data)
-                        {
-                            <option value="@cycle.Id">@cycle.Name</option>
-                        }                            
-                    }
-                </select>
-                    <button class="btn btn-success" @onclick="GoToCycleEditor">+</button>
-    
-                    <select>
-                    </select>
+                    <div style="display: flex; flex-direction: row; flex: 1 1">
+                        <select @bind="book.CycleId">
+                           <option selected>Выбрать</option>
+                            @if (Cycles != null)
+                            {
+                                @foreach (var cycle in Cycles.Value.Data)
+                                {
+                                    <option value="@cycle.Id">@cycle.Name</option>
+                                }                            
+                            }
+                        </select>
+                        <button class="btn btn-success" @onclick="GoToCycleEditor">+</button>
+                        <div style="display: flex; flex-direction: column">
+                            @if (BookGenres != null)
+                            {
+                                @foreach (var genre in BookGenres.Value.Data)
+                                {
+                                    <label>@genre.Name</label>
+                                    <button @onclick="(()=>RemoveGenre(genre.Id))">Удалить</button>
+                                }     
+                            }
+
+                            <select>
+                                <option selected @onchange="HandleGenreChange">Выбрать</option>
+                                @if(Genres != null)
+                                {
+                                    @foreach (var genre in Genres.Value.Data)
+                                    {
+                                        <option value="@genre.Id">@genre.Name</option>
+                                    } 
+                                }
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
     
@@ -244,7 +262,8 @@ else
 
     Response<DataPage<ChapterDto>>? chapters;
     Response<DataPage<CycleDto>>? Cycles;
-    Response<DataPage<GenreDto>>? Genre;
+    Response<DataPage<GenreDto>>? Genres;
+    Response<DataPage<GenreDto>>? BookGenres;
 
     BookDto book = new();
 
@@ -270,6 +289,8 @@ else
                 var resp = await client.GetFromJsonAsync<Response<BookDto>>($"https://localhost:7190/api/Book/Read?id={Id}");
                 await GetChapters();
                 Cycles = await client.GetFromJsonAsync<Response<DataPage<CycleDto>>>($"https://localhost:7190/api/Cycle/GetAllForUser?userId={user.Value.Id}&start={0}");
+                Genres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetAll?start={0}");
+                BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={Id}&start={0}");
                 book = resp.Value;
             }
         }
@@ -366,5 +387,22 @@ else
     void GoToCycleEditor()
     {
         navigation.NavigateTo($"cycleeditor/0/{book.Id}");
+    }
+    async Task AddGenre(int Id)
+    {
+        await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Book/AddGenre?bookId={this.Id}&genreId={Id}");
+        BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/AddGenre?bookId={this.Id}&start={0}");
+    }
+    async Task RemoveGenre(int Id)
+    {
+        await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Book/RemoveGenre?bookId={this.Id}&genreId={Id}");
+        BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={this.Id}&start={0}");
+    }
+    private void HandleGenreChange(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int genreId))
+        {
+            AddGenre(genreId);
+        }
     }
 }

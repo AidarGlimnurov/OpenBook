@@ -161,8 +161,8 @@ else
             //navigation.NavigateTo("SignIn");
         }
         book = await client.GetFromJsonAsync<Response<BookDto>>($"https://localhost:7190/api/Book/GetBook?id={Id}");
-        genres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={Id}&start{0}");
-        reviews = await client.GetFromJsonAsync<Response<DataPage<ReviewDto>>>($"https://localhost:7190/api/Review/GetForBook?bookId={Id}&start{0}");
+        genres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={Id}&start={0}");
+        reviews = await client.GetFromJsonAsync<Response<DataPage<ReviewDto>>>($"https://localhost:7190/api/Review/GetForBook?bookId={Id}&start={0}");
         @if (user.IsSuccess)
         {
             myReview = reviews.Value.Data.FirstOrDefault(r => r.UserId == user.Value.Id);
