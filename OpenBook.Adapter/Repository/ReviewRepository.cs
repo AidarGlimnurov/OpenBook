@@ -36,7 +36,7 @@ namespace OpenBook.Adapter.Repository
             review.Book = await context.Books.FirstOrDefaultAsync(r => r.Id == review.BookId);
             review.User = await context.Users.FirstOrDefaultAsync(u => u.Id == review.UserId);
 
-            context.Add(review);
+            context.Update(review);
         }
 
         public async IAsyncEnumerable<Review> GetForBook(int bookId, int start, int? count)
