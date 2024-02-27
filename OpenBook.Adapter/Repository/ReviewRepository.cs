@@ -18,14 +18,24 @@ namespace OpenBook.Adapter.Repository
 
         public async Task Create(Review review)
         {
-            if (review.Book == null || review.Book.Id == 0)
-            {
-                review.Book = await context.Books.FirstOrDefaultAsync(r => r.Id == review.BookId);
-            }
-            if (review.User == null || review.User.Id == 0)
-            {
-                review.User = await context.Users.FirstOrDefaultAsync(u => u.Id == review.UserId);
-            }
+            review.Book = await context.Books.FirstOrDefaultAsync(r => r.Id == review.BookId);
+            review.User = await context.Users.FirstOrDefaultAsync(u => u.Id == review.UserId);
+
+            //if (review.Book == null || review.Book.Id == 0)
+            //{
+            //    review.Book = await context.Books.FirstOrDefaultAsync(r => r.Id == review.BookId);
+            //}
+            //if (review.User == null || review.User.Id == 0)
+            //{
+            //    review.User = await context.Users.FirstOrDefaultAsync(u => u.Id == review.UserId);
+            //}
+            context.Add(review);
+        }
+        public async Task Update(Review review)
+        {
+            review.Book = await context.Books.FirstOrDefaultAsync(r => r.Id == review.BookId);
+            review.User = await context.Users.FirstOrDefaultAsync(u => u.Id == review.UserId);
+
             context.Add(review);
         }
 
@@ -67,5 +77,6 @@ namespace OpenBook.Adapter.Repository
                 .FirstOrDefaultAsync(r => r.UserId == userId && r.BookId == bookId);
             return review;
         }
+
     }
 }

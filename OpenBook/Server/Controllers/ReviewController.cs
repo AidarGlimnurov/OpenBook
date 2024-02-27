@@ -19,6 +19,7 @@ namespace OpenBook.Server.Controllers
         [HttpPost("Create")]
         public async Task<Response> Create([FromBody] ReviewDto review)
         {
+            int a = 0;
             return await interactor.Create(review);
         }
         [HttpPost("CreateWithEntity")]
@@ -40,6 +41,11 @@ namespace OpenBook.Server.Controllers
         public async Task<Response> UpdateWithEntity([FromBody] ReviewDto review)
         {
             return await interactor.UpdateWithEntity(review);
+        }
+        [HttpPost("Update")]
+        public async Task<Response> Update([FromBody] ReviewDto review)
+        {
+            return await interactor.Update(review);
         }
         [HttpGet("Delete")]
         public async Task<Response> Delete(int id)

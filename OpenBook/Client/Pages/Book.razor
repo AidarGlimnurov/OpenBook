@@ -42,88 +42,90 @@
 </style>
 @if (book == null)
 {
-        <span>Загрузка...</span>
+            <span>Загрузка...</span>
 }
 else
 {
-    <div class="columnContainer">
-        <div class="rowContainer">
-            <div>
-                <img style="width: 90%; height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Value.Cover)">
-            </div>
-            <div class="columnContainer">
-                <h2>@book.Value.Name</h2>
-                <h3>@book.Value.Author</h3>
-                <h4>Chapter count: Very many chapters</h4>
-    
-                <button class="btn btn-primary" @onclick="GoToBookReader" style="margin-top: 5px; margin-bottom: 5px; width: 30%">Читать</button>
-    
-            @if (book.Value.Cycle != null)
-            {
-                        <a href="cycle/{@book.Value.CycleId}">@book.Value.Cycle.Name</a>
-            }
-                <div class="newLineContainer">
-                @if (genres != null)
-                {
-                    @foreach (var genre in genres.Value.Data)
-                    {
-                                    <a href="genre/{@genre.Id}">@genre.Name | </a>
-                    }                    
-                }
-                </div>
+        <div class="columnContainer">
+            <div class="rowContainer">
                 <div>
-                    <p>@book.Value.Description</p>
-                @* <button>Раскрыть блок</button> *@
+                    <img style="width: 90%; height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Value.Cover)">
+                </div>
+                <div class="columnContainer">
+                    <h2>@book.Value.Name</h2>
+                    <h3>@book.Value.Author</h3>
+                    <h4>Chapter count: Very many chapters</h4>
+
+                    <button class="btn btn-primary" @onclick="GoToBookReader" style="margin-top: 5px; margin-bottom: 5px; width: 30%">Читать</button>
+
+                @if (book.Value.Cycle != null)
+                {
+                                <a href="cycle/{@book.Value.CycleId}">@book.Value.Cycle.Name</a>
+                }
+                    <div class="newLineContainer">
+                    @if (genres != null)
+                    {
+                        @foreach (var genre in genres.Value.Data)
+                        {
+                                                <a href="genre/{@genre.Id}">@genre.Name | </a>
+                        }                    
+                    }
+                    </div>
+                    <div>
+                        <p>@book.Value.Description</p>
+                    @* <button>Раскрыть блок</button> *@
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="innerColumnContainer">
-            <div style="text-align:center">
-                <h2>Отзывы</h2>
-            @if (myReview == null)
+            <div class="innerColumnContainer">
+                <div style="text-align:center">
+                    <h2>Отзывы</h2>
+                @if (myReview == null)
+                {
+                            <button class="btn btn-secondary" @onclick="AddReview">Добавить отзыв</button>
+                }
+                </div>
+            @if (myReview != null)
             {
-                        <button class="btn btn-secondary" @onclick="AddReview">@reviewChangerText</button>
+                        <div style="background: #eef1f1">
+                    @if (myReview.IsEdited)
+                    {
+                                    <label>ред.</label>
+                    }
+                            <h4>@myReview.User.Name</h4>
+                    @if (editMode)
+                    {
+                                    <input type="text" @bind="@myReview.Text">
+                    }
+                    else
+                    {
+                                    <p>@myReview.Text</p>
+                    }
+                            <button class="btn btn-secondary" @onclick="AddReview">@reviewChangerText</button>
+                        </div>
+            }
+                <div></div>
+            @if (reviews != null)
+            {
+                @foreach (var review in reviews.Value.Data)
+                {
+                    @* @if (review.Id != myReview.Id) *@
+                    @if (CheckId(review.Id).Result)
+                    {
+                                        <div>
+                            @if (review.IsEdited)
+                            {
+                                                    <label>ред.</label>
+                            }
+                                            <h4>@review.User.Name</h4>
+                                            <p>@review.Text</p>
+                                        </div>                        
+                    }
+                }                
             }
             </div>
-        @if (myReview != null)
-        {
-            <div>
-                @if (myReview.IsEdited)
-                {
-                    <label>ред.</label>
-                }
-                <h4>@myReview.User.Name</h4>
-                @if (editMode)
-                {
-                    <input type="text" @bind="@myReview.Text">
-                }
-                else
-                {
-                    <p>@myReview.Text</p>
-                }
-                <button class="btn btn-secondary">Изменить</button>
-            </div>
-        }
-            <div></div>
-        @if (reviews != null)
-        {
-            @foreach (var review in reviews.Value.Data)
-            {
-                @if (review.Id != myReview.Id)
-                {
-                    <div>
-                        @if (review.IsEdited)
-                        {
-                            <label>ред.</label>
-                        }
-                        <h4>@review.User.Name</h4>
-                        <p>@review.Text</p>
-                    </div>                        
-                }
-            }                
-        }
         </div>
-    </div>
+        <h1>@testStr</h1>
 }
 @code {
     [Parameter]
@@ -138,7 +140,7 @@ else
     Response<DataPage<ReviewDto>>? reviews;
     ReviewDto? myReview;
 
-    string reviewChangerText = "Добавить отзыв";
+    string reviewChangerText = "Изменить";
 
     bool editMode = false;
 
@@ -149,39 +151,49 @@ else
             var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
             user = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
-            book = await client.GetFromJsonAsync<Response<BookDto>>($"https://localhost:7190/api/Book/GetBook?id={Id}");
-            genres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={Id}&start{0}");
-            reviews = await client.GetFromJsonAsync<Response<DataPage<ReviewDto>>>($"https://localhost:7190/api/Review/GetForBook?bookId={Id}&start{0}");
-            myReview = reviews.Value.Data.FirstOrDefault(r => r.Id == user.Value.Id);
-            int a = 0;
         }
         catch (Exception ex)
         {
-            navigation.NavigateTo("SignIn");
+            //navigation.NavigateTo("SignIn");
+        }
+        book = await client.GetFromJsonAsync<Response<BookDto>>($"https://localhost:7190/api/Book/GetBook?id={Id}");
+        genres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={Id}&start{0}");
+        reviews = await client.GetFromJsonAsync<Response<DataPage<ReviewDto>>>($"https://localhost:7190/api/Review/GetForBook?bookId={Id}&start{0}");
+        @if (user != null)
+        {
+            myReview = reviews.Value.Data.FirstOrDefault(r => r.UserId == user.Value.Id);
         }
     }
     async Task AddReview()
     {
-        if (editMode)
+        if (user == null)
         {
-            reviewChangerText = "Добавить отзыв";
-            editMode = false;
+            if (editMode)
+            {
+                using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Review/Update", myReview);
+                reviewChangerText = "Изменить";
+                editMode = false;
+            }
+            else
+            {
+                editMode = true;
+                if (myReview == null)
+                {
+                    ReviewDto reviewDto = new()
+                        {
+                            BookId = Convert.ToInt32(Id),
+                            UserId = user.Value.Id,
+                        };
+                    using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Review/Create", reviewDto);
+                    var rev = await client.GetFromJsonAsync<Response<ReviewDto>>($"https://localhost:7190/api/Review/GetForUserBook?bookId={Id}&userId={user.Value.Id}");
+                    myReview = rev.Value;
+                }
+                reviewChangerText = "Сохранить";
+            }
         }
         else
         {
-            reviewChangerText = "Сохранить";
-            editMode = true;
-            if (myReview == null)
-            {
-                ReviewDto reviewDto = new()
-                {
-                    BookId = Convert.ToInt32(Id),
-                    UserId = user.Value.Id,
-                };
-                using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Review/Create", myReview);
-                var rev = await client.GetFromJsonAsync<Response<ReviewDto>>($"https://localhost:7190/api/Review/GetForUserBook?bookId={Id}&userId={user.Value.Id}");
-                myReview = rev.Value;
-            }
+            navigation.NavigateTo("SignIn");
         }
     }
     async Task<bool> CheckAuth()
@@ -192,5 +204,25 @@ else
     void GoToBookReader()
     {
         navigation.NavigateTo($"bookreader/{Id}");
+    }
+    async Task<bool> CheckId(int id)
+    {
+        if (myReview != null)
+        {
+            if (myReview.Id == id)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    string testStr = "Не активен!";
+    void Test()
+    {
+        testStr = "!!!!!";
+    }
+    void Test(string str)
+    {
+        testStr = str;
     }
 }

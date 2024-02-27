@@ -108,6 +108,24 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
+        public async Task<Response> Update(ReviewDto review)
+        {
+            var response = new Response<ReviewDto>();
+            try
+            {
+                review.IsEdited = true;
+                await reviewRepository.Update(review.ToEntity());
+                response.IsSuccess = true;
+                await unitWork.Commit();
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
         public async Task<Response> Delete(int id)
         {
             var response = new Response<ReviewDto>();
