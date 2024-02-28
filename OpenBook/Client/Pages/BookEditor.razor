@@ -219,7 +219,7 @@ else
                         <button @onclick="(()=>GoToChapterEditor(chapter.Id, chapter.Number.Value))">@chapter.Name</button>
                     </td>
                     <td>
-                        <input type="checkbox">
+                        <input type="checkbox" @onclick="(()=>PulishedChapter(chapter.Id, chapter.IsPublic))" checked="@chapter.IsPublic">
                     </td>
                     <td>
                         @if(chapter.Number == 1)
@@ -414,5 +414,9 @@ else
     private async Task GetBookGenres()
     {
         BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={this.Id}&start={0}");
+    }
+    private async Task PulishedChapter(int id, bool isPub)
+    {
+        await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Chapter/Published?chapterId={id}&action={!isPub}");
     }
 }

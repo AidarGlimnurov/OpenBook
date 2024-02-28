@@ -1,0 +1,63 @@
+﻿@page "/BookContent/{Id}"
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@using OpenBook.Shared.SupportData;
+@using System.Net.Http.Headers;
+@inject HttpClient client
+@inject NavigationManager navigation
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@if (book == null)
+{
+    <p>Загрузка...</p>
+}
+else
+{
+    <H1>@book.Value.Name</H1>
+    @if (chapters != null)
+    {
+        @foreach (var chapter in chapters.Value.Data)
+        {
+            <a href="reader/@chapter.Id">@chapter.Number @chapter.Name</a>
+            <br>
+        }        
+    }
+    else
+    {
+        <h3>Скоро здесь будут главы</h3>
+    }
+}
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    Response<BookDto> book;
+    Response<DataPage<ChapterDto>> chapters;
+    Response? response;
+
+    Response<UserDto>? user = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
+            user = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+            book = await client.GetFromJsonAsync<Response<BookDto>>($"https://localhost:7190/api/Book/Read?id={Id}");
+            await GetChapters();
+        }
+        catch (Exception ex)
+        {
+            navigation.NavigateTo("SignIn");
+        }
+    }
+    async Task<bool> CheckAuth()
+    {
+        var resp = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+        return resp.IsSuccess;
+    }
+    async Task GetChapters()
+    {
+        chapters = await client.GetFromJsonAsync<Response<DataPage<ChapterDto>>>($"https://localhost:7190/api/Chapter/GetForBook?bookId={Id}&start={0}");
+    }
+}
