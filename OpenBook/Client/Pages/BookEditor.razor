@@ -156,13 +156,13 @@ else
                             {
                                 @foreach (var genre in BookGenres.Value.Data)
                                 {
-                                    <label>@genre.Name</label>
-                                    <button @onclick="(()=>RemoveGenre(genre.Id))">Удалить</button>
+                                    <label>@genre.Name <button @onclick="(()=>RemoveGenre(genre.Id))">Удалить</button></label>
                                 }     
                             }
 
-                            <select>
-                                <option selected @onchange="HandleGenreChange">Выбрать</option>
+                            <select @onchange="HandleGenreChange">
+@*                                <option value="0" selected>Выбрать</option>*@
+
                                 @if(Genres != null)
                                 {
                                     @foreach (var genre in Genres.Value.Data)
@@ -290,7 +290,8 @@ else
                 await GetChapters();
                 Cycles = await client.GetFromJsonAsync<Response<DataPage<CycleDto>>>($"https://localhost:7190/api/Cycle/GetAllForUser?userId={user.Value.Id}&start={0}");
                 Genres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetAll?start={0}");
-                BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={Id}&start={0}");
+                //BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={Id}&start={0}");
+                await GetBookGenres();
                 book = resp.Value;
             }
         }
@@ -390,13 +391,18 @@ else
     }
     async Task AddGenre(int Id)
     {
-        await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Book/AddGenre?bookId={this.Id}&genreId={Id}");
-        BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/AddGenre?bookId={this.Id}&start={0}");
+        var r = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Book/AddGenre?bookId={this.Id}&genreId={Id}");
+        if(r.IsSuccess)
+        {
+            await GetBookGenres();
+            //BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={this.Id}&start={0}");
+        }
     }
     async Task RemoveGenre(int Id)
     {
         await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Book/RemoveGenre?bookId={this.Id}&genreId={Id}");
-        BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={this.Id}&start={0}");
+        await GetBookGenres();
+        //BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={this.Id}&start={0}");
     }
     private void HandleGenreChange(ChangeEventArgs e)
     {
@@ -404,5 +410,9 @@ else
         {
             AddGenre(genreId);
         }
+    }
+    private async Task GetBookGenres()
+    {
+        BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={this.Id}&start={0}");
     }
 }
