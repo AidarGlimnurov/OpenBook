@@ -1,0 +1,44 @@
+﻿@page "/bookReader/{Id}"
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@using OpenBook.Shared.SupportData;
+@using System.Net.Http.Headers;
+@inject HttpClient client
+@inject NavigationManager navigation
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@if (chapter == null)
+{
+    <p>Загрузка...</p>
+}
+else
+{
+    <a href="bookcontent/@chapter.BookId">Назад</a>
+    <h2>Глава @chapter.Number</h2>
+    <h2>@chapter.Name</h2>
+    <div style="border: 1px solid black; background: #f6f7f7; width: 100%; min-height: 100vh; padding: 5px; border-radius: 5px; margin-bottom: 5px">
+        @((MarkupString)markdownHtml)
+    </div>
+
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    string markdownHtml;
+
+    ChapterDto chapter;
+    protected override async Task OnInitializedAsync()
+    {
+        var resp = await client.GetFromJsonAsync<Response<ChapterDto>>($"https://localhost:7190/api/Chapter/Read?id={Id}");
+        chapter = resp.Value;
+        markdownHtml = Markdown.ToHtml(chapter.Content);
+        int a = 0;
+    }
+    private string ConvertMarkdownToHtml(string markdown)
+    {
+        var pipeline = new Markdig.MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+        return Markdig.Markdown.ToHtml(markdown, pipeline);
+    }
+}
