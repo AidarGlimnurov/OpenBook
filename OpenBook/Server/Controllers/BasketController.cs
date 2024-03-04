@@ -58,5 +58,10 @@ namespace OpenBook.Server.Controllers
         {
             return await interactor.GetBooks(userId, start, count);
         }
+        [HttpGet("GetBookk")]
+        public async Task<Response<BookDto>> GetBook(int userId, int bookId)
+        {
+            return await interactor.GetBook(userId, bookId);
+        }
     }
 }

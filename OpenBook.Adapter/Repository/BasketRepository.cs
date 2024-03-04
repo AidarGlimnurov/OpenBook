@@ -38,6 +38,25 @@ namespace OpenBook.Adapter.Repository
             context.Baskets.Add(basket);
         }
 
+        public async Task<Book> GetBook(int userId, int bookId)
+        {
+            try
+            {
+                var basket = await context.BookBaskets.Include(bb => bb.Basket).Include(bb => bb.Book)
+                    .FirstOrDefaultAsync(bb => bb.Basket.UserId == userId && bb.Book.Id == bookId);
+                if (basket == null)
+                {
+                    throw new Exception("Basket is Null!!!");
+                }
+                return basket.Book;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Basket is Null!!!");
+            }
+        }
+
         public async IAsyncEnumerable<Book> GetBooks(int userId, int start, int count)
         {
             if (count == null || count == 0) count = 100;

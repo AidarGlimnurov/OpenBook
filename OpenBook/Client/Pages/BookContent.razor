@@ -13,7 +13,19 @@
 }
 else
 {
+    <a href="book/@Id">Назад</a>
     <H1>@book.Value.Name</H1>
+    <button class="btn btn-secondary" @onclick="FavoriteAction" style="background: @actionColor">
+        @if (favoriteBook.IsSuccess)
+        {
+            <label>Убрать из избранного</label>
+        }
+        else
+        {
+            <label>Добавить в избранное</label>
+        }
+    </button>
+    <hr />
     @if (chapters != null)
     {
         @foreach (var chapter in chapters.Value.Data)
@@ -33,8 +45,10 @@ else
     Response<BookDto> book;
     Response<DataPage<ChapterDto>> chapters;
     Response? response;
-
+    Response<BookDto> favoriteBook = new() { IsSuccess = false };
     Response<UserDto>? user = new();
+
+    string actionColor => favoriteBook.IsSuccess ? "#f69c9c" : "#9ca1f6";
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,13 +57,14 @@ else
             var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
             user = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
-            book = await client.GetFromJsonAsync<Response<BookDto>>($"https://localhost:7190/api/Book/Read?id={Id}");
-            await GetChapters();
+            await GetFavoriteBook();
         }
         catch (Exception ex)
         {
-            navigation.NavigateTo("SignIn");
+            //navigation.NavigateTo("SignIn");
         }
+        book = await client.GetFromJsonAsync<Response<BookDto>>($"https://localhost:7190/api/Book/Read?id={Id}");
+        await GetChapters();
     }
     async Task<bool> CheckAuth()
     {
@@ -59,5 +74,22 @@ else
     async Task GetChapters()
     {
         chapters = await client.GetFromJsonAsync<Response<DataPage<ChapterDto>>>($"https://localhost:7190/api/Chapter/GetForBook?bookId={Id}&start={0}");
+    }
+    async Task GetFavoriteBook()
+    {
+        favoriteBook = await client.GetFromJsonAsync<Response<BookDto>>($"https://localhost:7190/api/Basket/GetBookk?userId={user.Value.Id}&bookId={Id}");
+    }
+    async Task FavoriteAction()
+    {
+        if (favoriteBook.IsSuccess)
+        {
+            var resp = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Basket/RemoveBook?userId={user.Value.Id}&bookId={Id}");
+            await GetFavoriteBook();
+        }
+        else
+        {
+            var resp = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Basket/AddBook?userId={user.Value.Id}&bookId={Id}");
+            await GetFavoriteBook();
+        }
     }
 }

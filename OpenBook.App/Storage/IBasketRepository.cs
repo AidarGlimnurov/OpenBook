@@ -13,5 +13,6 @@ namespace OpenBook.App.Storage
         Task AddBook(int userId, int bookId);
         Task RemoveBook(int userId, int bookId);
         IAsyncEnumerable<Book> GetBooks(int userId, int start, int count);
+        Task<Book> GetBook(int userId, int bookId);
     }
 }
