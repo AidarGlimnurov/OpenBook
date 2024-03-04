@@ -81,15 +81,22 @@ else
     }
     async Task FavoriteAction()
     {
-        if (favoriteBook.IsSuccess)
+        if (user.IsSuccess)
         {
-            var resp = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Basket/RemoveBook?userId={user.Value.Id}&bookId={Id}");
-            await GetFavoriteBook();
+            if (favoriteBook.IsSuccess)
+            {
+                var resp = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Basket/RemoveBook?userId={user.Value.Id}&bookId={Id}");
+                await GetFavoriteBook();
+            }
+            else
+            {
+                var resp = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Basket/AddBook?userId={user.Value.Id}&bookId={Id}");
+                await GetFavoriteBook();
+            }
         }
         else
         {
-            var resp = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Basket/AddBook?userId={user.Value.Id}&bookId={Id}");
-            await GetFavoriteBook();
+            navigation.NavigateTo("SignIn");
         }
     }
 }
