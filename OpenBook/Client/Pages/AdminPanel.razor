@@ -1,0 +1,73 @@
+﻿@page "/adminpanel"
+
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@using System.Net.Http.Headers;
+@using OpenBook.Shared.SupportData;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager navigation
+@inject HttpClient client
+
+@if (user == null)
+{
+        <p>Загрузка...</p>
+}
+else
+{
+        <h3>Панель администратора</h3>
+        <div >
+            <button class="btn btn-secondary" @onclick="GoToUserEditor" style="margin: 3px">Управлять жанрами</button>
+            <br>
+            <button class="btn btn-secondary" @onclick="GoToBooksEditor" style="margin: 3px">Управлять пользователями</button>
+            <br>
+            <button class="btn btn-secondary" @onclick="GoToGenresEditor" style="margin: 3px">Управлять книгами</button>
+        </div>
+}
+
+@code {
+    AuthView authView = new AuthView();
+    AuthInfo authInfo = new AuthInfo();
+    Response? response;
+
+    Response<UserDto>? user;
+
+    bool editMode = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
+            await CheckAuth();
+            if (!await CheckAdmin()) throw new Exception("User is not Admin!");
+        }
+        catch (Exception ex)
+        {
+            navigation.NavigateTo("SignIn");
+        }
+    }
+    async Task<bool> CheckAdmin()
+    {
+        if (user.Value.Role.Name == "Admin" || user.Value.Role.Name == "SuperAdmin") return true;
+        return false;
+    }
+    async Task<bool> CheckAuth()
+    {
+        user = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+        return user.IsSuccess;
+    }
+
+    void GoToUserEditor()
+    {
+        navigation.NavigateTo("usersEditor");
+    }
+    void GoToBooksEditor()
+    {
+        navigation.NavigateTo("booksEditor");
+    }
+    void GoToGenresEditor()
+    {
+        navigation.NavigateTo("genresEditor");
+    }
+}

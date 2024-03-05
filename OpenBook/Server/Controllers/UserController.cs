@@ -16,11 +16,11 @@ namespace OpenBook.Server.Controllers
         {
             this.interactor = interactor;
         }
-        [HttpPost("CreateWithEntity")]
-        public async Task<Response> CreateWithEntity([FromBody] UserDto user)
-        {
-            return await interactor.CreateWithEntity(user);
-        }
+        //[HttpPost("CreateWithEntity")]
+        //public async Task<Response> CreateWithEntity([FromBody] UserDto user)
+        //{
+        //    return await interactor.CreateWithEntity(user);
+        //}
         [HttpPost("CreateWithBasket")]
         public async Task<Response> CreateWithBasket(UserDto user)
         {

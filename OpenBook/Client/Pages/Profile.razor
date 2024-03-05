@@ -36,7 +36,7 @@
 <h3 style="text-align: center">Личный кабинет</h3>
 @if (user == null)
 {
-        <span>Загрузка...</span>
+            <span>Загрузка...</span>
 }
 else
 {
@@ -47,16 +47,17 @@ else
                 {
                             <p style="font-weight: 300; font-size: x-large">@user.Value.Name</p>
                             <br>
-                            <button @onclick="EditChange">Изменить</button>                        
+                            <button @onclick="EditChange">Изменить</button>
+                            <br>
                 }
                 else
                 {
                             <p style="font-weight: 300; font-size: x-large">@user.Value.Name</p>
-                            <button @onclick="EditChange">Сохранить</button>                            
+                            <button @onclick="EditChange">Сохранить</button>
+                            <br>
                 }
 
-                    <span>Почта:</span>
-                    <p>@user.Value.Email</p>
+                    <p>Почта: @user.Value.Email</p>
                     <br>
                 </div>
                 <div  class="innerDiv">
@@ -66,13 +67,13 @@ else
                     <p>
                     @if (user.Value.IsVerified)
                     {
-                                <span style="color: green;">Ваш аккаунт верифицирован</span>
+                            <span style="color: green;">Ваш аккаунт верифицирован</span>
                     }
                     else
                     {
-                                <span>Ваш аккаунт не верифицирован!</span>
-                                <br>
-                                <button>Пройти верификацию</button>
+                            <span>Ваш аккаунт не верифицирован!</span>
+                            <br>
+                            <button>Пройти верификацию</button>
                     }
                     </p>
                     <p>
@@ -82,9 +83,9 @@ else
 
                 @if (user.Value.Role.Name == "Admin" || user.Value.Role.Name == "SuperAdmin")
                 {
-                            <p>
-                                <button @onclick="GoToAdminPanel">Админ панель</button>
-                            </p>                    
+                        <p>
+                            <button @onclick="GoToAdminPanel">Админ панель</button>
+                        </p>                    
                 }
                     <p>
                         <button @onclick="(() => GoToEditBooks(0))">Мои книги</button>

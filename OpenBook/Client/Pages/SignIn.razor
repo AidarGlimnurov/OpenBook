@@ -45,33 +45,33 @@
 <h3 style="text-align:center">Авторизация</h3>
 @if (isAuth == null)
 {
-       <span>Загрузка...</span>
+           <span>Загрузка...</span>
 }
 else
 {
-    <div class="container">
-    @if (isAuth == true)
-    {
-        <button class="rounded-button" @onclick="LogOut">Выйти</button> 
-        <a href="SignUp">Зарегистрировать новый аккаунт</a>
-    }
-    else
-    {
-        <div class="input-group">
-            <input type="text" id="login" @bind="authView.Email" placeholder="Email"/>
+        <div class="container">
+        @if (isAuth == true)
+        {
+                <button class="rounded-button" @onclick="LogOut">Выйти</button> 
+                <a href="SignUp">Зарегистрировать новый аккаунт</a>
+        }
+        else
+        {
+                <div class="input-group">
+                    <input type="text" id="login" @bind="authView.Email" placeholder="Email"/>
+                </div>
+
+                <div class="input-group">
+                    <input type="@passwordInputType" id="password" @bind="authView.Password" placeholder="Пароль"/>
+                    <button @onclick="TogglePasswordVisibility" class="password-toggle">
+                        <img style="width:20px; height:15px;" src="@eyeIconPath" alt="Глаз">
+                    </button>
+                </div>
+
+                <button class="rounded-button" @onclick="Authorize">Войти</button>
+                <a href="SignUp">Нет аккаунта? Регистрация</a>        
+        }
         </div>
-        
-        <div class="input-group">
-            <input type="@passwordInputType" id="password" @bind="authView.Password" placeholder="Пароль"/>
-            <button @onclick="TogglePasswordVisibility" class="password-toggle">
-                <img style="width:20px; height:15px;" src="@eyeIconPath" alt="Глаз">
-            </button>
-        </div>
-        
-        <button class="rounded-button" @onclick="Authorize">Войти</button>
-        <a href="SignUp">Нет аккаунта? Регистрация</a>        
-    }
-    </div>
 }
 
 @code {
@@ -112,7 +112,7 @@ else
     private async Task LogOut()
     {
         await localStorage.ClearAsync();
-        navigation.NavigateTo("");
+        navigation.NavigateTo("/Profile");
     }
 
     private void TogglePasswordVisibility()

@@ -77,7 +77,7 @@ namespace OpenBook.Adapter.Repository
         public async Task RemoveBook(int userId, int bookId)
         {
             var bookBasket = await context.BookBaskets.Include(bb => bb.Basket)
-                .FirstOrDefaultAsync(bb => bb.Basket.UserId == userId && bb.BasketId == bookId);
+                .FirstOrDefaultAsync(bb => bb.Basket.UserId == userId && bb.BookId == bookId);
             context.BookBaskets.Remove(bookBasket);
         }
     }

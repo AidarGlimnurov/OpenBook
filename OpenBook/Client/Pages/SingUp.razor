@@ -94,7 +94,7 @@
     {
         if (IsFormValid)
         {
-            user.RoleId = 2;
+            user.RoleId = 4;
             using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/User/CreateWithBasket", user);
             TestResponse.EnsureSuccessStatusCode();
             response = await TestResponse.Content.ReadFromJsonAsync<Response>();

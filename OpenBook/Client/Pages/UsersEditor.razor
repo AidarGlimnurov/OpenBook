@@ -1,0 +1,86 @@
+﻿@page "/usersEditor"
+
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@using System.Net.Http.Headers;
+@using OpenBook.Shared.SupportData;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager navigation
+@inject HttpClient client
+
+@if (users == null)
+{
+        <p>Загрузка...</p>    
+}
+else
+{
+        <table class="table">
+            <tr>
+                <th>Id</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Password</th>
+                <th>IsVerif</th>
+                <th>Role</th>
+                <th>Update</th>
+                <th>Delete</th>
+            </tr>
+        @if (users.IsSuccess)
+        {
+            @foreach (var userItem in users.Value.Data)
+            {
+                <tr>
+                    <td>@userItem.Id</td>
+                    <td><input @bind="@userItem.Email"></td>
+                    <td>@userItem.Name</td>
+                    <td>@userItem.Password</td>
+                    <td>@userItem.IsVerified</td>
+                    <td>@userItem.Role</td>
+                    <td><button>Update</button></td>
+                    <td><button>Delete</button></td>
+                </tr>
+            }
+            <tr>
+                <td></td>
+            </tr>            
+        }
+        </table>
+}
+@code {
+    AuthView authView = new AuthView();
+    AuthInfo authInfo = new AuthInfo();
+    Response? response;
+
+    Response<UserDto>? user;
+    Response<DataPage<UserDto>>? users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
+            await CheckAuth();
+            if (!await CheckAdmin()) throw new Exception("User is not Admin!");
+
+        }
+        catch (Exception ex)
+        {
+            navigation.NavigateTo("SignIn");
+        }
+    }
+    async Task<bool> CheckAdmin()
+    {
+        if (user.Value.Role.Name == "Admin" || user.Value.Role.Name == "SuperAdmin") return true;
+        return false;
+    }
+    async Task<bool> CheckAuth()
+    {
+        user = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+        return user.IsSuccess;
+    }
+    async Task GetUsers()
+    {
+        users = await client.GetFromJsonAsync<Response<DataPage<UserDto>>>($"https://localhost:7190/api/User/GetAll/start={0}");
+    }
+}

@@ -1,0 +1,131 @@
+﻿@page "/favoritebook"
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@using OpenBook.Shared.SupportData;
+@using System.Net.Http.Headers;
+@inject HttpClient client
+@inject NavigationManager navigation
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@if (books == null)
+{
+        <label>Загрузка...</label>
+}
+else
+{
+    @*     <input id="name" class="input-medium search-query" style="width: 80%" @bind="name" /> *@
+    @*     <button @onclick="Search" class="oi oi-magnifying-glass" style="height: 30px"></button> *@
+    foreach (var book in books.Value.Data)
+    {
+                <div style="width: 23%; height: 15%; margin: 8px; display: inline-block; text-align: center;">
+                    <a href="book/@book.Id">
+                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" style="background:gray; height: 100%; width: 95%;">
+                        <label style="color: black">@book.Name</label>
+                    </a>
+                </div>
+    }
+
+        <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin: 15px">
+            <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
+            @if (books.Value.Start > 0)
+            {
+                        <button class="oi oi-arrow-left  btn btn-secondary" @onclick="GetLastPage" style="background:#F8E9A1; border: none;  height: 100%"></button>
+            }
+            else
+            {
+                        <button class="oi oi-arrow-left btn btn-secondary" disabled style="background:#F8E9A1; border: none;  height: 100%"></button>
+            }
+            </div>
+            <div style=" font-size:15pt;">@PageNumber</div>
+            <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
+            @if (books.Value.Count == 10)
+            {
+                        <button class="oi oi-arrow-right btn btn-secondary" @onclick="GetNextPage" style="background:#F8E9A1; border: none; height: 100%"></button>
+            }
+            else
+            {
+                        <button class="oi oi-arrow-right  btn btn-secondary" disabled style="background:#F8E9A1; border: none;  height: 100%"></button>
+            }
+            </div>
+        </div>
+}
+
+@code {
+    Response<DataPage<BookDto>>? books;
+    int pageCount = 0;
+    int start = 0;
+    int count = 10;
+    public int PageNumber { get; set; } = 1;
+    string name = string.Empty;
+
+    Response<UserDto>? user = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
+            user = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+            await GetBooks(start, count);
+        }
+        catch (Exception ex)
+        {
+            navigation.NavigateTo("SignIn");
+        }
+    }
+
+    async Task<bool> CheckAuth()
+    {
+        var resp = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+        return resp.IsSuccess;
+    }
+
+    private void ToBook(int id)
+    {
+        navigation.NavigateTo($"book/{id}");
+    }
+
+    public async Task GetNextPage()
+    {
+        start += 10;
+        PageNumber++;
+        if (name == "")
+        {
+            await GetBooks(start, count);
+        }
+        else
+        {
+            await GetBooks(start, count, name);
+        }
+    }
+    public async Task GetLastPage()
+    {
+        start -= 10;
+        PageNumber--;
+        if (name == "")
+        {
+            await GetBooks(start, count);
+        }
+        else
+        {
+            await GetBooks(start, count, name);
+        }
+    }
+    public async Task Search()
+    {
+        if (name == "")
+        {
+            await GetBooks(start, count);
+        }
+        else
+        {
+            await GetBooks(start, count, name);
+        }
+    }
+
+    private async Task GetBooks(int start, int count, string? name = "")//"!-!")
+    {
+        books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Basket/GetBooks?userId={user.Value.Id}&start={start}&count={count}");
+    }
+}
