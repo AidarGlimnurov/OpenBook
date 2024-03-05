@@ -14,45 +14,67 @@
 }
 else
 {
-        <table class="table">
-            <tr>
-                <th>Id</th>
-                <th>Email</th>
-                <th>Name</th>
-                <th>Password</th>
-                <th>IsVerif</th>
-                <th>Role</th>
-                <th>Update</th>
-                <th>Delete</th>
-            </tr>
-        @if (users.IsSuccess)
+    <table class="table">
+        <tr>
+            <th>Id</th>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Password</th>
+            <th>IsVerif</th>
+            <th>Role</th>
+            <th>Update</th>
+            <th>Delete</th>
+        </tr>
+    @if (users.IsSuccess)
+    {
+        @foreach (var userItem in users.Value.Data)
         {
-            @foreach (var userItem in users.Value.Data)
-            {
-                <tr>
-                    <td>@userItem.Id</td>
-                    <td><input @bind="@userItem.Email"></td>
-                    <td>@userItem.Name</td>
-                    <td>@userItem.Password</td>
-                    <td>@userItem.IsVerified</td>
-                    <td>@userItem.Role</td>
-                    <td><button>Update</button></td>
-                    <td><button>Delete</button></td>
-                </tr>
-            }
             <tr>
-                <td></td>
-            </tr>            
+                <td>@userItem.Id</td>
+                <td><input @bind="@userItem.Email"></td>
+                <td><input @bind="@userItem.Name"></td>
+                <td><input @bind="@userItem.Password"></td>
+                <td><input @bind="@userItem.IsVerified"></td>
+                <td>
+                    <select @bind="userItem.Role.Id">
+                        <option value="userItem.Role.Id">@userItem.Role.Name</option>
+                        @foreach (var role in roles.Value.Data)
+                        {
+                            <option value="role.Id">@role.Name</option>
+                        }
+                    </select>
+                </td>
+                <td><button @onclick="Update">Update</button></td>
+                <td><button @onclick="Delete">Delete</button></td>
+            </tr>
         }
-        </table>
+        <tr>
+            <td>Id</td>
+            <td><input @bind="@newUser.Email"></td>
+            <td><input @bind="@newUser.Name"></td>
+            <td><input @bind="@newUser.Password"></td>
+            <td><input @bind="@newUser.IsVerified"></td>
+            <td>
+                <select @bind="newUser.Role.Id">
+                    @foreach (var role in roles.Value.Data)
+                    {
+                        <option value="role.Id">@role.Name</option>
+                    }
+                </select>
+            </td>
+            <td><button @onclick="Create">Создать</button></td>
+        </tr>            
+    }
+    </table>
 }
 @code {
     AuthView authView = new AuthView();
     AuthInfo authInfo = new AuthInfo();
     Response? response;
-
+    UserDto newUser = new();
     Response<UserDto>? user;
     Response<DataPage<UserDto>>? users;
+    Response<DataPage<RoleDto>>? roles;
 
     protected override async Task OnInitializedAsync()
     {
@@ -62,7 +84,7 @@ else
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
             await CheckAuth();
             if (!await CheckAdmin()) throw new Exception("User is not Admin!");
-
+            roles = await client.GetFromJsonAsync<Response<DataPage<RoleDto>>>($"https://localhost:7190/api/Role/GetAll/start={0}");
         }
         catch (Exception ex)
         {
@@ -82,5 +104,17 @@ else
     async Task GetUsers()
     {
         users = await client.GetFromJsonAsync<Response<DataPage<UserDto>>>($"https://localhost:7190/api/User/GetAll/start={0}");
+    }
+    async Task Update()
+    {
+        using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/User/Update", user.Value);
+    }
+    async Task Delete()
+    {
+        var resp = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/User/Delete/id={user.Value.Id}");
+    }
+    async Task Create()
+    {
+        using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/User/CreateWithBasket", user.Value);
     }
 }
