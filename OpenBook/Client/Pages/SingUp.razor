@@ -81,6 +81,7 @@
         && !string.IsNullOrWhiteSpace(user.Name)
         && !string.IsNullOrWhiteSpace(user.Password)
         && !string.IsNullOrWhiteSpace(confirmPassword)
+        && IsValidEmail(user.Email)
         && user.Password == confirmPassword;
 
     private string passwordInputType => showPassword ? "text" : "password";
@@ -89,7 +90,18 @@
     {
         showPassword = !showPassword;
     }
-
+    private bool IsValidEmail(string email)
+    {
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email);
+            return true; // Если успешно создан MailAddress, то email верен
+        }
+        catch
+        {
+            return false; // В противном случае email неверен
+        }
+    }
     private async Task Register()
     {
         if (IsFormValid)
@@ -101,6 +113,10 @@
             if (response.IsSuccess)
             {
                 navigation.NavigateTo("SignIn");
+            }
+            else
+            {
+                navigation.NavigateTo("");
             }
         }
     }
