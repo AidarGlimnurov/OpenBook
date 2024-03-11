@@ -44,10 +44,20 @@
 <div class="container">
     <div class="input-group">
         <input type="text" id="login" @bind="user.Email" placeholder="Email"/>
+        <br>
+        @if (!checkEmail)
+        {
+            <label style="color: red">Данный email уже зарегистрирован</label>
+        }
     </div>
 
     <div class="input-group">
         <input type="text" id="alias" @bind="user.Name" placeholder="Имя"/>
+                <br>
+        @if (!checkName)
+        {
+            <label style="color: red">Данное имя уже занято</label>
+        }
     </div>
 
     <div class="input-group">
@@ -70,6 +80,9 @@
 @code {
     Response response;
     private UserDto user = new();
+
+    bool checkEmail = true;
+    bool checkName = true;
 
     private string confirmPassword;
     private bool showPassword = false;
@@ -106,18 +119,41 @@
     {
         if (IsFormValid)
         {
-            user.RoleId = 3;
-            using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/User/CreateWithBasket", user);
-            TestResponse.EnsureSuccessStatusCode();
-            response = await TestResponse.Content.ReadFromJsonAsync<Response>();
-            if (response.IsSuccess)
+            if (await CheckEmailAsync())
             {
-                navigation.NavigateTo("SignIn");
+                checkEmail = false;
             }
-            else
+            if (await CheckName())
             {
-                navigation.NavigateTo("");
+                checkName = false;
+            }
+            if (checkName && checkEmail)
+            {
+                user.RoleId = 3;
+                using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/User/CreateWithBasket", user);
+                TestResponse.EnsureSuccessStatusCode();
+                response = await TestResponse.Content.ReadFromJsonAsync<Response>();
+                if (response.IsSuccess)
+                {
+                    navigation.NavigateTo("SignIn");
+                }
+                else
+                {
+                    navigation.NavigateTo("");
+                }
             }
         }
+    }
+    private async Task<bool> CheckEmailAsync()
+    {
+        var emailChecker = await client.GetFromJsonAsync<Response<UserDto>>($"https://localhost:7190/api/User/GetByEmail?email={user.Email}");
+        if (emailChecker.Value == null) return false;
+        return true;
+    }
+    private async Task<bool> CheckName()
+    {
+        var nameChecker = await client.GetFromJsonAsync<Response<UserDto>>($"https://localhost:7190/api/User/GetByNamel?name={user.Name}");
+        if (nameChecker.Value == null) return false;
+        return true;
     }
 }

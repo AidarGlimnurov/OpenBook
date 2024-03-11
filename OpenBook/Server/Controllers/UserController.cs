@@ -54,7 +54,22 @@ namespace OpenBook.Server.Controllers
         [HttpGet("GetByEmail")]
         public async Task<Response<UserDto>> GetByEmail(string email)
         {
-            return await interactor.GetByEmail(email);
+            var user = await interactor.GetByEmail(email);
+            if (user.Value != null)
+            {
+                user.Value.Password = "";
+            }
+            return user;
+        }
+        [HttpGet("GetByName")]
+        public async Task<Response<UserDto>> GetByName(string name)
+        {
+            var user = await interactor.GetByName(name);
+            if (user.Value != null)
+            {
+                user.Value.Password = "";
+            }
+            return user;
         }
     }
 }

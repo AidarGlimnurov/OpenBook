@@ -17,6 +17,7 @@ namespace OpenBook.Adapter.Repository
 
         public async Task CreateWithBasket(User user)
         {
+
             if (user.Role == null || user.Role.Id == 0)
             {
                 user.Role = await context.Roles.FirstOrDefaultAsync(r => r.Id == user.RoleId);
@@ -61,6 +62,18 @@ namespace OpenBook.Adapter.Repository
             if (email != null && password != null)
             {
                 return await context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public async Task<User> GetByName(string name)
+        {
+            if (name != null)
+            {
+                return await context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Name == name);
             }
             else
             {

@@ -167,5 +167,22 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
+        public async Task<Response<UserDto>> GetByName(string name)
+        {
+            var response = new Response<UserDto>();
+            try
+            {
+                var user = await userRepository.GetByName(name);
+                response.Value = user.ToDto();
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
     }
 }
