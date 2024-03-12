@@ -156,7 +156,7 @@ else
                         {
                             @foreach (var genre in BookGenres.Value.Data)
                             {
-                                            <label>@genre.Name <button @onclick="(()=>RemoveGenre(genre.Id))">Удалить</button></label>
+                                <label>@genre.Name <button @onclick="(()=>RemoveGenre(genre.Id))">Удалить</button></label>
                             }     
                         }
     
@@ -167,7 +167,7 @@ else
                             {
                                 @foreach (var genre in Genres.Value.Data)
                                 {
-                                                <option value="@genre.Id">@genre.Name</option>
+                                    <option value="@genre.Id">@genre.Name</option>
                                 } 
                             }
                             </select>

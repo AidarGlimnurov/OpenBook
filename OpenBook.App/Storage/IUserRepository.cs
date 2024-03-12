@@ -14,5 +14,6 @@ namespace OpenBook.App.Storage
         public Task<User> GetByEmail(string email);
         public Task<User> GetByName(string name);
         public Task CreateWithBasket(User user);
+        public Task Update(User user);
     }
 }

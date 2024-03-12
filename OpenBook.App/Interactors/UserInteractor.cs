@@ -184,5 +184,22 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
+        public async Task<Response> Update(UserDto user)
+        {
+            var response = new Response<UserDto>();
+            try
+            {
+                await userRepository.Update(user.ToEntity());
+                response.IsSuccess = true;
+                await unitWork.Commit();
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
     }
 }

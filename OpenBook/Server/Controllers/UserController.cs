@@ -71,5 +71,10 @@ namespace OpenBook.Server.Controllers
             }
             return user;
         }
+        [HttpPost("Update")]
+        public async Task<Response> Update(UserDto user)
+        {
+            return await interactor.Update(user);
+        }
     }
 }
