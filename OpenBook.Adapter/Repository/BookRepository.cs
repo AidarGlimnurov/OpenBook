@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace OpenBook.Adapter.Repository
 {
@@ -37,6 +38,22 @@ namespace OpenBook.Adapter.Repository
                 book.User = await context.Users.FirstOrDefaultAsync(u => u.Id == book.UserId);
             }
             context.Add(book);
+        }
+
+        public async IAsyncEnumerable<Book> GetAllBooks(int start, int? count)
+        {
+            if (count == null) count = 100;
+
+            int skip = start;
+            int take = count.Value;
+
+            var books = context.Books.Include(b => b.User)
+                .Include(b => b.Cycle).Skip(skip).Take(take);
+
+            foreach (var item in books)
+            {
+                yield return item;
+            }
         }
 
         public async Task<Book> GetBook(int Id)

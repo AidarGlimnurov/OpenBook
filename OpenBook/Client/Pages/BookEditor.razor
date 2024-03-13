@@ -287,8 +287,9 @@ else
             else
             {
                 var resp = await client.GetFromJsonAsync<Response<BookDto>>($"https://localhost:7190/api/Book/Read?id={Id}");
+                if (!await CheckAdmin(resp.Value.UserId.Value)) throw new Exception("User is not Admin!");
                 await GetChapters();
-                Cycles = await client.GetFromJsonAsync<Response<DataPage<CycleDto>>>($"https://localhost:7190/api/Cycle/GetAllForUser?userId={user.Value.Id}&start={0}");
+                Cycles = await client.GetFromJsonAsync<Response<DataPage<CycleDto>>>($"https://localhost:7190/api/Cycle/GetAllForUser?userId={resp.Value.UserId}&start={0}");
                 Genres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetAll?start={0}");
                 //BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={Id}&start={0}");
                 await GetBookGenres();
@@ -299,6 +300,11 @@ else
         {
             navigation.NavigateTo("SignIn");
         }
+    }
+    async Task<bool> CheckAdmin(int id)
+    {
+        if (user.Value.Role.Name == "Admin" || user.Value.Role.Name == "SuperAdmin" || user.Value.Id == id) return true;
+        return false;
     }
     async Task GetChapters()
     {

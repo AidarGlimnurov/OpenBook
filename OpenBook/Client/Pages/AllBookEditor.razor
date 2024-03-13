@@ -1,0 +1,115 @@
+﻿@page "/allbookeditor"
+
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@using System.Net.Http.Headers;
+@using OpenBook.Shared.SupportData;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager navigation
+@inject HttpClient client
+
+@if (books == null)
+{
+    <span>Загрузка...</span>
+}
+else
+{
+    <a href="adminpanel">Назад</a>
+    <br>
+    <label style="color: @labelColor">@msg</label>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    User Name
+                </th>
+                <th>
+                    Edit
+                </th>
+                <th>
+                    Delete
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var book in books.Value.Data)
+            {
+                <tr>
+                    <th>
+                        @book.Name
+                    </th>
+                    <th>
+                        @book.User.Name
+                    </th>
+                    <th>
+                        <button class="btn btn-primary" @onclick="(()=>Edit(book.Id))">Edit</button>
+                    </th>
+                    <th>
+                        <button class="btn btn-danger" @onclick="(()=>Delete(book.Id))">Delete</button>
+                    </th>
+                </tr>                
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    Response? response;
+    Response<UserDto>? user;
+    Response<DataPage<BookDto>>? books;
+
+    string msg;
+    string labelColor = "green";
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
+            await CheckAuth();
+            if (!await CheckAdmin()) throw new Exception("User is not Admin!");
+            await GetBooks();
+        }
+        catch (Exception ex)
+        {
+            navigation.NavigateTo("SignIn");
+        }
+    }
+    async Task<bool> CheckAdmin()
+    {
+        if (user.Value.Role.Name == "Admin" || user.Value.Role.Name == "SuperAdmin") return true;
+        return false;
+    }
+    async Task<bool> CheckAuth()
+    {
+        user = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+        return user.IsSuccess;
+    }
+    async Task GetBooks()
+    {
+        books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetAllBooks?start={0}");
+
+    }
+    void Edit(int id)
+    {
+        navigation.NavigateTo($"BookEditor/{id}");
+    }
+    async Task Delete(int id)
+    {
+        var resp = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Book/Delete?id={id}");
+        if (resp.IsSuccess)
+        {
+            labelColor = "green";
+            msg = "Запись успешно удалена!";
+            await GetBooks();
+        }
+        else
+        {
+            labelColor = "red";
+            msg = $"Не удалось удалить запись! Ошибка:\n{resp.ErrorInfo}\n{resp.ErrorMessage}";
+        }
+    }
+}

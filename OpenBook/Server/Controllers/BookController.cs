@@ -83,5 +83,10 @@ namespace OpenBook.Server.Controllers
         {
             return await interactor.GetBooksForCycle(cycleId, start, count);
         }
+        [HttpGet("GetAllBooks")]
+        public async Task<Response<DataPage<BookDto>>> GetAllBooks(int start, int? count)
+        {
+            return await interactor.GetAllBooks(start, count);
+        }
     }
 }

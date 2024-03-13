@@ -273,5 +273,29 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
+        public async Task<Response<DataPage<BookDto>>> GetAllBooks(int start, int? count)
+        {
+            var response = new Response<DataPage<BookDto>>();
+            try
+            {
+                var data = bookRepository.GetAllBooks(start, count);
+
+                List<BookDto> books = new();
+                await foreach (var item in data)
+                {
+                    books.Add(item.ToDto());
+                }
+                response.Value.Data = books.ToArray();
+                response.Value.Start = start;
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
     }
 }

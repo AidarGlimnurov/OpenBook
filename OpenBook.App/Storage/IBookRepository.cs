@@ -12,6 +12,7 @@ namespace OpenBook.App.Storage
         Task Create(Book book);
         Task Update(Book book);
         IAsyncEnumerable<Book> GetBooks(int start, int? count, bool? isPublic, string? name);
+        IAsyncEnumerable<Book> GetAllBooks(int start, int? count);
         IAsyncEnumerable<Book> GetBooksForAuthor(int userId, int start, int? count, bool? isPublic);
         Task Published(int bookId, bool action);
         Task AddGenre(int bookId, int genreId);

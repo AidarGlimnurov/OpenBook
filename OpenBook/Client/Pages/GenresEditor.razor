@@ -1,0 +1,135 @@
+﻿@page "/genresEditor"
+
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@using System.Net.Http.Headers;
+@using OpenBook.Shared.SupportData;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager navigation
+@inject HttpClient client
+
+@if (genres == null)
+{
+    <span>Загрузка...</span>
+}
+else
+{
+    <a href="adminpanel">Назад</a>
+    <br>
+    <label style="color: @labelColor">@msg</label>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Save</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var genre in genres.Value.Data)
+            {
+                <tr>
+                    <td>@genre.Id</td>
+                    <td><input @bind="@genre.Name" class="form-control"></td>
+                    <td><button @onclick="(()=>Save(genre))" class="btn btn-warning">Сохранить</button></td>
+                    <td><button @onclick="(()=>Delete(genre.Id))" class="btn btn-danger">Удалить</button></td>
+                </tr>
+            }
+            <tr>
+                <td>-</td>
+                <td><input @bind="@genre.Name" class="form-control"></td>
+                <td><button @onclick="Create" class="btn btn-primary">Создать</button></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+}
+@code {
+    Response? response;
+    Response<UserDto>? user;
+    Response<DataPage<GenreDto>>? genres;
+
+    GenreDto genre = new();
+
+    string msg;
+    string labelColor = "green";
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
+            await CheckAuth();
+            if (!await CheckAdmin()) throw new Exception("User is not Admin!");
+            await GetGenres();
+        }
+        catch (Exception ex)
+        {
+            navigation.NavigateTo("SignIn");
+        }
+    }
+    async Task<bool> CheckAdmin()
+    {
+        if (user.Value.Role.Name == "Admin" || user.Value.Role.Name == "SuperAdmin") return true;
+        return false;
+    }
+    async Task<bool> CheckAuth()
+    {
+        user = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+        return user.IsSuccess;
+    }
+    async Task GetGenres()
+    {
+        genres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetAll?start={0}");
+    }
+    async Task Create()
+    {
+        using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Genre/CreateWithEntity", genre);
+        TestResponse.EnsureSuccessStatusCode();
+        response = await TestResponse.Content.ReadFromJsonAsync<Response>();
+        if (response.IsSuccess)
+        {
+            msg = "Жанр успешно создан!";
+            labelColor = "green";
+            genre = new();
+            await GetGenres();
+        }
+        else
+        {
+            msg = $"Не удалось создать жанр! Ошибка:\n{response.ErrorInfo}";
+            labelColor = "red";
+        }
+    }
+    async Task Save(GenreDto genre)
+    {
+        using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Genre/UpdateWithEntity", genre);
+        TestResponse.EnsureSuccessStatusCode();
+        response = await TestResponse.Content.ReadFromJsonAsync<Response>();
+        if (response.IsSuccess)
+        {
+            msg = "Жанр успешно обновлён!";
+            labelColor = "green";
+            await GetGenres();
+        }
+        else
+        {
+            msg = $"Не удалось обновить жанр! Ошибка:\n{response.ErrorInfo}";
+            labelColor = "red";
+        }
+    }
+    async Task Delete(int id)
+    {
+        var resp = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Genre/Delete?id={id}");
+        if (resp.IsSuccess)
+        {
+            labelColor = "green";
+            msg = "Жанр успешно удален!";
+        }
+        else
+        {
+            labelColor = "red";
+            msg = $"Не удалось удалить жанр! Ошибка:\n{resp.ErrorInfo}\n{resp.ErrorMessage}";
+        }
+    }
+}
