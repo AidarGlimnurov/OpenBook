@@ -98,7 +98,7 @@
 </style>
 @if (Id != "0" && book.Name == null)
 {
-            <span>Загрузка...</span>
+    <span>Загрузка...</span>
 }
 else
 {
@@ -139,7 +139,7 @@ else
     
                     <input type="text" placeholder="Автор" @bind="book.Author">
                     <br>
-                    <div style="display: flex; flex-direction: row; flex: 1 1">
+                    @*<div style="display: flex; flex-direction: row; flex: 1 1">*@
                         <select @bind="book.CycleId">
                            <option selected>Выбрать</option>
                         @if (Cycles != null)
@@ -151,28 +151,46 @@ else
                         }
                         </select>
                         <button class="btn btn-success" @onclick="GoToCycleEditor">+</button>
+                        <hr />
                         <div style="display: flex; flex-direction: column">
-                        @if (BookGenres != null)
-                        {
-                            @foreach (var genre in BookGenres.Value.Data)
-                            {
-                                <label>@genre.Name <button @onclick="(()=>RemoveGenre(genre.Id))">Удалить</button></label>
-                            }     
-                        }
-    
                             <select @onchange="HandleGenreChange">
-                            @*                                <option value="0" selected>Выбрать</option>*@
+                                @*<option value="0" selected>Выбрать</option>*@
     
-                            @if (Genres != null)
-                            {
-                                @foreach (var genre in Genres.Value.Data)
+                                @if (Genres != null)
                                 {
-                                    <option value="@genre.Id">@genre.Name</option>
-                                } 
-                            }
+                                    @foreach (var genre in Genres.Value.Data)
+                                    {
+                                        <option value="@genre.Id">@genre.Name</option>
+                                    } 
+                                }
                             </select>
+
+                            @if (BookGenres != null)
+                            {
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Delete</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var genre in BookGenres.Value.Data)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <label>@genre.Name</label>
+                                                </td>
+                                                <td>
+                                                    <button @onclick="(()=>RemoveGenre(genre.Id))">Удалить</button>
+                                                </td>
+                                            </tr>
+                                        } 
+                                    </tbody>
+                                </table>    
+                            }
                         </div>
-                    </div>
+                    @*</div>*@
                 </div>
             </div>
     
