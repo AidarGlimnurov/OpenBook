@@ -1,0 +1,114 @@
+﻿@page "/mycycles"
+
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@using System.Net.Http.Headers;
+@using OpenBook.Shared.SupportData;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager navigation
+@inject HttpClient client
+
+@if (cycles == null)
+{
+    <span>Загрузка...</span>
+}
+else
+{
+    <a href="adminpanel">Назад</a>
+    <br>
+    <label style="color: @labelColor">@msg</label>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Change</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td colspan="2" style="text-align:center"><button @onclick="Create" class="btn btn-primary">Создать</button></td>
+                <td></td>
+            </tr>
+            @foreach (var cycle in cycles.Value.Data)
+            {
+                <tr>
+                    <td>@cycle.Id</td>
+                    <td><label>@cycle.Name</label></td>
+                    <td><button @onclick="(()=>Change(cycle.Id))" class="btn btn-warning">Изменить</button></td>
+                    <td><button @onclick="(()=>Delete(cycle.Id))" class="btn btn-danger">Удалить</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@code {
+    Response? response;
+    Response<UserDto>? user;
+    Response<DataPage<CycleDto>>? cycles;
+
+    CycleDto cycle = new();
+
+    string msg;
+    string labelColor = "green";
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
+            await CheckAuth();
+            if (!await CheckAdmin()) throw new Exception("User is not Admin!");
+            await GetCycles();
+        }
+        catch (Exception ex)
+        {
+            navigation.NavigateTo("SignIn");
+        }
+    }
+    async Task<bool> CheckAdmin()
+    {
+        if (user.Value.Role.Name == "Admin" || user.Value.Role.Name == "SuperAdmin") return true;
+        return false;
+    }
+    async Task<bool> CheckAuth()
+    {
+        user = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+        return user.IsSuccess;
+    }
+    async Task GetCycles()
+    {
+        cycles = await client.GetFromJsonAsync<Response<DataPage<CycleDto>>>($"https://localhost:7190/api/Cycle/GetAll?start={0}");
+    }
+    void GoToCycleEditor(int id)
+    {
+        navigation.NavigateTo($"/cycleeditor/{id}");
+
+    }
+    async Task Create()
+    {
+        GoToCycleEditor(0);
+    }
+    async Task Change(int id)
+    {
+        GoToCycleEditor(id);
+    }
+    async Task Delete(int id)
+    {
+        var resp = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Cycle/Delete?id={id}");
+        if (resp.IsSuccess)
+        {
+            labelColor = "green";
+            msg = "Цикл успешно удален!";
+            await GetCycles();
+        }
+        else
+        {
+            labelColor = "red";
+            msg = $"Не удалось удалить цикл! Ошибка:\n{resp.ErrorInfo}\n{resp.ErrorMessage}";
+        }
+    }
+}
+

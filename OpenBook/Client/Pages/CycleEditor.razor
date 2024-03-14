@@ -1,4 +1,4 @@
-﻿@page "/cycleeditor/{Id}/{BookId}"
+﻿@page "/cycleeditor/{Id}"
 @using OpenBook.Shared.Dtos;
 @using OpenBook.Shared.OutputData;
 @using OpenBook.Shared.SupportData;
@@ -33,6 +33,7 @@
 }
 else
 {
+    <a href="mycycles">Назад</a>
     <div class="MainBox" style="background: gray;">
         <div class="Box">
             <div class="content" style="text-align: center">
@@ -49,19 +50,13 @@ else
             </div>
         </div>   
         <div style="display: flex; flex-flow:column; align-items:center">
-            <button @onclick = "Save">Сохранить</button>
-            @if (BookId != "0")
-            {
-                <a href="bookeditor/@BookId">Вернуться к книге</a>
-            }
+            <button @onclick = "Save" class="btn btn-primary">Сохранить</button>
         </div>
     </div>
 }
 @code {
     [Parameter]
     public string Id { get; set; }
-    [Parameter]
-    public string BookId { get; set; }
 
     CycleDto cycle = new();
 
