@@ -1,8 +1,68 @@
 ﻿@page "/"
 @layout PageLayout
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@using System.Net.Http.Headers;
+@using OpenBook.Shared.SupportData;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager navigation
+@inject HttpClient client
 
-<h3>Index</h3>
+<style>
+    .flexContainer{
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        width: 100%;
+        align-items: center;
+    }
+    .innerContainer{
+        min-height: 50vh;
+        width: 100%;
+        text-align: center;
+        padding: 15px;
+    }
+    .boxMain{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between
+    }
+</style>
+<div class="flexContainer">
+    <div class="innerContainer" style="background: #778899">
+        <h2 style="margin-bottom: auto;">OpenBook</h2>
+        
+        <p style="flex: 1; margin-top: 15%; margin-bottom:15%">
+            Какой-то текст
+        </p>
+        
+        <button class="btn btn-primary" style="margin-top: auto;" @onclick="GoToBooks">Читать</button>
+    </div>
+    <div class="innerContainer" style="background: #2F4F4F">
+        <h2>Безграничное творчество</h2>
+        <p style="flex: 1; margin-top: 15%; margin-bottom:15%">
+            Какой-то текст
+        </p>
+        <button class="btn btn-primary" @onclick="GoToMyBooks">Стать автором</button>
+    </div>
+    <div class="innerContainer"  style="background: #778899">
+        <div class="boxMain">
+            <h2>О проекте</h2>
+
+            <p style="flex: 1; margin-top: 15%; margin-bottom:15%">
+                Какой-то текст
+            </p>
+        </div>
+    </div>
+</div>
 
 @code {
-
+    void GoToBooks()
+    {
+        navigation.NavigateTo("books");
+    }
+    void GoToMyBooks()
+    {
+        navigation.NavigateTo("mybooks");
+    }
 }
