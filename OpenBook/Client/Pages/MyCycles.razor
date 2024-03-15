@@ -80,7 +80,7 @@ else
     }
     async Task GetCycles()
     {
-        cycles = await client.GetFromJsonAsync<Response<DataPage<CycleDto>>>($"https://localhost:7190/api/Cycle/GetAll?start={0}");
+        cycles = await client.GetFromJsonAsync<Response<DataPage<CycleDto>>>($"https://localhost:7190/api/Cycle/GetAllForUser?userId={user.Value.Id}&start={0}");
     }
     void GoToCycleEditor(int id)
     {

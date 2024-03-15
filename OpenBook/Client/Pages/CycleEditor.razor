@@ -34,7 +34,7 @@
 else
 {
     <a href="mycycles">Назад</a>
-    <p style="color:red">msg</p>
+    <p style="color:red">@msg</p>
     <div class="MainBox" style="background: gray;">
         <div class="Box">
             <div class="content" style="text-align: center">
@@ -109,6 +109,7 @@ else
             else
             {
                 var resp = await client.GetFromJsonAsync<Response<CycleDto>>($"https://localhost:7190/api/Cycle/Read?id={Id}");
+                await GetBooks();
                 cycle = resp.Value;
             }
         }
@@ -119,7 +120,7 @@ else
     }
     async Task GetBooks()
     {
-        books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Cycle/Read?cycleId={Id}&start={0}");
+        books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooksForCycle?cycleId={Id}&start={0}");
     }
     async Task<bool> CheckAuth()
     {
@@ -173,6 +174,7 @@ else
         var response = await TestResponse.Content.ReadFromJsonAsync<Response>();
         if (response.IsSuccess)
         {
+            await GetBooks();
         }
         else
         {
