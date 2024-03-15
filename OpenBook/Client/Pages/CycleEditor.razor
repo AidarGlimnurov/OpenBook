@@ -34,6 +34,7 @@
 else
 {
     <a href="mycycles">Назад</a>
+    <p style="color:red">msg</p>
     <div class="MainBox" style="background: gray;">
         <div class="Box">
             <div class="content" style="text-align: center">
@@ -53,6 +54,32 @@ else
             <button @onclick = "Save" class="btn btn-primary">Сохранить</button>
         </div>
     </div>
+    <div class="MainBox" style="background: gray;">
+        @if (books != null)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                @foreach (var book in books.Value.Data)
+                {
+                    <thead>
+                        <tr>
+                            <th>@book.Id</th>
+                            <th>@book.Name</th>
+                            <th><button class="btn btn-warning" @onclick="(()=>Edit(book.Id))">Edit</button></th>
+                            <th><button class="btn btn-danger" @onclick="(()=>Delete(book))">Delete</button></th>
+                        </tr>
+                    </thead>                    
+                }
+            </table>            
+        }
+    </div>
 }
 @code {
     [Parameter]
@@ -63,6 +90,10 @@ else
     Response? response;
 
     Response<UserDto>? user = new();
+
+    Response<DataPage<BookDto>> books;
+
+    string msg;
 
     protected override async Task OnInitializedAsync()
     {
@@ -86,7 +117,10 @@ else
             navigation.NavigateTo("SignIn");
         }
     }
-
+    async Task GetBooks()
+    {
+        books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Cycle/Read?cycleId={Id}&start={0}");
+    }
     async Task<bool> CheckAuth()
     {
         var resp = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
@@ -124,6 +158,25 @@ else
 
                 cycle.Cover = imageBytes;
             }
+        }
+    }
+    private void Edit(int id)
+    {
+        navigation.NavigateTo($"BookEditor/{id}");
+    }
+    private async Task Delete(BookDto book)
+    {
+        book.CycleId = 0;
+        book.Cycle = null;
+        using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Book/Update", book);
+        TestResponse.EnsureSuccessStatusCode();
+        var response = await TestResponse.Content.ReadFromJsonAsync<Response>();
+        if (response.IsSuccess)
+        {
+        }
+        else
+        {
+            msg = $"Не удалось удалить книгу из цикла.\nОшибка: {response.ErrorInfo}\n{response.ErrorMessage}";
         }
     }
 }
