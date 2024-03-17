@@ -74,7 +74,7 @@ namespace OpenBook.Adapter.Repository
 
             if (name != null && name != "!-!")
             {
-                books = books.Where(b => b.Name.Contains(name));
+                books = books.Where(b => b.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
             }
 
             foreach (var item in books)

@@ -10,6 +10,7 @@ namespace OpenBook.App.Storage
     public interface ICycleRepository : IRepository<Cycle>
     {
         IAsyncEnumerable<Cycle> GetAll(int start, int? count);
+        IAsyncEnumerable<Cycle> GetWithName(int start, int? count, string? name);
         IAsyncEnumerable<Cycle> GetAllForUser(int userId, int start, int? count);
         Task Create(Cycle cycle);
         Task Update(Cycle cycle);

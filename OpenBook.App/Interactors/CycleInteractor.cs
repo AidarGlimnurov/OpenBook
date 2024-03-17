@@ -5,10 +5,12 @@ using OpenBook.Domain.Entity;
 using OpenBook.Shared.Dtos;
 using OpenBook.Shared.OutputData;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace OpenBook.App.Interactors
 {
@@ -154,6 +156,30 @@ namespace OpenBook.App.Interactors
             try
             {
                 var data = cycleRepository.GetAllForUser(userId, start, count);
+
+                List<CycleDto> cycle = new();
+                await foreach (var item in data)
+                {
+                    cycle.Add(item.ToDto());
+                }
+                response.Value.Data = cycle.ToArray();
+                response.Value.Start = start;
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
+        public async Task<Response<DataPage<CycleDto>>> GetWithName(int start, int? count, string? name)
+        {
+            var response = new Response<DataPage<CycleDto>>();
+            try
+            {
+                var data = cycleRepository.GetWithName(start, count, name);
 
                 List<CycleDto> cycle = new();
                 await foreach (var item in data)

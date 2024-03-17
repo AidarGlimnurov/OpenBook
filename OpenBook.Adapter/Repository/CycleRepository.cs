@@ -52,6 +52,26 @@ namespace OpenBook.Adapter.Repository
             }
         }
 
+        public async IAsyncEnumerable<Cycle> GetWithName(int start, int? count, string? name)
+        {
+            if (count == null) count = 100;
+
+            int skip = start;
+            int take = count.Value;
+
+            var cycles = context.Cycles.Include(c => c.User).Skip(skip).Take(take);
+
+            if (name != null && name != "!-!")
+            {
+                cycles = cycles.Where(c => c.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
+            }
+
+            foreach (var item in cycles)
+            {
+                yield return item;
+            }
+        }
+
         public async Task Update(Cycle cycle)
         {
             var user = await context.Users.FirstOrDefaultAsync(u => u.Id == cycle.UserId);

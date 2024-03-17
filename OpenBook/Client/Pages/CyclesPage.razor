@@ -1,0 +1,109 @@
+﻿@page "/CyclesPage"
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@inject HttpClient client
+@inject NavigationManager navigation
+
+@if (cycles == null)
+{
+    <label>Загрузка...</label>
+}
+else
+{
+    <input id="name" class="input-medium search-query" style="width: 80%" @bind="name"/>
+    <button @onclick="Search" class="oi oi-magnifying-glass" style="height: 30px"></button>
+    foreach (var cycle in cycles.Value.Data)
+    {
+        <div style="width: 23%; height: 15%; margin: 8px; display: inline-block; text-align: center;">
+            <a href="cyclePage/@cycle.Id">
+                <img src="data:image/jpeg;base64,@Convert.ToBase64String(cycle.Cover)" style="background:gray; height: 100%; width: 95%;" >
+                <label style="color: black">@cycle.Name</label>
+            </a>
+        </div>
+    }
+
+    <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin: 15px">
+        <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
+            @if (cycles.Value.Start > 0)
+            {
+                <button class="oi oi-arrow-left  btn btn-secondary" @onclick="GetLastPage" style="background:#F8E9A1; border: none;  height: 100%"></button>
+            }
+            else
+            {
+                <button class="oi oi-arrow-left btn btn-secondary" disabled style="background:#F8E9A1; border: none;  height: 100%"></button>
+            }
+        </div>
+        <div style=" font-size:15pt;">@PageNumber</div>
+        <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
+            @if (cycles.Value.Count == 10)
+            {
+                <button class="oi oi-arrow-right btn btn-secondary" @onclick="GetNextPage" style="background:#F8E9A1; border: none; height: 100%"></button>
+            }
+            else
+            {
+                <button class="oi oi-arrow-right  btn btn-secondary" disabled style="background:#F8E9A1; border: none;  height: 100%"></button>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    Response<DataPage<CycleDto>>? cycles;
+    int pageCount = 0;
+    int start = 0;
+    int count = 10;
+    public int PageNumber { get; set; } = 1;
+    string name = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCycles(start, count);
+    }
+
+    private void ToBook(int id)
+    {
+        navigation.NavigateTo($"cyclePage/{id}");
+    }
+
+    public async Task GetNextPage()
+    {
+        start += 10;
+        PageNumber++;
+        if (name == "")
+        {
+            await GetCycles(start, count);
+        }
+        else
+        {
+            await GetCycles(start, count, name);
+        }
+    }
+    public async Task GetLastPage()
+    {
+        start -= 10;
+        PageNumber--;
+        if (name == "")
+        {
+            await GetCycles(start, count);
+        }
+        else
+        {
+            await GetCycles(start, count, name);
+        }
+    }
+    public async Task Search()
+    {
+        if (name == "")
+        {
+            await GetCycles(start, count);
+        }
+        else
+        {
+            await GetCycles(start, count, name);
+        }
+    }
+
+    private async Task GetCycles(int start, int count, string? name = "")//"!-!")
+    {
+        cycles = await client.GetFromJsonAsync<Response<DataPage<CycleDto>>>($"https://localhost:7190/api/Cycle/GetBooks?start={start}&count={count}&name={name}");
+    }
+}
