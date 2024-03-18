@@ -3,9 +3,15 @@
 @using OpenBook.Shared.OutputData;
 @using OpenBook.Shared.SupportData;
 @using System.Net.Http.Headers;
+@using System.ComponentModel;
+@using System.Net;
+@using iTextSharp.text;
+@using iTextSharp.text.html.simpleparser;
+@using iTextSharp.text.pdf;
 @inject HttpClient client
 @inject NavigationManager navigation
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime JSRuntime
 
 @if (chapter == null)
 {
@@ -16,6 +22,7 @@ else
     <a href="bookcontent/@chapter.BookId">Назад</a>
     <h2>Глава @chapter.Number</h2>
     <h2>@chapter.Name</h2>
+    <h3><button class="btn btn-warning" @onclick="DownloadPDF">Скачать</button></h3>
     <div style="border: 1px solid black; background: #f6f7f7; width: 100%; min-height: 100vh; padding: 5px; border-radius: 5px; margin-bottom: 5px">
         @((MarkupString)markdownHtml)
     </div>
@@ -40,5 +47,46 @@ else
     {
         var pipeline = new Markdig.MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
         return Markdig.Markdown.ToHtml(markdown, pipeline);
+    }
+    private async Task DownloadPDF()
+    {
+        var pdfBytes = await GeneratePDF();
+        if (pdfBytes != null && pdfBytes.Length > 0)
+        {
+            // Создание временного имени файла
+            var fileName = "document.pdf";
+
+            // Получение пути к папке для загрузки
+            var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+            // Полный путь к файлу
+            var filePath = Path.Combine(folderPath, fileName);
+
+            // Запись массива байтов в файл
+            await File.WriteAllBytesAsync(filePath, pdfBytes);
+
+            // Скачивание файла
+            await JSRuntime.InvokeVoidAsync("downloadFile", fileName, filePath);
+        }
+    }
+
+    private async Task<byte[]> GeneratePDF()
+    {
+        // Создаем документ PDF
+        Document document = new Document();
+        MemoryStream memoryStream = new MemoryStream();
+        PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+        document.Open();
+
+        // Преобразуем HTML в PDF
+        StringReader stringReader = new StringReader(markdownHtml);
+        HTMLWorker htmlWorker = new HTMLWorker(document);
+        htmlWorker.Parse(stringReader);
+
+        // Закрываем документ
+        document.Close();
+
+        // Возвращаем PDF в виде массива байтов
+        return memoryStream.ToArray();
     }
 }
