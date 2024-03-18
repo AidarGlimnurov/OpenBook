@@ -48,51 +48,51 @@
 </style>
 @if (cycle == null)
 {
-        <span>Загрузка...</span>
+    <span>Загрузка...</span>
 }
 else
 {
-        <div class="columnContainer">
-            <a href="CyclesPage">Назад</a>
-            <div class="rowContainer">
-                <div>
-                    <img style="width: 90%; height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(cycle.Value.Cover)">
-                </div>
-                <div class="columnContainer">
-                    <h2>@cycle.Value.Name</h2>
-
-                    <button class="btn btn-primary" @onclick="GoToBookReader" style="margin-top: 5px; margin-bottom: 5px; width: 30%">Читать</button>
-
-                    <div>
-                        <p>@cycle.Value.Description</p>
-                    @* <button>Раскрыть блок</button> *@
-                    </div>
-                </div>
+    <div class="columnContainer">
+        <a href="CyclesPage">Назад</a>
+        <div class="rowContainer">
+            <div>
+                <img style="width: 90%; height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(cycle.Value.Cover)">
             </div>
-            <div class="innerColumnContainer">
-                <div style="text-align:center">
-                    <h2>Книги</h2>
+            <div class="columnContainer">
+                <h2>@cycle.Value.Name</h2>
+
+                <button class="btn btn-primary" @onclick="GoToBookReader" style="margin-top: 5px; margin-bottom: 5px; width: 30%">Читать</button>
+
+                <div>
+                    <p>@cycle.Value.Description</p>
+                @* <button>Раскрыть блок</button> *@
                 </div>
-                @if (books == null || books.Value.Data == null)
-                {
-                    <p>Скоро здесь будут книги...</p>
-                }
-                else
-                {
-                    <div>
-                        @foreach (var book in books.Value.Data)
-                        {
-                            <a href="book/@book.Id">
-                                <div style="border-radius: 5px; border: 1px solid black; width: 100%; padding: 5px">
-                                    <img style="width: 60px; height: 80px" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)">
-                                    <label>@book.Name</label>
-                                </div>
-                            </a>
-                        }
-                    </div>                    
-                }
             </div>
         </div>
+        <div class="innerColumnContainer">
+            <div style="text-align:center">
+                <h2>Книги</h2>
+            </div>
+            @if (books == null || books.Value.Data == null)
+            {
+                <p>Скоро здесь будут книги...</p>
+            }
+            else
+            {
+                <div>
+                    @foreach (var book in books.Value.Data)
+                    {
+                        <a href="book/@book.Id">
+                            <div style="border-radius: 5px; border: 1px solid black; width: 100%; padding: 5px">
+                                <img style="width: 60px; height: 80px" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)">
+                                <label>@book.Name</label>
+                            </div>
+                        </a>
+                    }
+                </div>                    
+            }
+        </div>
+    </div>
 }
 @code {
     [Parameter]
