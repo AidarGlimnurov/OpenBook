@@ -52,6 +52,12 @@ namespace OpenBook.Adapter.Repository
             }
         }
 
+        public async Task<Cycle> GetCycle(int id)
+        {
+            var cycle = await context.Cycles.Include(c => c.User).FirstOrDefaultAsync(c => c.Id == id);
+            return cycle;
+        }
+
         public async IAsyncEnumerable<Cycle> GetWithName(int start, int? count, string? name)
         {
             if (count == null) count = 100;

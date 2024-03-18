@@ -104,6 +104,6 @@ else
 
     private async Task GetCycles(int start, int count, string? name = "")//"!-!")
     {
-        cycles = await client.GetFromJsonAsync<Response<DataPage<CycleDto>>>($"https://localhost:7190/api/Cycle/GetBooks?start={start}&count={count}&name={name}");
+        cycles = await client.GetFromJsonAsync<Response<DataPage<CycleDto>>>($"https://localhost:7190/api/Cycle/GetWithName?start={start}&count={count}&name={name}");
     }
 }

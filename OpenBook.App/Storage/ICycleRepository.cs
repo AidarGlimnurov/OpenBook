@@ -14,5 +14,6 @@ namespace OpenBook.App.Storage
         IAsyncEnumerable<Cycle> GetAllForUser(int userId, int start, int? count);
         Task Create(Cycle cycle);
         Task Update(Cycle cycle);
+        Task<Cycle> GetCycle(int id);
     }
 }

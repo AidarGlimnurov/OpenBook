@@ -58,6 +58,23 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
+        public async Task<Response<CycleDto>> GetCycle(int id)
+        {
+            var response = new Response<CycleDto>();
+            try
+            {
+                var cycle = await cycleRepository.GetCycle(id);
+                response.Value = cycle.ToDto();
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
         public async Task<Response<CycleDto>> Read(int id)
         {
             var response = new Response<CycleDto>();

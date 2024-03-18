@@ -53,6 +53,7 @@
 else
 {
     <div class="columnContainer">
+        <a href="Books">Назад</a>
         <div class="rowContainer">
             <div>
                 <img style="width: 90%; height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Value.Cover)">
@@ -66,7 +67,7 @@ else
     
             @if (book.Value.Cycle != null)
             {
-                            <a href="cycle/{@book.Value.CycleId}">@book.Value.Cycle.Name</a>
+                <a href="cycle/{@book.Value.CycleId}">@book.Value.Cycle.Name</a>
             }
                 <div class="newLineContainer">
                 @if (genres != null)

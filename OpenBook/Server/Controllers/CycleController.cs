@@ -30,6 +30,11 @@ namespace OpenBook.Server.Controllers
         {
             return await interactor.Read(id);
         }
+        [HttpGet("GetCycle")]
+        public async Task<Response<CycleDto>> GetCycle(int id)
+        {
+            return await interactor.GetCycle(id);
+        }
         [HttpPost("UpdateWithEntity")]
         public async Task<Response> UpdateWithEntity([FromBody] CycleDto cycle)
         {

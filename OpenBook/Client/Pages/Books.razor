@@ -4,6 +4,19 @@
 @inject HttpClient client
 @inject NavigationManager navigation
 
+<style>
+    .container .content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease-out;
+        width: auto;
+    }
+
+    .container .content.show {
+        max-height: 200px; /* Меняйте на желаемую высоту */
+    }
+</style>
+
 @if (books == null)
 {
     <label>Загрузка...</label>
@@ -12,6 +25,29 @@ else
 {
     <input id="name" class="input-medium search-query" style="width: 80%" @bind="name"/>
     <button @onclick="Search" class="oi oi-magnifying-glass" style="height: 30px"></button>
+
+    <div class="container">
+        <button @onclick="Toggle">
+            @if (isExpanded)
+            {
+                <label>&cuwed;</label>
+            }
+            else
+            {
+                <label>&cuvee;</label>
+            }
+        </button>
+        @if (isExpanded)
+        {
+@*                <div class="content">
+                    <div>
+                       <input id="name" class="input-medium search-query" style="width: 80%" @bind="name"/>
+                        <button @onclick="Search" class="oi oi-magnifying-glass" style="height: 30px"></button>
+                    </div>
+                </div>*@
+                <button @onclick="CycleSearch">Найти по циклу</button>
+        }
+    </div>
     foreach (var book in books.Value.Data)
     {
         <div style="width: 23%; height: 15%; margin: 8px; display: inline-block; text-align: center;">
@@ -105,5 +141,17 @@ else
     private async Task GetBooks(int start, int count, string? name = "")//"!-!")
     {
         books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooks?start={start}&count={count}&isPublic=true&name={name}");
+    }
+
+    private void CycleSearch()
+    {
+        navigation.NavigateTo("CyclesPage");
+    }
+
+    bool isExpanded = false;
+
+    void Toggle()
+    {
+        isExpanded = !isExpanded;
     }
 }
