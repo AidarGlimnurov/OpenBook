@@ -5,6 +5,7 @@
 @using System.Net.Http.Headers;
 @using System.ComponentModel;
 @using System.Net;
+@using System.Web;
 @using iTextSharp.text;
 @using iTextSharp.text.html.simpleparser;
 @using iTextSharp.text.pdf;
@@ -12,6 +13,20 @@
 @inject NavigationManager navigation
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject IJSRuntime JSRuntime
+
+<style>
+    .refHover:hover{
+        cursor: pointer;
+        background: #F4BB01;
+    }
+    .divHover:hover{
+        cursor: pointer;
+        background: #F4BB01;
+    }
+    .labelHover:hover{
+        cursor: pointer;
+    }
+</style>
 
 @if (chapter == null)
 {
@@ -22,7 +37,11 @@ else
     <a href="bookcontent/@chapter.BookId">Назад</a>
     <h2>Глава @chapter.Number</h2>
     <h2>@chapter.Name</h2>
-    <h3><button class="btn btn-warning" @onclick="DownloadPDF">Скачать</button></h3>
+@*    <a href="@path" class="refHover">
+        <div class="divHover" style="height: 4vh; width: 12vh; margin-top: 5px; margin-bottom: 5px; color: black; border-radius: 5px; background: #FFC300; text-align:center; padding:0.5vh">
+            <label class="labelHover">Скачать</label>
+        </div>
+    </a>*@
     <div style="border: 1px solid black; background: #f6f7f7; width: 100%; min-height: 100vh; padding: 5px; border-radius: 5px; margin-bottom: 5px">
         @((MarkupString)markdownHtml)
     </div>
@@ -34,7 +53,7 @@ else
     public string Id { get; set; }
 
     string markdownHtml;
-
+    string path;
     ChapterDto chapter;
     protected override async Task OnInitializedAsync()
     {
@@ -42,6 +61,7 @@ else
         chapter = resp.Value;
         markdownHtml = Markdown.ToHtml(chapter.Content);
         int a = 0;
+        path = $"https://localhost:7190/api/Chapter/DownloadFile?data={HttpUtility.UrlEncode(markdownHtml)}&name={HttpUtility.UrlEncode(chapter.Name)}.pdf";
     }
     private string ConvertMarkdownToHtml(string markdown)
     {
@@ -50,24 +70,9 @@ else
     }
     private async Task DownloadPDF()
     {
-        var pdfBytes = await GeneratePDF();
-        if (pdfBytes != null && pdfBytes.Length > 0)
-        {
-            // Создание временного имени файла
-            var fileName = "document.pdf";
-
-            // Получение пути к папке для загрузки
-            var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
-            // Полный путь к файлу
-            var filePath = Path.Combine(folderPath, fileName);
-
-            // Запись массива байтов в файл
-            await File.WriteAllBytesAsync(filePath, pdfBytes);
-
-            // Скачивание файла
-            await JSRuntime.InvokeVoidAsync("downloadFile", fileName, filePath);
-        }
+        //var pdfBytes = await GeneratePDF();
+        string fullName = chapter.Name + ".pdf";
+        navigation.NavigateTo($"https://localhost:7190/api/Chapter/DownloadFile?data={markdownHtml}&name={fullName}");
     }
 
     private async Task<byte[]> GeneratePDF()

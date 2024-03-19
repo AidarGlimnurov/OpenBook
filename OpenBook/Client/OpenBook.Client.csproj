@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\PasswordReset.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.4.0" />
     <PackageReference Include="iTextSharp" Version="5.5.13.3" />
     <PackageReference Include="Markdig" Version="0.35.0" />
@@ -23,6 +27,18 @@
   <ItemGroup>
     <Folder Include="wwwroot\image\" />
     <Folder Include="wwwroot\fonts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\PasswordReset.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\PasswordReset.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\PasswordReset.razor" />
   </ItemGroup>
 
 </Project>
