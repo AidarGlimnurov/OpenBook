@@ -9,49 +9,73 @@
 @inject HttpClient client
 
 <style>
-    .flexContainer{
+    .flexContainer {
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
         width: 100%;
         align-items: center;
     }
-    .innerContainer{
+    .innerContainer {
         min-height: 50vh;
         width: 100%;
         text-align: center;
-        padding: 15px;
+        position: relative; /* Добавляем позиционирование для псевдоэлемента */
+        color: white;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
     }
-    .boxMain{
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between
+    .innerContainer::before { /* Добавляем псевдоэлемент, который будет служить прозрачным черным блоком */
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Устанавливаем прозрачный черный цвет */
+        z-index: 1; /* Поднимаем слой над изображением */
+    }
+    .innerContent { /* Контейнер для содержимого, чтобы оно отображалось поверх прозрачного блока */
+        position: relative;
+        z-index: 2; /* Устанавливаем слой поверх псевдоэлемента */
+    }
+    .img1 {
+        background-image: url('../image/fight_on_the_mountain.jpg');
+    }
+    .img2 {
+        background-image: url('../image/castle.jpg');
+    }
+    .img3 {
+        background-image: url('../image/night_star.jpg');
     }
 </style>
-<div class="flexContainer">
-    <div class="innerContainer" style="background: #778899">
-        <h2 style="margin-bottom: auto;">OpenBook</h2>
-        
-        <p style="flex: 1; margin-top: 15%; margin-bottom:15%">
-            Какой-то текст
-        </p>
-        
-        <button class="btn btn-primary" style="margin-top: auto;" @onclick="GoToBooks">Читать</button>
-    </div>
-    <div class="innerContainer" style="background: #2F4F4F">
-        <h2>Безграничное творчество</h2>
-        <p style="flex: 1; margin-top: 15%; margin-bottom:15%">
-            Какой-то текст
-        </p>
-        <button class="btn btn-primary" @onclick="GoToMyBooks">Стать автором</button>
-    </div>
-    <div class="innerContainer"  style="background: #778899">
-        <div class="boxMain">
-            <h2>О проекте</h2>
 
-            <p style="flex: 1; margin-top: 15%; margin-bottom:15%">
-                Какой-то текст
-            </p>
+<div class="flexContainer">
+    <div class="innerContainer img1">
+        <div class="innerContent">
+            <div style="padding: 15px;">
+                <h2 style="margin-bottom: auto;">Безграничный мир</h2>
+                <p style="margin-top: 15%; margin-bottom: 15%;">Какой-то текст</p>
+                <button class="btn btn-primary" @onclick="GoToBooks">Читать</button>
+            </div>
+        </div>
+    </div>
+    <div class="innerContainer img2">
+        <div class="innerContent">
+            <div style="padding: 15px;">
+                <h2>Безграничное творчество</h2>
+                <p style="margin-top: 15%; margin-bottom: 15%;">Какой-то текст</p>
+                <button class="btn btn-primary" @onclick="GoToMyBooks">Стать автором</button>
+            </div>
+        </div>
+    </div>
+    <div class="innerContainer img3">
+        <div class="innerContent">
+            <div style="padding: 15px;">
+                <h2>О проекте</h2>
+                <p style="margin-top: 15%; margin-bottom: 15%;">Какой-то текст</p>
+            </div>
         </div>
     </div>
 </div>

@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Pages\PasswordReset.razor" />
+    <None Include="Pages\Auth\PasswordReset.razor" />
   </ItemGroup>
 
 </Project>
