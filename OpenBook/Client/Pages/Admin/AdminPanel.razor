@@ -10,15 +10,15 @@
 
 @if (user == null)
 {
-        <p>Загрузка...</p>
+    <p>Загрузка...</p>
 }
 else
 {
-    <a href="profile">В профиль</a>
-    <br>
-    <h3>Панель администратора</h3>
-    <div >
-        <button class="btn btn-secondary" @onclick="GoToGenresEditor" style="margin: 3px">Управлять жанрами</button>
+    <div style="background: lightgray; padding: 5px; border-radius: 5px; min-height: 80vh; margin 5px;">
+        <a href="profile">В профиль</a>
+        <br>
+        <h3>Панель администратора</h3>
+        <button class="btn btn-secondary"@onclick="GoToGenresEditor" style="margin: 5px">Управлять жанрами</button>
         <br>
         <button class="btn btn-secondary" @onclick="GoToUserEditor" style="margin: 3px">Управлять пользователями</button>
         <br>

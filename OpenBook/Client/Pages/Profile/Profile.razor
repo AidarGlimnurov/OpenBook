@@ -12,7 +12,7 @@
     .mainContainer{
         display: flex;
         flex-direction: column;
-        background: #104C64;
+        background: lightgray;
         border-radius: 25px;
         padding: 5%;
     }
@@ -33,13 +33,13 @@
         width: 100%;
         border-radius: 25px;
         padding: 5%;
-        border: 1px solid #0a2f3e 
+        border: 1px solid black
     }
 </style>
 
 @if (user == null)
 {
-            <span>Загрузка...</span>
+    <span>Загрузка...</span>
 }
 else
 {
@@ -59,15 +59,10 @@ else
                 <button @onclick="EditChange" class="btn btn-secondary">Сохранить</button>
                 <br>
             }
-        </div>
-        <div class="innerDiv">
             <p>Почта: @user.Value.Email</p>
-        </div>
-        <div class="innerDiv">
+            <hr />
             <span>Роль:</span>
             <p>@user.Value.Role.Name</p>
-        </div>
-        <div class="innerDiv">
             @if (user.Value.IsVerified)
             {
                 <span style="color: green;">Ваш аккаунт верифицирован</span>
@@ -78,14 +73,12 @@ else
                 <br>
                 <button class="btn btn-success">Пройти верификацию</button>
             }
-        </div>
-        <div class="innerDiv">
+            <hr />
             <button class="btn btn-secondary" @onclick="GoToPasswordChanger">Сменить пароль</button>
-        </div>
-        <div class="innerDiv">
             <hr />
             <button class="btn btn-primary" @onclick="(() => GoToEditBooks(0))">Мои книги</button>
         </div>
+
         @if (user.Value.Role.Name == "Admin" || user.Value.Role.Name == "SuperAdmin")
         {
             <div class="innerDiv">
