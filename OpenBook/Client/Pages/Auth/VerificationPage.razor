@@ -1,5 +1,120 @@
 ﻿@page "/VerificationPage"
 
-@code {
+@using OpenBook.Shared.Dtos;
+@using OpenBook.Shared.OutputData;
+@using System.Net.Http.Headers;
+@using OpenBook.Shared.SupportData;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject HttpClient client
+@inject NavigationManager navigation 
+<style>
+    .container {
+        border: 2px solid black;
+        border-radius: 10px;
+        padding: 20px;
+        width: 300px;
+        margin: auto;
+        margin-top: 50px;
+    }
 
+    .input-group {
+        margin-bottom: 15px;
+    }
+
+    .rounded-button {
+        border-radius: 5px;
+        padding: 10px;
+        width: 100%;
+        cursor: pointer;
+        background-color: #3498db;
+        color: white;
+        border: none;
+    }
+
+    .rounded-button:disabled {
+        background-color: #95a5a6;
+        cursor: not-allowed;
+    }
+
+    .password-toggle {
+        cursor: pointer;
+        color: #3498db;
+        text-decoration: underline;
+    }
+</style>
+
+@if (isAuth == null)
+{
+        <span>Загрузка...</span>
+}
+else
+{
+    <div class="container">
+        @if (isAuth == true)
+        {
+            <div class="input-group">
+                <button @onclick="GetCode" class="password-toggle">@codeMsg</button>
+                @if (codeResponse.IsSuccess)
+                {
+                    <p>@msg</p>
+                    <input id="code" @bind="code" placeholder="Введите код"/>
+                    <button @onclick="CheckCode" class="password-toggle">Проверить</button>                         
+                }
+            </div>
+        }
+    </div>
+}
+
+@code {
+    bool? isAuth = null;
+
+    Response response;
+    Response codeResponse = new() { IsSuccess = false };
+
+    string code;
+    string msg = "Код отправлен на почту!";
+    string codeMsg = "Получить код на почту";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
+            if (cookieContent != null && await CheckAuth())
+            {
+                isAuth = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            isAuth = false;
+        }
+    }
+
+    async Task<bool> CheckAuth()
+    {
+        var resp = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+        return resp.IsSuccess;
+    }
+
+    private async Task GetCode()
+    {
+        //ToDo создать нужную логику
+        msg = "Код отправлен на почту!";
+        codeMsg = "Получить код повторно";
+    }
+    private async Task CheckCode()
+    {
+        //ToDo создать нужную логику
+
+        if (response.IsSuccess)
+        {
+            navigation.NavigateTo("profile");
+        }
+        else
+        {
+            msg = "Введен не правильный код!!!";
+        }
+    }
 }
