@@ -13,41 +13,45 @@
 }
 else
 {
+<div style="border: 2px solid black; background: #f0f0f0; border-radius: 7px; margin-top: 5px; margin-bottom: 5px;">
     @*     <input id="name" class="input-medium search-query" style="width: 80%" @bind="name" /> *@
     @*     <button @onclick="Search" class="oi oi-magnifying-glass" style="height: 30px"></button> *@
-    foreach (var book in books.Value.Data)
-    {
-                <div style="width: 23%; height: 15%; margin: 8px; display: inline-block; text-align: center;">
-                    <a href="book/@book.Id">
-                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" style="background:gray; height: 100%; width: 95%;">
-                        <label style="color: black">@book.Name</label>
-                    </a>
-                </div>
-    }
+    <div style="min-height: 70vh">
+        @foreach (var book in books.Value.Data)
+        {
+            <div style="width: 100px; height: 150px; margin: 8px; display: inline-block; text-align: center;">
+                <a href="book/@book.Id">
+                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" style="background:gray; height: 100%; width: 95%;">
+                    <label style="color: black">@book.Name</label>
+                </a>
+            </div>
+        }
+    </div>
 
-        <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin: 15px">
-            <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
-            @if (books.Value.Start > 0)
-            {
-                        <button class="oi oi-arrow-left  btn btn-secondary" @onclick="GetLastPage" style="background:#F8E9A1; border: none;  height: 100%"></button>
-            }
-            else
-            {
-                        <button class="oi oi-arrow-left btn btn-secondary" disabled style="background:#F8E9A1; border: none;  height: 100%"></button>
-            }
-            </div>
-            <div style=" font-size:15pt;">@PageNumber</div>
-            <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
-            @if (books.Value.Count == 10)
-            {
-                        <button class="oi oi-arrow-right btn btn-secondary" @onclick="GetNextPage" style="background:#F8E9A1; border: none; height: 100%"></button>
-            }
-            else
-            {
-                        <button class="oi oi-arrow-right  btn btn-secondary" disabled style="background:#F8E9A1; border: none;  height: 100%"></button>
-            }
-            </div>
+    <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin: 15px">
+        <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
+        @if (books.Value.Start > 0)
+        {
+                    <button class="oi oi-arrow-left  btn btn-secondary" @onclick="GetLastPage" style="background:#b7b7b7; border: none;  height: 100%"></button>
+        }
+        else
+        {
+                    <button class="oi oi-arrow-left btn btn-secondary" disabled style="background:#b7b7b7; border: none;  height: 100%"></button>
+        }
         </div>
+        <div style=" font-size:15pt;">@PageNumber</div>
+        <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
+        @if (books.Value.Count == 10)
+        {
+                    <button class="oi oi-arrow-right btn btn-secondary" @onclick="GetNextPage" style="background:#b7b7b7; border: none; height: 100%"></button>
+        }
+        else
+        {
+                    <button class="oi oi-arrow-right  btn btn-secondary" disabled style="background:#b7b7b7; border: none;  height: 100%"></button>
+        }
+        </div>
+    </div>
+</div>
 }
 
 @code {
