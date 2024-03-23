@@ -17,7 +17,8 @@
         flex: 1 1;
         flex-direction:row;
         flex-wrap: wrap;
-        justify-content: space-between;
+        justify-content: space-и
+        ;
         padding: 20px;
         width: 100%;
         margin: 5px;
@@ -65,18 +66,18 @@ else
     
                 <button class="btn btn-primary" @onclick="GoToBookReader" style="margin-top: 5px; margin-bottom: 5px; width: 30%">Читать</button>
     
-            @if (book.Value.Cycle != null)
-            {
-                <a href="cycle/{@book.Value.CycleId}">@book.Value.Cycle.Name</a>
-            }
-                <div class="newLineContainer">
-                @if (genres != null)
+                @if (book.Value.Cycle != null)
                 {
-                    @foreach (var genre in genres.Value.Data)
-                    {
-                        <a href="genre/{@genre.Id}">@genre.Name | </a>
-                    }                    
+                    <a href="cycle/{@book.Value.CycleId}">@book.Value.Cycle.Name</a>
                 }
+                <div class="newLineContainer">
+                    @if (genres != null)
+                    {
+                        @foreach (var genre in genres.Value.Data)
+                        {
+                            <a href="genre/{@genre.Id}">@genre.Name | </a>
+                        }                    
+                    }
                 </div>
                 <div>
                     <p>@book.Value.Description</p>

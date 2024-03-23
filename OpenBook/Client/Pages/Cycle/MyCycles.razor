@@ -14,7 +14,7 @@
 }
 else
 {
-    <a href="adminpanel">Назад</a>
+    <a href="mybooks">Назад</a>
     <br>
     <label style="color: @labelColor">@msg</label>
     <table class="table">
@@ -60,7 +60,7 @@ else
             var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
             await CheckAuth();
-            if (!await CheckAdmin()) throw new Exception("User is not Admin!");
+            //if (!await CheckAdmin()) throw new Exception("User is not Admin!");
             await GetCycles();
         }
         catch (Exception ex)

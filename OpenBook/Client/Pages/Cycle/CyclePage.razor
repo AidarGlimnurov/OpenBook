@@ -17,7 +17,7 @@
         flex: 1 1;
         flex-direction:row;
         flex-wrap: wrap;
-        justify-content: space-between;
+        justify-content: space-evenly;
         padding: 20px;
         width: 100%;
         margin: 5px;
@@ -61,7 +61,7 @@ else
             <div class="columnContainer">
                 <h2>@cycle.Value.Name</h2>
 
-                <button class="btn btn-primary" @onclick="GoToBookReader" style="margin-top: 5px; margin-bottom: 5px; width: 30%">Читать</button>
+                <button class="btn btn-primary" @onclick="GoToBookReader" style="margin-top: 5px; margin-bottom: 5px;">Читать</button>
 
                 <div>
                     <p>@cycle.Value.Description</p>
