@@ -5,14 +5,15 @@
     <div class="wrapper">
 
         <header class="header">
-            <div style="height:120px; background:#F8E9A1; width:100%">
-                <button @onclick="ToggleMenu" style="position: absolute; top: 40px; left: 50px; background: #F8E9A1; border:none; height:50px; width: 50px">
+            <div style="height:120px; background:#f3f3f3; width:100%">
+                <button @onclick="ToggleMenu" style="position: absolute; top: 40px; left: 50px; background: #f3f3f3; border:none; height:50px; width: 50px">
                     <img src="../image/burgerDark.svg" alt="Меню">
                 </button>
                 <br>
                 <NavLink class="nav-link" style="color:black;" href="">
-                   <h1 style="text-align: center; font-family:Lalezar; font-size:48pt;">OpenBook</h1>
+                    <h1 style="text-align: center; font-family:Lalezar; font-size:48pt;">OpenBook</h1>
                 </NavLink>
+
             </div>
         </header>
 
@@ -27,14 +28,16 @@
 
         <div class="overlay" @onclick="CloseMenu" style="display: @overlayDisplay"></div>
 
-        <div class="menu" style="left: @leftNumb; background: #E4DCB9">
-            <button @onclick="GoToProfile" style="background:#F8E9A1; height:120px; width:100%; border:none; text-align: left; font-size:16pt"><span class="oi oi-person" style="margin-left:10px; margin-right:10px; font-size:16pt"></span> Профиль</button>
+        @* <div class="menu" style="left: @leftNumb; background: #E4DCB9"> *@
+        <div class="menu" style="left: @leftNumb; background:white">
+            <button @onclick="GoToProfile" style="background:white; height:120px; width:100%; border:none; text-align: left; font-size:16pt"><span class="oi oi-person" style="margin-left:10px; margin-right:10px; font-size:16pt"></span> Профиль</button>
+            <hr/>
             <div>
-                <button @onclick="GoToHome" style="height:60px; width:100%; border:none; background:#E4DCB9; text-align: left; font-size:16pt"> <span class="oi oi-home" style="margin-left:10px; margin-right:10px; font-size:16pt"></span>Главная</button>
-                <button @onclick="GoToBook" style="height:60px; width:100%; border:none; background:#E4DCB9; text-align: left; font-size:16pt"> <span class="oi oi-book" style="margin-left:10px; margin-right:10px; font-size:16pt"></span> Книги</button>
-                <button @onclick="GoToFavorite" style="height:60px; width:100%; border:none; background:#E4DCB9; text-align: left; font-size:16pt"> <span class="oi oi-star" style="margin-left:10px; margin-right:10px; font-size:16pt"></span> Избранное</button>
-                <div style="height:60px; width:100%; border:none; background:#E4DCB9; text-align: left; font-size:16pt"></div>
-                <button @onclick="GoToLogin" style="height:60px; width:100%; border:none; background:#E4DCB9; font-size:16pt"> <span class="oi oi-account-login" style="margin-left:10px; margin-right:10px; font-size:16pt"></span></button>
+                <button @onclick="GoToHome" style="height:60px; width:100%; border:none; background:white; text-align: left; font-size:16pt"> <span class="oi oi-home" style="margin-left:10px; margin-right:10px; font-size:16pt"></span>Главная</button>
+                <button @onclick="GoToBook" style="height:60px; width:100%; border:none; background:white; text-align: left; font-size:16pt"> <span class="oi oi-book" style="margin-left:10px; margin-right:10px; font-size:16pt"></span> Книги</button>
+                <button @onclick="GoToFavorite" style="height:60px; width:100%; border:none; background:white; text-align: left; font-size:16pt"> <span class="oi oi-star" style="margin-left:10px; margin-right:10px; font-size:16pt"></span> Избранное</button>
+                <div style="height:60px; width:100%; border:none; background:white; text-align: left; font-size:16pt"></div>
+                <button @onclick="GoToLogin" style="height:60px; width:100%; border:none; background:white; font-size:16pt"> <span class="oi oi-account-login" style="margin-left:10px; margin-right:10px; font-size:16pt"></span></button>
             </div>
         </div>
     </div>         

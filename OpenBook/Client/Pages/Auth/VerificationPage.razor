@@ -15,6 +15,7 @@
         width: 300px;
         margin: auto;
         margin-top: 50px;
+        text-align: center;
     }
 
     .input-group {
@@ -29,6 +30,8 @@
         background-color: #3498db;
         color: white;
         border: none;
+        text-align: center;
+        align-items: center;
     }
 
     .rounded-button:disabled {
@@ -38,31 +41,29 @@
 
     .password-toggle {
         cursor: pointer;
-        color: #3498db;
-        text-decoration: underline;
     }
 </style>
 
 @if (isAuth == null)
 {
-        <span>Загрузка...</span>
+            <span>Загрузка...</span>
 }
 else
 {
-    <div class="container">
+        <div class="container">
         @if (isAuth == true)
         {
-            <div class="input-group">
-                <button @onclick="GetCode" class="password-toggle">@codeMsg</button>
+                    <div class="input-group">
+                        <button @onclick="GetCode" class="btn btn-primary password-toggle">@codeMsg</button>
                 @if (codeResponse.IsSuccess)
                 {
-                    <p>@msg</p>
-                    <input id="code" @bind="code" placeholder="Введите код"/>
-                    <button @onclick="CheckCode" class="password-toggle">Проверить</button>                         
+                                <p>@msg</p>
+                                <input id="code" @bind="code" placeholder="Введите код"/>
+                                <button @onclick="CheckCode" class="password-toggle">Проверить</button>                         
                 }
-            </div>
+                    </div>
         }
-    </div>
+        </div>
 }
 
 @code {

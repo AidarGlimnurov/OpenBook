@@ -10,40 +10,42 @@
 
 @if (genres == null)
 {
-    <span>Загрузка...</span>
+        <span>Загрузка...</span>
 }
 else
 {
-    <a href="adminpanel">Назад</a>
-    <br>
-    <label style="color: @labelColor">@msg</label>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Save</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var genre in genres.Value.Data)
-            {
-                <tr>
-                    <td>@genre.Id</td>
-                    <td><input @bind="@genre.Name" class="form-control"></td>
-                    <td><button @onclick="(()=>Save(genre))" class="btn btn-warning">Сохранить</button></td>
-                    <td><button @onclick="(()=>Delete(genre.Id))" class="btn btn-danger">Удалить</button></td>
-                </tr>
-            }
-            <tr>
-                <td>-</td>
-                <td><input @bind="@genre.Name" class="form-control"></td>
-                <td><button @onclick="Create" class="btn btn-primary">Создать</button></td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
+        <div class="jumbotron jumbotron-fluid border rounded p-1 m-1">
+            <a href="adminpanel">Назад</a>
+            <br>
+            <label style="color: @labelColor">@msg</label>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Save</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var genre in genres.Value.Data)
+                {
+                            <tr>
+                                <td>@genre.Id</td>
+                                <td><input @bind="@genre.Name" class="form-control"></td>
+                                <td><button @onclick="(()=>Save(genre))" class="btn btn-warning">Сохранить</button></td>
+                                <td><button @onclick="(()=>Delete(genre.Id))" class="btn btn-danger">Удалить</button></td>
+                            </tr>
+                }
+                    <tr>
+                        <td>-</td>
+                        <td><input @bind="@genre.Name" class="form-control"></td>
+                        <td><button @onclick="Create" class="btn btn-primary">Создать</button></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 }
 @code {
     Response? response;

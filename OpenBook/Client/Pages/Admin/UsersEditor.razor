@@ -12,74 +12,76 @@
 
 @if (users == null)
 {
-        <p>Загрузка...</p>    
+            <p>Загрузка...</p>    
 }
 else
 {
-    <a href="adminpanel">Назад</a>
-    <br>
-    <label style="color: @labelColor">@msg</label>
-    <table class="table">
-        <thead class="thead-dark">
-            <tr>
-                <th>Id</th>
-                <th>Email</th>
-                <th>Name</th>
-                <th>Password</th>
-                <th>IsVerif</th>
-                <th>Role</th>
-                <th>ChangeRole</th>
-                <th>Update</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (users.IsSuccess)
-            {
-                @foreach (var userItem in users.Value.Data)
-                {
+        <div class="jumbotron jumbotron-fluid border rounded p-1 m-1">
+            <a href="adminpanel">Назад</a>
+            <br>
+            <label style="color: @labelColor">@msg</label>
+            <table class="table">
+                <thead class="thead-dark">
                     <tr>
-                        <td>@userItem.Id</td>
-                        <td><input @bind="@userItem.Email" placeholder="@userItem.Email" class="form-control"></td>
-                        <td><input @bind="@userItem.Name" placeholder="@userItem.Name" class="form-control"></td>
-                        <td><input @bind="@userItem.Password" placeholder="@userItem.Password" class="form-control"></td>
-                        <td><input type="checkbox" @bind="@userItem.IsVerified"></td>
-                        <td>@userItem.Role.Name</td>
-                        <td>
-                            <select @bind="userItem.RoleId">
-                                <option selected>Выбрать новый</option>
+                        <th>Id</th>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>Password</th>
+                        <th>IsVerif</th>
+                        <th>Role</th>
+                        <th>ChangeRole</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @if (users.IsSuccess)
+                {
+                    @foreach (var userItem in users.Value.Data)
+                    {
+                                    <tr>
+                                        <td>@userItem.Id</td>
+                                        <td><input @bind="@userItem.Email" placeholder="@userItem.Email" class="form-control"></td>
+                                        <td><input @bind="@userItem.Name" placeholder="@userItem.Name" class="form-control"></td>
+                                        <td><input @bind="@userItem.Password" placeholder="@userItem.Password" class="form-control"></td>
+                                        <td><input type="checkbox" @bind="@userItem.IsVerified"></td>
+                                        <td>@userItem.Role.Name</td>
+                                        <td>
+                                            <select @bind="userItem.RoleId">
+                                                <option selected>Выбрать новый</option>
+                                    @foreach (var role in roles.Value.Data)
+                                    {
+                                                        <option value="@role.Id">@role.Name</option>
+                                    }
+                                            </select>
+                                        </td>
+                                        <td><button @onclick="(() => Update(userItem))" class="btn btn-warning">Update</button></td>
+                                        <td><button @onclick="(() => Delete(userItem))" class="btn btn-danger">Delete</button></td>
+                                    </tr>
+                    }
+                            <tr>
+                                <td>Id</td>
+                                <td><input @bind="@newUser.Email"></td>
+                                <td><input @bind="@newUser.Name"></td>
+                                <td><input @bind="@newUser.Password"></td>
+                                <td><input type="checkbox" @bind="@newUser.IsVerified"></td>
+                                <td>-</td>
+                                <td>
+                                    <select @bind="newUser.RoleId">
+                                        <option selected>Выбрать</option>
                                 @foreach (var role in roles.Value.Data)
                                 {
-                                    <option value="@role.Id">@role.Name</option>
+                                                <option value="@role.Id">@role.Name</option>
                                 }
-                            </select>
-                        </td>
-                        <td><button @onclick="(() => Update(userItem))" class="btn btn-warning">Update</button></td>
-                        <td><button @onclick="(() => Delete(userItem))" class="btn btn-danger">Delete</button></td>
-                    </tr>
+                                    </select>
+                                </td>
+                                <td><button @onclick="Create" class="btn btn-primary">Создать</button></td>
+                                <td></td>
+                            </tr>            
                 }
-                <tr>
-                    <td>Id</td>
-                    <td><input @bind="@newUser.Email"></td>
-                    <td><input @bind="@newUser.Name"></td>
-                    <td><input @bind="@newUser.Password"></td>
-                    <td><input type="checkbox" @bind="@newUser.IsVerified"></td>
-                    <td>-</td>
-                    <td>
-                        <select @bind="newUser.RoleId">
-                            <option selected>Выбрать</option>
-                            @foreach (var role in roles.Value.Data)
-                            {
-                                <option value="@role.Id">@role.Name</option>
-                            }
-                        </select>
-                    </td>
-                    <td><button @onclick="Create" class="btn btn-primary">Создать</button></td>
-                    <td></td>
-                </tr>            
-            }
-        </tbody>
-    </table>
+                </tbody>
+            </table>
+        </div>
 }
 @code {
     AuthView authView = new AuthView();
