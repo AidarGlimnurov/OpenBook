@@ -17,12 +17,10 @@
         flex: 1 1;
         flex-direction:row;
         flex-wrap: wrap;
-        justify-content: space-и
-        ;
+        justify-content: space-between;
         padding: 20px;
         width: 100%;
         margin: 5px;
-        background: #ccc;
         border-radius: 5px;
     }
 
@@ -32,7 +30,6 @@
         padding: 20px;
         width: 100%;
         margin: 5px;
-        background: #ccc;
         border-radius: 5px;
     }
     .newLineContainer{
@@ -43,19 +40,19 @@
     .review{
         border: 1px solid black;
         padding: 5px;
-        matgin: 2px;
+        margin: 2px;
         border-radius: 5px;
     }
 </style>
 @if (book == null)
 {
-    <span>Загрузка...</span>
+        <span>Загрузка...</span>
 }
 else
 {
     <div class="columnContainer">
         <a href="Books">Назад</a>
-        <div class="rowContainer">
+        <div class="rowContainer jumbotron border rounded">
             <div>
                 <img style="width: 90%; height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Value.Cover)">
             </div>
@@ -71,13 +68,13 @@ else
                     <a href="cycle/{@book.Value.CycleId}">@book.Value.Cycle.Name</a>
                 }
                 <div class="newLineContainer">
-                    @if (genres != null)
+                @if (genres != null)
+                {
+                    @foreach (var genre in genres.Value.Data)
                     {
-                        @foreach (var genre in genres.Value.Data)
-                        {
-                            <a href="genre/{@genre.Id}">@genre.Name | </a>
-                        }                    
-                    }
+                                    <a href="genre/{@genre.Id}">@genre.Name | </a>
+                    }                    
+                }
                 </div>
                 <div>
                     <p>@book.Value.Description</p>
@@ -88,10 +85,10 @@ else
         <div class="innerColumnContainer">
             <div style="text-align:center">
                 <h2>Отзывы</h2>
-            @if (myReview == null)
-            {
-                 <button class="btn btn-secondary" @onclick="AddReview">Добавить отзыв</button>
-            }
+                @if (myReview == null)
+                {
+                     <button class="btn btn-secondary" @onclick="AddReview">Добавить отзыв</button>
+                }
             </div>
         @if (myReview != null)
         {
@@ -100,7 +97,7 @@ else
                 {
                     <label>ред.</label>
                 }
-                <h4>@myReview.User.Name</h4>
+                    <h4>@myReview.User.Name</h4>
                 @if (editMode)
                 {
                     <input type="text" @bind="@myReview.Text">
@@ -112,7 +109,7 @@ else
                 <button class="btn btn-secondary" @onclick="AddReview">@reviewChangerText</button>
             </div>
         }
-            <div></div>
+        <div></div>
         @if (reviews != null)
         {
             @foreach (var review in reviews.Value.Data)
@@ -176,7 +173,6 @@ else
         {
             if (editMode)
             {
-                myReview.IsEdited = true;
                 using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Review/Update", myReview);
                 reviewChangerText = "Изменить";
                 editMode = false;
@@ -187,10 +183,10 @@ else
                 if (myReview == null)
                 {
                     ReviewDto reviewDto = new()
-                    {
-                        BookId = Convert.ToInt32(Id),
-                        UserId = user.Value.Id,
-                    };
+                        {
+                            BookId = Convert.ToInt32(Id),
+                            UserId = user.Value.Id,
+                        };
                     using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Review/Create", reviewDto);
                     var rev = await client.GetFromJsonAsync<Response<ReviewDto>>($"https://localhost:7190/api/Review/GetForUserBook?bookId={Id}&userId={user.Value.Id}");
                     myReview = rev.Value;
