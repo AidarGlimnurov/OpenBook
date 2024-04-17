@@ -30,21 +30,21 @@
 
 @if (chapter == null)
 {
-    <p>Загрузка...</p>
+        <p>Загрузка...</p>
 }
 else
 {
-    <a href="bookcontent/@chapter.BookId">Назад</a>
-    <h2>Глава @chapter.Number</h2>
-    <h2>@chapter.Name</h2>
-@*    <a href="@path" class="refHover">
+        <a href="bookcontent/@chapter.BookId">Назад</a>
+        <h2>Глава @chapter.Number</h2>
+        <h2>@chapter.Name</h2>
+    @*     <a href="@path" class="refHover">
         <div class="divHover" style="height: 4vh; width: 12vh; margin-top: 5px; margin-bottom: 5px; color: black; border-radius: 5px; background: #FFC300; text-align:center; padding:0.5vh">
             <label class="labelHover">Скачать</label>
         </div>
-    </a>*@
-    <div style="border: 1px solid black; background: #f6f7f7; width: 100%; min-height: 100vh; padding: 5px; border-radius: 5px; margin-bottom: 5px">
+    </a> *@
+        <div class="jumbotron mt-3 p-2 border-1 rounded-1" style="background: #f6f7f7; width: 100%; min-height: 100vh;">
         @((MarkupString)markdownHtml)
-    </div>
+        </div>
 
 }
 

@@ -1,68 +1,63 @@
 ﻿@page "/favoritebook"
-@using OpenBook.Shared.Dtos;
-@using OpenBook.Shared.OutputData;
-@using OpenBook.Shared.SupportData;
-@using System.Net.Http.Headers;
+@using OpenBook.Shared.Dtos
+@using OpenBook.Shared.OutputData
+@using OpenBook.Shared.SupportData
+@using System.Net.Http.Headers
 @inject HttpClient client
 @inject NavigationManager navigation
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 @if (books == null)
 {
-        <label>Загрузка...</label>
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Загрузка...</span>
+            </div>
+        </div>
 }
 else
 {
-<div style="border: 2px solid black; background: #f0f0f0; border-radius: 7px; margin-top: 5px; margin-bottom: 5px;">
-    @*     <input id="name" class="input-medium search-query" style="width: 80%" @bind="name" /> *@
-    @*     <button @onclick="Search" class="oi oi-magnifying-glass" style="height: 30px"></button> *@
-    <div style="min-height: 70vh">
+    <div class="container mt-3 p-3 border rounded bg-light">
+        <div class="row">
         @foreach (var book in books.Value.Data)
         {
-            <div style="width: 100px; height: 150px; margin: 8px; display: inline-block; text-align: center;">
-                <a href="book/@book.Id">
-                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" style="background:gray; height: 100%; width: 95%;">
-                    <label style="color: black">@book.Name</label>
-                </a>
+            <div class="col-md-3 mb-3">
+                <div class="card h-100">
+                    <a href="book/@book.Id">
+                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" class="card-img-top" alt="Обложка">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">@book.Name</h5>
+                    </div>
+                </div>
             </div>
         }
-    </div>
-
-    <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin: 15px">
-        <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
-        @if (books.Value.Start > 0)
-        {
-                    <button class="oi oi-arrow-left  btn btn-secondary" @onclick="GetLastPage" style="background:#b7b7b7; border: none;  height: 100%"></button>
-        }
-        else
-        {
-                    <button class="oi oi-arrow-left btn btn-secondary" disabled style="background:#b7b7b7; border: none;  height: 100%"></button>
-        }
         </div>
-        <div style=" font-size:15pt;">@PageNumber</div>
-        <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
-        @if (books.Value.Count == 10)
-        {
-                    <button class="oi oi-arrow-right btn btn-secondary" @onclick="GetNextPage" style="background:#b7b7b7; border: none; height: 100%"></button>
-        }
-        else
-        {
-                    <button class="oi oi-arrow-right  btn btn-secondary" disabled style="background:#b7b7b7; border: none;  height: 100%"></button>
-        }
-        </div>
+    
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(books.Value.Start > 0 ? "" : "disabled")">
+                    <button class="page-link" @onclick="GetLastPage">Предыдущая</button>
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link">@PageNumber</a>
+                </li>
+                <li class="page-item @(books.Value.Count == 10 ? "" : "disabled")">
+                    <button class="page-link" @onclick="GetNextPage">Следующая</button>
+                </li>
+            </ul>
+        </nav>
     </div>
-</div>
 }
 
 @code {
     Response<DataPage<BookDto>>? books;
-    int pageCount = 0;
     int start = 0;
     int count = 10;
     public int PageNumber { get; set; } = 1;
     string name = string.Empty;
 
-    Response<UserDto>? user = new();
+    Response<UserDto>? user;
 
     protected override async Task OnInitializedAsync()
     {
@@ -79,56 +74,24 @@ else
         }
     }
 
-    async Task<bool> CheckAuth()
-    {
-        var resp = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
-        return resp.IsSuccess;
-    }
-
-    private void ToBook(int id)
-    {
-        navigation.NavigateTo($"book/{id}");
-    }
-
     public async Task GetNextPage()
     {
         start += 10;
         PageNumber++;
-        if (name == "")
-        {
-            await GetBooks(start, count);
-        }
-        else
-        {
-            await GetBooks(start, count, name);
-        }
+        await GetBooks(start, count);
     }
+
     public async Task GetLastPage()
     {
-        start -= 10;
-        PageNumber--;
-        if (name == "")
+        if (PageNumber > 1)
         {
+            start -= 10;
+            PageNumber--;
             await GetBooks(start, count);
-        }
-        else
-        {
-            await GetBooks(start, count, name);
-        }
-    }
-    public async Task Search()
-    {
-        if (name == "")
-        {
-            await GetBooks(start, count);
-        }
-        else
-        {
-            await GetBooks(start, count, name);
         }
     }
 
-    private async Task GetBooks(int start, int count, string? name = "")//"!-!")
+    private async Task GetBooks(int start, int count, string? name = "")
     {
         books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Basket/GetBooks?userId={user.Value.Id}&start={start}&count={count}");
     }

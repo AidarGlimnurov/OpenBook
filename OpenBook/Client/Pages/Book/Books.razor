@@ -1,165 +1,159 @@
 ﻿@page "/books"
-@using OpenBook.Shared.Dtos;
-@using OpenBook.Shared.OutputData;
+@using OpenBook.Shared.Dtos
+@using OpenBook.Shared.OutputData
 @inject HttpClient client
 @inject NavigationManager navigation
 
 <style>
-    .container .content {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.5s ease-out;
-        width: auto;
+    .loading {
+        font-size: 20px;
+        font-weight: bold;
     }
-
-    .container .content.show {
-        max-height: 200px; /* Меняйте на желаемую высоту */
+    .book-list-container {
+        background-color: #f3f3f3;
+        padding: 20px;
+        border-radius: 5px;
+        margin-top: 20px;
+    }
+    .search-section {
+        display: flex;
+        margin-bottom: 20px;
+    }
+    .search-input {
+        flex-grow: 1;
+        margin-right: 10px;
+    }
+    .search-button {
+        width: 50px;
+        height: 38px;
+    }
+    .book-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: start;
+    }
+    .book-card {
+        width: 200px;
+        height: 270px;
+        margin: 8px;
+        text-align: center;
+        cursor: pointer;
+    }
+    .book-card img {
+        width: 100%;
+        height: 200px;
+        background-color: gray;
+    }
+    .book-card .book-title {
+        color: black;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+    }
+    .page-control {
+        background-color: #b7b7b7;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        padding: 10px;
+    }
+    .page-number {
+        font-size: 18px;
     }
 </style>
 
 @if (books == null)
 {
-    <label>Загрузка...</label>
+        <div class="loading">Загрузка...</div>
 }
 else
 {
-<div style="border: 2px solid black; background: #f0f0f0; border-radius: 7px; margin-top: 5px; margin-bottom: 5px;">
-    <div class="container" style="text-align: left">
-        <div style="margin-top:5px">
-            <input id="name" class="input-medium search-query" style="width: 80%" @bind="name"/>
-            <button @onclick="Search" class="oi oi-magnifying-glass" style="height: 30px"></button>
+    <div class="book-list-container">
+        <div class="search-section">
+            <input class="form-control search-input" @bind="name" placeholder="Введите название книги...">
+            <button class="search-button btn btn-primary" @onclick="Search">
+                <i class="oi oi-magnifying-glass"></i>
+            </button>
         </div>
-        <br>
-@*        <button @onclick="Toggle" class="btn btn-primary" style="margin-top: 7px; max-width: 50vh">
-            @if (isExpanded)
-            {
-                <label>&cuwed;</label>
-            }
-            else
-            {
-                <label>&cuvee;</label>
-            }
-        </button>*@
-        @if (isExpanded)
+    
+        <div class="book-grid">
+        @foreach (var book in books.Value.Data)
         {
-@*            <div class="content">
-                <div>
-                   <input id="name" class="input-medium search-query" style="width: 80%" @bind="name"/>
-                    <button @onclick="Search" class="oi oi-magnifying-glass" style="height: 30px"></button>
-                </div>
-            </div>*@
-            <button @onclick="CycleSearch" class="btn btn-secondary"  style="max-width: 50vh">Найти по циклу</button>
+                    <div class="book-card" @onclick="() => ToBook(book.Id)">
+                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" alt="Обложка книги">
+                        <div class="book-title">@book.Name</div>
+                    </div>
         }
-    </div>
-    <div style="min-height: 70vh;">
-        <div style=" vertical-align: top;">
-            @foreach (var book in books.Value.Data)
-            {
-                <div style="width: 170px; height: 230px; margin: 8px; display: inline-block; row; text-align: center;">
-                    <a href="book/@book.Id">
-                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" style="background:gray; width: 170px; height: 200px;" >
-                        <label style="color: black">@book.Name</label>
-                    </a>
-                </div>
-            }
         </div>
+    
+        <nav aria-label="Page navigation" class="pagination justify-content-center">
+            <ul class="pagination">
+                <li class="page-item @(PageNumber > 1 ? "" : "disabled")">
+                    <button class="page-link" @onclick="GetLastPage">Предыдущая</button>
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link">@PageNumber</a>
+                </li>
+                <li class="page-item @(books.Value.Count == 10 ? "" : "disabled")">
+                    <button class="page-link" @onclick="GetNextPage">Следующая</button>
+                </li>
+            </ul>
+        </nav>
     </div>
-
-    <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin: 15px">
-        <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
-            @if (books.Value.Start > 0)
-            {
-                <button class="oi oi-arrow-left  btn btn-secondary" @onclick="GetLastPage" style="background:#b7b7b7; border: none;  height: 100%"></button>
-            }
-            else
-            {
-                <button class="oi oi-arrow-left btn btn-secondary" disabled style="background:#b7b7b7; border: none;  height: 100%"></button>
-            }
-        </div>
-        <div style=" font-size:15pt;">@PageNumber</div>
-        <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
-            @if (books.Value.Count == 10)
-            {
-                <button class="oi oi-arrow-right btn btn-secondary" @onclick="GetNextPage" style="background:#b7b7b7; border: none; height: 100%"></button>
-            }
-            else
-            {
-                <button class="oi oi-arrow-right  btn btn-secondary" disabled style="background:#b7b7b7; border: none;  height: 100%"></button>
-            }
-        </div>
-    </div>
-</div>
 }
 
 @code {
     Response<DataPage<BookDto>>? books;
-    int pageCount = 0;
     int start = 0;
     int count = 10;
     public int PageNumber { get; set; } = 1;
     string name = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
-        await GetBooks(start, count);
+        await SearchBooks();
+    }
+
+    private bool HasPreviousPage() => PageNumber > 1;
+    private bool HasNextPage() => books?.Value.Count == count;
+
+    public async Task GetNextPage()
+    {
+        start += count;
+        PageNumber++;
+        await SearchBooks();
+    }
+
+    public async Task GetLastPage()
+    {
+        if (HasPreviousPage())
+        {
+            start -= count;
+            PageNumber--;
+            await SearchBooks();
+        }
+    }
+
+    public async Task Search()
+    {
+        start = 0; // Reset to start when new search is initiated
+        PageNumber = 1;
+        await SearchBooks();
+    }
+
+    private async Task SearchBooks()
+    {
+        books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooks?start={start}&count={count}&isPublic=true&name={name}");
     }
 
     private void ToBook(int id)
     {
         navigation.NavigateTo($"book/{id}");
-    }
-
-    public async Task GetNextPage()
-    {
-        start += 10;
-        PageNumber++;
-        if (name == "")
-        {
-            await GetBooks(start, count);
-        }
-        else
-        {
-            await GetBooks(start, count, name);
-        }
-    }
-    public async Task GetLastPage()
-    {
-        start -= 10;
-        PageNumber--;
-        if (name == "")
-        {
-            await GetBooks(start, count);
-        }
-        else
-        {
-            await GetBooks(start, count, name);
-        }
-    }
-    public async Task Search()
-    {
-        if (name == "")
-        {
-            await GetBooks(start, count);
-        }
-        else
-        {
-            await GetBooks(start, count, name);
-        }
-    }
-
-    private async Task GetBooks(int start, int count, string? name = "")//"!-!")
-    {
-        books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooks?start={start}&count={count}&isPublic=true&name={name}");
-    }
-
-    private void CycleSearch()
-    {
-        navigation.NavigateTo("CyclesPage");
-    }
-
-    bool isExpanded = false;
-
-    void Toggle()
-    {
-        isExpanded = !isExpanded;
     }
 }

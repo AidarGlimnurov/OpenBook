@@ -16,11 +16,11 @@
         display: flex;
         flex: 1 1;
         flex-direction:row;
-        flex-wrap: wrap;
-        justify-content: space-between;
+        justify-content: space-evenly;
         padding: 20px;
         width: 100%;
         margin: 5px;
+        background: #f3f3f3;
         border-radius: 5px;
     }
 
@@ -30,6 +30,7 @@
         padding: 20px;
         width: 100%;
         margin: 5px;
+        background: #f3f3f3;
         border-radius: 5px;
     }
     .newLineContainer{
@@ -38,7 +39,7 @@
         flex-wrap: wrap
     }
     .review{
-        border: 1px solid black;
+        border: 1px solid;
         padding: 5px;
         margin: 2px;
         border-radius: 5px;
@@ -50,66 +51,73 @@
 }
 else
 {
-    <div class="columnContainer">
-        <a href="Books">Назад</a>
-        <div class="rowContainer jumbotron border rounded">
+    <div class="columnContainer jumbotron rounded-2">
+        <a href="Books">     </a>
+        <div class="rowContainer">
             <div>
                 <img style="width: 90%; height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Value.Cover)">
             </div>
             <div class="columnContainer">
-                <h2>@book.Value.Name</h2>
+                <h2 style="word-wrap: break-word; white-space: pre-wrap">@book.Value.Name</h2>
                 <h3>@book.Value.Author</h3>
                 <h4>Chapter count: Very many chapters</h4>
     
                 <button class="btn btn-primary" @onclick="GoToBookReader" style="margin-top: 5px; margin-bottom: 5px; width: 30%">Читать</button>
     
-                @if (book.Value.Cycle != null)
-                {
-                    <a href="cycle/{@book.Value.CycleId}">@book.Value.Cycle.Name</a>
-                }
+            @if (book.Value.Cycle != null)
+            {
+                        <a href="cycle/@book.Value.CycleId">@book.Value.Cycle.Name</a>
+            }
                 <div class="newLineContainer">
                 @if (genres != null)
                 {
                     @foreach (var genre in genres.Value.Data)
                     {
-                                    <a href="genre/{@genre.Id}">@genre.Name | </a>
+                        <a href="genre/{@genre.Id}">@genre.Name | </a>
                     }                    
                 }
                 </div>
                 <div>
                     <p>@book.Value.Description</p>
-                @* <button>Раскрыть блок</button> *@
+                @* <button>             </button> *@
                 </div>
             </div>
         </div>
+    
         <div class="innerColumnContainer">
             <div style="text-align:center">
-                <h2>Отзывы</h2>
-                @if (myReview == null)
-                {
-                     <button class="btn btn-secondary" @onclick="AddReview">Добавить отзыв</button>
-                }
+                <h2>      </h2>
+            @if (myReview == null)
+            {
+                <button class="btn btn-secondary m-2" @onclick="AddReview">Отзыв</button>
+            }
             </div>
+    
         @if (myReview != null)
         {
-            <div style="background: #eef1f1"  class="review">
+                <div style="background: #eef1f1"  class="review">
                 @if (myReview.IsEdited)
                 {
-                    <label>ред.</label>
+                    <label style="font-size:smaller;">ред.</label>
                 }
-                    <h4>@myReview.User.Name</h4>
+                <h4 class="m-1">@myReview.User.Name</h4>
                 @if (editMode)
                 {
-                    <input type="text" @bind="@myReview.Text">
+                    <div class="form-group">
+                        <textarea class="form-control" @bind="@myReview.Text" placeholder="Отзыв"></textarea>
+                    </div>
+                    @*<input type="text" @bind="@myReview.Text"> *@
                 }
                 else
                 {
-                    <p>@myReview.Text</p>
+                     <div class="jumbotron rounded-1 border-primary" style="background: white">
+                         <p class="p-3 m-3 border-1 rounded-1">@myReview.Text</p>
+                     </div>
                 }
-                <button class="btn btn-secondary" @onclick="AddReview">@reviewChangerText</button>
+                        <button class="btn btn-secondary btn-sm m-3" @onclick="AddReview">@reviewChangerText</button>
             </div>
         }
-        <div></div>
+    
         @if (reviews != null)
         {
             @foreach (var review in reviews.Value.Data)
@@ -119,10 +127,12 @@ else
                     <div class="review">
                         @if (review.IsEdited)
                         {
-                            <label>ред.</label>
+                            <label style="font-size:smaller;">ред.</label>
                         }
                         <h4>@review.User.Name</h4>
-                        <p>@review.Text</p>
+                        <div class="jumbotron rounded-1 border-secondary" style="background: #fdfdfd">
+                            <p class="p-3 m-3 border-1 rounded-1">@review.Text</p>
+                        </div>
                     </div>                        
                 }
             }                
@@ -173,8 +183,9 @@ else
         {
             if (editMode)
             {
+                //myReview.IsEdited = true;
                 using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Review/Update", myReview);
-                reviewChangerText = "Изменить";
+                reviewChangerText = "Сохранить";
                 editMode = false;
             }
             else
@@ -191,7 +202,7 @@ else
                     var rev = await client.GetFromJsonAsync<Response<ReviewDto>>($"https://localhost:7190/api/Review/GetForUserBook?bookId={Id}&userId={user.Value.Id}");
                     myReview = rev.Value;
                 }
-                reviewChangerText = "Сохранить";
+                reviewChangerText = "         ";
             }
         }
         else
