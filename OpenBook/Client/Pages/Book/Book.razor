@@ -202,7 +202,7 @@ else
                     var rev = await client.GetFromJsonAsync<Response<ReviewDto>>($"https://localhost:7190/api/Review/GetForUserBook?bookId={Id}&userId={user.Value.Id}");
                     myReview = rev.Value;
                 }
-                reviewChangerText = "         ";
+                reviewChangerText = "Изменить";
             }
         }
         else

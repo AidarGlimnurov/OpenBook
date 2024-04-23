@@ -9,31 +9,36 @@
 @inject HttpClient client
 
 <style>
-    .mainContainer{
-        display: flex;
-        flex-direction: column;
-        background: lightgray;
-        border-radius: 25px;
-        padding: 5%;
-    }
-    .columnContainer{
-        text-align: center;
-        background: #c7e8ff;
-        border-radius: 5%;
-        padding: 5%;
-    }
-    .rowContainer{
+    .mainContainer {
         display: flex;
         flex-direction: row;
-        justify-content: space-around;
-        padding: 5%;
-    }
-    .innerDiv{
-        background: #d6eef8;
-        width: 100%;
+        background: f3f3f3;
         border-radius: 25px;
-        padding: 5%;
-        border: 1px solid black
+        padding: 2%;
+        justify-content: space-evenly;
+        align-items: flex-start;
+    }
+
+    .columnContainer {
+        flex: 1;
+        text-align: center;
+        background: #f3f3f3;
+        border-radius: 10px;
+        padding: 2%;
+        margin: 10px;
+    }
+
+    .innerDiv {
+        background: #f3f3f3;
+        border-radius: 10px;
+        padding: 10px;
+        border: 1px solid black;
+        margin-bottom: 20px;
+    }
+
+    button {
+        width: 100%;
+        margin-top: 10px;
     }
 </style>
 
@@ -44,47 +49,35 @@
 else
 {
     <div class="mainContainer">
-        <h3 style="text-align: center">Личный кабинет</h3>
-        <div class="innerDiv">
-            @if (!editMode)
-            {
+        <!-- Колонка с информацией пользователя -->
+        <div class="columnContainer">
+            <div class="innerDiv">
                 <p style="font-weight: 300; font-size: x-large">@user.Value.Name</p>
-                <br>
-                <button @onclick="EditChange" class="btn btn-secondary">Изменить</button>
-                <br>
-            }
-            else
-            {
-                <p style="font-weight: 300; font-size: x-large">@user.Value.Name</p>
-                <button @onclick="EditChange" class="btn btn-secondary">Сохранить</button>
-                <br>
-            }
-            <p>Почта: @user.Value.Email</p>
-            <hr />
-            <span>Роль:</span>
-            <p>@user.Value.Role.Name</p>
-            @if (user.Value.IsVerified)
-            {
-                <span style="color: green;">Ваш аккаунт верифицирован</span>
-            }
-            else
-            {
-                <span style="color: red;">Ваш аккаунт не верифицирован!</span>
-                <br>
-                <button class="btn btn-success">Пройти верификацию</button>
-            }
-            <hr />
-            <button class="btn btn-secondary" @onclick="GoToPasswordChanger">Сменить пароль</button>
-            <hr />
-            <button class="btn btn-primary" @onclick="(() => GoToEditBooks(0))">Мои книги</button>
+                <p>Почта: @user.Value.Email</p>
+                <span>Роль:</span>
+                <p>@user.Value.Role.Name</p>
+                @if (user.Value.IsVerified)
+                {
+                    <span style="color: green;">Ваш аккаунт верифицирован</span>
+                }
+                else
+                {
+                    <span style="color: red;">Ваш аккаунт не верифицирован!</span>
+                    <button class="btn btn-success">Пройти верификацию</button>
+                }
+                <button class="btn btn-secondary" @onclick="GoToPasswordChanger">Сменить пароль</button>
+                <button class="btn btn-primary" @onclick="() => GoToEditBooks(0)">Мои книги</button>
+            </div>
         </div>
 
+        <!-- Колонка для административных функций -->
         @if (user.Value.Role.Name == "Admin" || user.Value.Role.Name == "SuperAdmin")
         {
-            <div class="innerDiv">
-                <hr />
-                <button class="btn btn-secondary" @onclick="GoToAdminPanel">Админ панель</button>
-            </div>            
+            <div class="columnContainer">
+                <div class="innerDiv">
+                    <button class="btn btn-secondary" @onclick="GoToAdminPanel">Админ панель</button>
+                </div>
+            </div>
         }
     </div>
 }
