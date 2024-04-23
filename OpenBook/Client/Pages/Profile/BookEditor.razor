@@ -20,7 +20,7 @@
       width: 100%;
     }
     .box {
-      background-color: #ccc;
+      /*background-color: #ccc;*/
       padding: 10px;
     }
 
@@ -98,115 +98,100 @@
 </style>
 @if (Id != "0" && book.Name == null)
 {
-    <span>Загрузка...</span>
+        <span>Загрузка...</span>
 }
 else
 {
-    <div class="mainBox">
+    <div class="mainBox jumbotron bg-light">
         <div class="headBox">
             <div class="checkSlider">
                 <span>неопубл.</span>
                 <label class="switch">
-                   <input type="checkbox" @bind="book.IsPublished">
-                  <span class="slider round"></span>
+                    <input type="checkbox" @bind="book.IsPublished">
+                    <span class="slider round"></span>
                 </label>
                 <span>опубл.</span>
-                <br>
+                <br />
             </div>
             <div>
-            @if (Id == "0")
-            {
-                    <button class="btn btn-primary" style="margin: 3px;" @onclick = "CreateBook">Создать</button>
-            }
-            else
-            {
-                    <button class="btn btn-primary" style="margin: 3px;" @onclick = "UpdateBook">Сохранить</button>
-            }
+                @if (Id == "0")
+                {
+                        <button class="btn btn-primary" style="margin: 3px;" @onclick="CreateBook">Создать</button>
+                }
+                else
+                {
+                        <button class="btn btn-primary" style="margin: 3px;" @onclick="UpdateBook">Сохранить</button>
+                }
             </div>
         </div>
         <div class="box">
             <div class="container">
                 <div class="content" style="text-align: center">
-                    <img style="width: 90%; height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)">
+                    <img class="img-fluid" style="height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)">
                     <button class="btn btn-secondary">
                         <InputFile OnChange="HandleFileChange" />
                     </button>
                 </div>
     
                 <div class="content">
-                    <input type="text" placeholder="Название" @bind="book.Name">
-                    <br>
+                    <input class="form-control" type="text" placeholder="Название" @bind="book.Name" />
+                    <br />
     
-                    <input type="text" placeholder="Автор" @bind="book.Author">
-                    <br>
-                    @*<div style="display: flex; flex-direction: row; flex: 1 1">*@
-                        <select @bind="book.CycleId">
-                           <option selected>Выбрать</option>
-                        @if (Cycles != null)
+                    <input class="form-control" type="text" placeholder="Автор" @bind="book.Author" />
+                    <br />
+    
+                    <div style="display: flex; flex-direction: column">
+                        <select class="form-select" @onchange="HandleGenreChange">
+                        @if (Genres != null)
                         {
-                            @foreach (var cycle in Cycles.Value.Data)
+                            @foreach (var genre in Genres.Value.Data)
                             {
-                                <option value="@cycle.Id">@cycle.Name</option>
-                            }                            
+                                <option value="@genre.Id">@genre.Name</option>
+                            }
                         }
                         </select>
-                        @*<button class="btn btn-success" @onclick="GoToCycleEditor">+</button>*@
-                        <hr />
-                        <div style="display: flex; flex-direction: column">
-                            <select @onchange="HandleGenreChange">
-                                @*<option value="0" selected>Выбрать</option>*@
     
-                                @if (Genres != null)
+                    @if (BookGenres != null)
+                    {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var genre in BookGenres.Value.Data)
                                 {
-                                    @foreach (var genre in Genres.Value.Data)
-                                    {
-                                        <option value="@genre.Id">@genre.Name</option>
-                                    } 
+                                    <tr>
+                                        <td>
+                                            <label>@genre.Name</label>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-danger" @onclick="(()=>RemoveGenre(genre.Id))">Удалить</button>
+                                        </td>
+                                    </tr>
                                 }
-                            </select>
-
-                            @if (BookGenres != null)
-                            {
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Delete</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var genre in BookGenres.Value.Data)
-                                        {
-                                            <tr>
-                                                <td>
-                                                    <label>@genre.Name</label>
-                                                </td>
-                                                <td>
-                                                    <button @onclick="(()=>RemoveGenre(genre.Id))">Удалить</button>
-                                                </td>
-                                            </tr>
-                                        } 
-                                    </tbody>
-                                </table>    
-                            }
-                        </div>
-                    @*</div>*@
+                            </tbody>
+                        </table>
+                    }
+                    </div>
                 </div>
             </div>
     
             <div class="description" style="width: 100%">
-                <input type="text" style="width: 100%" placeholder="Описание" @bind="book.Description">
+                <input class="form-control" type="text" placeholder="Описание" @bind="book.Description" />
             </div>
         </div>
-    
+    <hr/>
     @if (Id == "0")
     {
-            <span>...</span>
+                <span>...</span>
     }
     else
     {
         <h4 style="text-align: center; padding-top: 10px; margin: 0px">Главы</h4>
-        <div class="box">
+        <div class="box jumbotron mb-2 p-2">
             <table class="table">
                 <tr>
                     <th>
@@ -225,52 +210,51 @@ else
                         вниз
                     </th>
                 </tr>
-            @if (chapters != null)
-            {
-                @foreach (var chapter in chapters.Value.Data)
+                @if (chapters != null)
                 {
-                    <tr>
-                        <td>
-                        @chapter.Number
-                        </td>
-                        <td>
-                            <button @onclick="(()=>GoToChapterEditor(chapter.Id, chapter.Number.Value))">@chapter.Name</button>
-                        </td>
-                        <td>
-                            <input type="checkbox" @onclick="(()=>PulishedChapter(chapter.Id, chapter.IsPublic))" checked="@chapter.IsPublic">
-                        </td>
-                        <td>
-                        @if (chapter.Number == 1)
-                        {
-                                    <button disabled>&#8593;</button>
-                        }
-                        else
-                        {
-                                    <button @onclick="(()=>NumberChange(true, chapter.Number.Value))">&#8593;</button>
-                        }
-                        </td>
-                        <td>
-                        @if (chapter.Number == chapters.Value.Data.Length)
-                        {
-                                    <button disabled>&#8595;</button>
-                        }
-                        else
-                        {
-                                    <button @onclick="(()=>NumberChange(false, chapter.Number.Value))">&#8595;</button>
-                        }
-                        </td>
-                    </tr>
-                }                        
-            }
+                    @foreach (var chapter in chapters.Value.Data)
+                    {
+                        <tr>
+                            <td>
+                                @chapter.Number
+                            </td>
+                            <td>
+                                <button class="btn btn-link" @onclick="(()=>GoToChapterEditor(chapter.Id, chapter.Number.Value))">@chapter.Name</button>
+                            </td>
+                            <td>
+                                <input class="form-check-input" type="checkbox" @onclick="(()=>PulishedChapter(chapter.Id, chapter.IsPublic))" checked="@chapter.IsPublic" />
+                            </td>
+                            <td>
+                                @if (chapter.Number == 1)
+                                {
+                                    <button class="btn btn-secondary" disabled>&#8593;</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-primary" @onclick="(()=>NumberChange(true, chapter.Number.Value))">&#8593;</button>
+                                }
+                            </td>
+                            <td>
+                                @if (chapter.Number == chapters.Value.Data.Length)
+                                {
+                                    <button class="btn btn-secondary" disabled>&#8595;</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-primary" @onclick="(()=>NumberChange(false, chapter.Number.Value))">&#8595;</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
                 <tr>
+                    <td></td>
                     <td>
-                    </td>
-                    <td>
-                        <button class="btn btn-success" @onclick="(()=>GoToChapterEditor(0, chapters.Value.Data.Length + 1))">Добавить главу</button>
+                        <button class="btn btn-info" @onclick="(()=>GoToChapterEditor(0, chapters.Value.Data.Length + 1))">Добавить главу</button>
                     </td>
                 </tr>
             </table>
-        </div>        
+        </div>
     }
     </div>
 }
@@ -284,8 +268,6 @@ else
     Response<DataPage<GenreDto>>? BookGenres;
 
     BookDto book = new();
-
-    bool isPublic = true;
 
     Response? response;
 
@@ -309,7 +291,6 @@ else
                 await GetChapters();
                 Cycles = await client.GetFromJsonAsync<Response<DataPage<CycleDto>>>($"https://localhost:7190/api/Cycle/GetAllForUser?userId={resp.Value.UserId}&start={0}");
                 Genres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetAll?start={0}");
-                //BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={Id}&start={0}");
                 await GetBookGenres();
                 book = resp.Value;
             }
@@ -339,17 +320,13 @@ else
         return resp.IsSuccess;
     }
 
-    void SwitchAction()
-    {
-        isPublic = !isPublic;
-
-    }
     async Task UpdateBook()
     {
         using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Book/Update", book);
         TestResponse.EnsureSuccessStatusCode();
         response = await TestResponse.Content.ReadFromJsonAsync<Response>();
     }
+
     async Task CreateBook()
     {
         using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Book/Create", book);
@@ -364,6 +341,7 @@ else
             navigation.NavigateTo("");
         }
     }
+
     private IBrowserFile selectedImage;
     private string uploadMessage;
 
@@ -381,6 +359,7 @@ else
             }
         }
     }
+
     private async Task NumberChange(bool isUp, int number)
     {
         bool isSucces;
@@ -402,6 +381,7 @@ else
             await GetChapters();
         }
     }
+
     private async Task<bool> ToUpDown(ChapterDto chapter)
     {
         using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Chapter/Update", chapter);
@@ -409,25 +389,27 @@ else
         var response = await TestResponse.Content.ReadFromJsonAsync<Response>();
         return response.IsSuccess;
     }
+
     void GoToCycleEditor()
     {
         navigation.NavigateTo($"cycleeditor/0/{book.Id}");
     }
+
     async Task AddGenre(int Id)
     {
         var r = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Book/AddGenre?bookId={this.Id}&genreId={Id}");
         if (r.IsSuccess)
         {
             await GetBookGenres();
-            //BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={this.Id}&start={0}");
         }
     }
+
     async Task RemoveGenre(int Id)
     {
         await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Book/RemoveGenre?bookId={this.Id}&genreId={Id}");
         await GetBookGenres();
-        //BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={this.Id}&start={0}");
     }
+
     private void HandleGenreChange(ChangeEventArgs e)
     {
         if (int.TryParse(e.Value.ToString(), out int genreId))
@@ -435,10 +417,12 @@ else
             AddGenre(genreId);
         }
     }
+
     private async Task GetBookGenres()
     {
         BookGenres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetGenresForBook?bookId={this.Id}&start={0}");
     }
+
     private async Task PulishedChapter(int id, bool isPub)
     {
         await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Chapter/Published?chapterId={id}&action={!isPub}");
