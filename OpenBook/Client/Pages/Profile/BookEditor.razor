@@ -98,11 +98,11 @@
 </style>
 @if (Id != "0" && book.Name == null)
 {
-        <span>Загрузка...</span>
+    <span>Загрузка...</span>
 }
 else
 {
-    <div class="mainBox jumbotron bg-light">
+    <div class="mainBox jumbotron bg-light rounded-1 m-1">
         <div class="headBox">
             <div class="checkSlider">
                 <span>неопубл.</span>
@@ -116,11 +116,11 @@ else
             <div>
                 @if (Id == "0")
                 {
-                        <button class="btn btn-primary" style="margin: 3px;" @onclick="CreateBook">Создать</button>
+                    <button class="btn btn-primary" style="margin: 3px;" @onclick="CreateBook">Создать</button>
                 }
                 else
                 {
-                        <button class="btn btn-primary" style="margin: 3px;" @onclick="UpdateBook">Сохранить</button>
+                    <button class="btn btn-primary" style="margin: 3px;" @onclick="UpdateBook">Сохранить</button>
                 }
             </div>
         </div>
@@ -128,7 +128,7 @@ else
             <div class="container">
                 <div class="content" style="text-align: center">
                     <img class="img-fluid" style="height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)">
-                    <button class="btn btn-secondary">
+                    <button class="btn btn-light">
                         <InputFile OnChange="HandleFileChange" />
                     </button>
                 </div>
@@ -191,7 +191,7 @@ else
     else
     {
         <h4 style="text-align: center; padding-top: 10px; margin: 0px">Главы</h4>
-        <div class="box jumbotron mb-2 p-2">
+        <div class="box jumbotron mb-2 p-2 rounded-1">
             <table class="table">
                 <tr>
                     <th>
@@ -227,21 +227,21 @@ else
                             <td>
                                 @if (chapter.Number == 1)
                                 {
-                                    <button class="btn btn-secondary" disabled>&#8593;</button>
+                                    <button class="btn btn-secondary btn-sm p-1 io-arrow-down" disabled></button>
                                 }
                                 else
                                 {
-                                    <button class="btn btn-primary" @onclick="(()=>NumberChange(true, chapter.Number.Value))">&#8593;</button>
+                                    <button class="btn btn-primary btn-sm p-1 io-arrow-down" @onclick="(()=>NumberChange(true, chapter.Number.Value))"></button>
                                 }
                             </td>
                             <td>
                                 @if (chapter.Number == chapters.Value.Data.Length)
                                 {
-                                    <button class="btn btn-secondary" disabled>&#8595;</button>
+                                    <button class="btn btn-secondary btn-sm p-1  io-arrow-up" disabled></button>
                                 }
                                 else
                                 {
-                                    <button class="btn btn-primary" @onclick="(()=>NumberChange(false, chapter.Number.Value))">&#8595;</button>
+                                    <button class="btn btn-primary btn-sm p-1  io-arrow-up" @onclick="(()=>NumberChange(false, chapter.Number.Value))"></button>
                                 }
                             </td>
                         </tr>
