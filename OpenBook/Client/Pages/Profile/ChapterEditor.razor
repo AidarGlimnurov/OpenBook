@@ -43,6 +43,9 @@
 
     bool isLoadChpter = false;
 
+    Timer timer;
+
+
     async Task Save()
     {
         chapter.Number = chapter.Number ?? Convert.ToInt32(Number);//ToDo в сущности Number стал int?
@@ -73,6 +76,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+            timer = new Timer(async (_) =>
+        {
+        await Save(); // Замените это на вашу логику
+        StateHasChanged(); // Обновите компонент
+        }, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
         if (Id == "0")
         {
             chapter.Number = Convert.ToInt32(Number);
