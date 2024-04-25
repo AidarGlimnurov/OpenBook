@@ -94,6 +94,7 @@
 
     .content {
         width: 50%;
+        padding: 5px;
     }
 </style>
 @if (Id != "0" && book.Name == null)
@@ -103,6 +104,7 @@
 else
 {
     <div class="mainBox jumbotron bg-light rounded-1 m-1">
+        <a class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover m-1" href="mybooks">Назад</a>
         <div class="headBox">
             <div class="checkSlider">
                 <span>неопубл.</span>
@@ -142,13 +144,13 @@ else
     
                     <div style="display: flex; flex-direction: column">
                         <select class="form-select" @onchange="HandleGenreChange">
-                        @if (Genres != null)
-                        {
-                            @foreach (var genre in Genres.Value.Data)
+                            @if (Genres != null)
                             {
-                                <option value="@genre.Id">@genre.Name</option>
+                                @foreach (var genre in Genres.Value.Data)
+                                {
+                                    <option value="@genre.Id">@genre.Name</option>
+                                }
                             }
-                        }
                         </select>
     
                     @if (BookGenres != null)
@@ -180,82 +182,84 @@ else
             </div>
     
             <div class="description" style="width: 100%">
-                <input class="form-control" type="text" placeholder="Описание" @bind="book.Description" />
+                <div class="form-group">
+                    <textarea class="form-control" @bind="@book.Description" placeholder="Описание книги"></textarea>
+                </div>
             </div>
         </div>
-    <hr/>
-    @if (Id == "0")
-    {
-                <span>...</span>
-    }
-    else
-    {
-        <h4 style="text-align: center; padding-top: 10px; margin: 0px">Главы</h4>
-        <div class="box jumbotron mb-2 p-2 rounded-1">
-            <table class="table">
-                <tr>
-                    <th>
-                        №
-                    </th>
-                    <th>
-                        Название
-                    </th>
-                    <th>
-                        публ.
-                    </th>
-                    <th>
-                        наверх
-                    </th>
-                    <th>
-                        вниз
-                    </th>
-                </tr>
-                @if (chapters != null)
-                {
-                    @foreach (var chapter in chapters.Value.Data)
+        <hr/>
+        @if (Id == "0")
+        {
+            <span>...</span>
+        }
+        else
+        {
+            <h4 style="text-align: center; padding-top: 10px; margin: 0px">Главы</h4>
+            <div class="box jumbotron mb-2 p-2 rounded-1">
+                <table class="table">
+                    <tr>
+                        <th>
+                            №
+                        </th>
+                        <th>
+                            Название
+                        </th>
+                        <th>
+                            публ.
+                        </th>
+                        <th>
+                            наверх
+                        </th>
+                        <th>
+                            вниз
+                        </th>
+                    </tr>
+                    @if (chapters != null)
                     {
-                        <tr>
-                            <td>
-                                @chapter.Number
-                            </td>
-                            <td>
-                                <button class="btn btn-link" @onclick="(()=>GoToChapterEditor(chapter.Id, chapter.Number.Value))">@chapter.Name</button>
-                            </td>
-                            <td>
-                                <input class="form-check-input" type="checkbox" @onclick="(()=>PulishedChapter(chapter.Id, chapter.IsPublic))" checked="@chapter.IsPublic" />
-                            </td>
-                            <td>
-                                @if (chapter.Number == 1)
-                                {
-                                    <button class="btn btn-secondary btn-sm p-1 io-arrow-down" disabled></button>
-                                }
-                                else
-                                {
-                                    <button class="btn btn-primary btn-sm p-1 io-arrow-down" @onclick="(()=>NumberChange(true, chapter.Number.Value))"></button>
-                                }
-                            </td>
-                            <td>
-                                @if (chapter.Number == chapters.Value.Data.Length)
-                                {
-                                    <button class="btn btn-secondary btn-sm p-1  io-arrow-up" disabled></button>
-                                }
-                                else
-                                {
-                                    <button class="btn btn-primary btn-sm p-1  io-arrow-up" @onclick="(()=>NumberChange(false, chapter.Number.Value))"></button>
-                                }
-                            </td>
-                        </tr>
+                        @foreach (var chapter in chapters.Value.Data)
+                        {
+                            <tr>
+                                <td>
+                                    @chapter.Number
+                                </td>
+                                <td>
+                                    <button class="btn btn-link" @onclick="(()=>GoToChapterEditor(chapter.Id, chapter.Number.Value))">@chapter.Name</button>
+                                </td>
+                                <td>
+                                    <input class="form-check-input" type="checkbox" @onclick="(()=>PulishedChapter(chapter.Id, chapter.IsPublic))" checked="@chapter.IsPublic" />
+                                </td>
+                                <td>
+                                    @if (chapter.Number == 1)
+                                    {
+                                    <button class="btn btn-outline-secondary p-1 oi oi-arrow-top" disabled></button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-outline-primary p-1 oi oi-arrow-top" @onclick="(()=>NumberChange(true, chapter.Number.Value))"></button>
+                                    }
+                                </td>
+                                <td>
+                                    @if (chapter.Number == chapters.Value.Data.Length)
+                                    {
+                                        <button class="btn btn-outline-secondary p-1 oi oi-arrow-bottom" disabled></button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-outline-primary p-1 oi oi-arrow-bottom" @onclick="(()=>NumberChange(false, chapter.Number.Value))"></button>
+                                    }
+                                </td>
+                            </tr>
+                        }
                     }
-                }
-                <tr>
-                    <td></td>
-                    <td>
-                        <button class="btn btn-info" @onclick="(()=>GoToChapterEditor(0, chapters.Value.Data.Length + 1))">Добавить главу</button>
-                    </td>
-                </tr>
-            </table>
-        </div>
-    }
+                    <tr>
+                        <td></td>
+                        <td>
+                            <button class="btn btn-outline-success" @onclick="(()=>GoToChapterEditor(0, chapters.Value.Data.Length + 1))">Добавить главу</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
     </div>
 }
 @code {

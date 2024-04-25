@@ -6,28 +6,31 @@
 @inject HttpClient client
 @inject NavigationManager navigation
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
-<div style="height: 100%; text-align: center;">
-    <button class="btn btn-primary" @onclick="Save" style="margin: 5px">Сохранить</button>
-</div>
-<div>
-    <input type="text" style="margin-top: 5px; margin-bottom: 5px;  " placeholder="Название" @bind="chapter.Name">
-    <p>Номер главы: @chapter.Number</p>
-    <p><a href="bookeditor/@BookId">Вернуться к книге</a></p>
-</div>
-@if (Id != "0" && !isLoadChpter)
-{
-    <div>Загрузка...</div>
-}
-else
-{
-    <div class="col-md-12">
-        <MarkdownEditor @bind-Value="@chapter.Content" 
-                        ValueHTMLChanged="@OnMarkdownValueHTMLChanged" />
-
-        <hr />
-        @((MarkupString)markdownHtml)
+<div class="jumbotron bg-light rounded-1 m-2 p-2">
+    <div style="height: 100%; text-align: center;">
+        <button class="btn btn-primary" @onclick="Save" style="margin: 5px">Сохранить</button>
     </div>
-}
+    <div>
+        <input class="form-control mt-1 mb-1" type="text" placeholder="Название" @bind="chapter.Name">
+        <p>Номер главы: @chapter.Number</p>
+        <p><a href="bookeditor/@BookId">Вернуться к книге</a></p>
+    </div>
+    @if (Id != "0" && !isLoadChpter)
+    {
+            <div>Загрузка...</div>
+    }
+    else
+    {
+        <div class="col-md-12">
+            <MarkdownEditor @bind-Value="@chapter.Content" 
+                        ValueHTMLChanged="@OnMarkdownValueHTMLChanged" />
+            <hr />
+            <div class="jumbotron bg-white p-2 rounded-1 border-1 border-dark">
+            @((MarkupString)markdownHtml)
+            </div>
+        </div>
+    }
+</div>
 @code {
     [Parameter]
     public string Id { get; set; }
@@ -98,3 +101,4 @@ else
     }
     //https://www.nuget.org/packages/PSC.Blazor.Components.MarkdownEditor
 }
+---
