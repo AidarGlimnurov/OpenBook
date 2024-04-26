@@ -43,39 +43,40 @@
 
 <div class="container">
     <div class="input-group">
-        <input type="text" id="login" @bind="user.Email" placeholder="Email"/>
+        <input class="form-control" type="text" id="login" @bind="user.Email" placeholder="Email" />
         <br>
         @if (!checkEmail)
         {
-            <label style="color: red">Данный email уже зарегистрирован</label>
+                <label style="color: red">Данный email уже зарегистрирован</label>
         }
     </div>
 
     <div class="input-group">
-        <input type="text" id="alias" @bind="user.Name" placeholder="Имя"/>
+        <input class="form-control" type="text" id="alias" @bind="user.Name" placeholder="Имя" />
                 <br>
         @if (!checkName)
         {
-            <label style="color: red">Данное имя уже занято</label>
+                <label style="color: red">Данное имя уже занято</label>
         }
     </div>
 
     <div class="input-group">
-        <input type="@passwordInputType" id="password" @bind="user.Password" placeholder="Пароль"/>
-        <button @onclick="TogglePasswordVisibility" class="password-toggle">
+        <input class="form-control" type="@passwordInputType" id="password" @bind="user.Password" placeholder="Пароль"/>
+        <button @onclick="TogglePasswordVisibility" class="btn btn-outline-secondary password-toggle">
             <img style="width:20px; height:15px;" src="@eyeIconPath" alt="Глаз">
         </button>
     </div>
 
     <div class="input-group">
-        <input type="@passwordInputType" id="confirmPassword" @bind="confirmPassword" placeholder="Повторите пароль"/>
-        <button @onclick="TogglePasswordVisibility" class="password-toggle">
+        <input class="form-control" type="@passwordInputType" id="confirmPassword" @bind="confirmPassword" placeholder="Повторите пароль" />
+        <button @onclick="TogglePasswordVisibility" class="btn btn-outline-secondary password-toggle">
             <img style="width:20px; height:15px;" src="@eyeIconPath" alt="Глаз">
         </button>
     </div>
-
-    <button class="rounded-button" @onclick="Register" disabled="@(!IsFormValid)">Регистрация</button>
-    <a href="SignIn">Есть аккаунт? Войти</a>   
+    <div clas="text-center">
+        <button class="btn btn-primary rounded-button" @onclick="Register" disabled="@(!IsFormValid)">Регистрация</button>
+        <a href="SignIn">Есть аккаунт? Войти</a>
+    </div>
 </div>
 
 @code {

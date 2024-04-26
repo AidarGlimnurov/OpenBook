@@ -47,7 +47,11 @@
 </style>
 @if (book == null)
 {
-        <span>Загрузка...</span>
+    <div class="text-center m-3">
+        <div class="spinner-border" role="status">
+            <span class="sr-only"></span>
+        </div>
+    </div>
 }
 else
 {

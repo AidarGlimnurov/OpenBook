@@ -5,6 +5,7 @@
 @using System.Net.Http.Headers;
 @inject HttpClient client
 @inject NavigationManager navigation
+@implements IDisposable
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 <div class="jumbotron bg-light rounded-1 m-2 p-2">
     <div style="height: 100%; text-align: center;">
@@ -17,13 +18,13 @@
     </div>
     @if (Id != "0" && !isLoadChpter)
     {
-            <div>Загрузка...</div>
+        <div>Загрузка...</div>
     }
     else
     {
         <div class="col-md-12">
             <MarkdownEditor @bind-Value="@chapter.Content" 
-                        ValueHTMLChanged="@OnMarkdownValueHTMLChanged" />
+                    ValueHTMLChanged="@OnMarkdownValueHTMLChanged" />
             <hr />
             <div class="jumbotron bg-white p-2 rounded-1 border-1 border-dark">
             @((MarkupString)markdownHtml)
@@ -76,11 +77,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-            timer = new Timer(async (_) =>
-        {
-        await Save(); // Замените это на вашу логику
-        StateHasChanged(); // Обновите компонент
-        }, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
         if (Id == "0")
         {
             chapter.Number = Convert.ToInt32(Number);
@@ -92,6 +88,25 @@
             OnMarkdownValueHTMLChanged(chapter.Content);
             isLoadChpter = true;
         }
+
+        AutoSave();
+    }
+
+    public void Dispose()
+    {
+        timer.Dispose();
+    }
+
+    private async Task AutoSave()
+    {
+        timer = new Timer(async (_) =>
+        {
+            if (chapter.Content != string.Empty && chapter.Name != string.Empty)
+            {
+                await Save();
+            }
+            StateHasChanged();
+        }, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
     }
 
     string markdownHtml;

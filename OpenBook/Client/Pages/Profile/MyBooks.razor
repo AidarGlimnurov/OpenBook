@@ -17,7 +17,7 @@
         margin: auto;
         margin-top: 50px;
     }
-    .book-image{
+/*     .book-image{
         width: 20%;
         height: 15%;
     }
@@ -27,7 +27,7 @@
     .book-actions {
         text-align: right;
         margin-top: 10px;
-    }
+    } */
 
     /* The switch - the box around the slider */
     .switch {
@@ -94,6 +94,29 @@
         align-items: center; /* Центрирование по вертикали */
         justify-content: center; /* Равномерное распределение по горизонтали */
     }
+    .book-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    }
+    .book-card {
+        width: 200px;
+        height: 270px;
+        margin: 8px;
+        text-align: center;
+        cursor: pointer;
+    }
+    .book-card img {
+        width: 100%;
+        height: 200px;
+        background-color: gray;
+    }
+    .book-card .book-title {
+        color: black;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 </style>
 <div class="jumbotron bg-light p-2 m-2 rounded-1">
     <div class="checkSlider">
@@ -119,26 +142,28 @@
 
     @if (books == null)
     {
-        <span>Загрузка...</span>
+        <div class="text-center m-3">
+            <div class="spinner-border" role="status">
+                <span class="sr-only"></span>
+            </div>
+        </div>
     }
     else
     {
         @if (books.Value != null)
         {
-            <div style="min-height:40vh;">
+            <div class="book-grid rounded-1">
                 @foreach (var book in books.Value.Data)
                 {
-                    <div class="container" style="padding: 5px">
-                        <div class="d-flex flex-wrap" style="width:100%">
-                                <div class="book-title">@book.Name</div>
-                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" style="background:gray;" >
-                            <div class="btn-group" style="height:50%" role="group"  aria-label="Basic example">
-                                <button type="button" class="btn btn-warning oi oi-pencil" @onclick="() => EditBook(book.Id)">
-                                </button>
-                                <br>
-                                <button type="button" class="btn btn-danger oi oi-trash" @onclick="() => DeleteBook(book.Id)">
-                                </button>
-                            </div>
+                    <div class="book-card">
+                        <div class="book-title rounded-1">@book.Name</div>
+                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" style="background:gray;" alt="Обложка книги">
+                        <div class="btn-group" role="group"  aria-label="Basic example">
+                            <button type="button" class="btn btn-warning oi oi-pencil" @onclick="() => EditBook(book.Id)">
+                            </button>
+                            <br>
+                            <button type="button" class="btn btn-danger oi oi-trash" @onclick="() => DeleteBook(book.Id)">
+                            </button>
                         </div>
                     </div>
                 }        
@@ -149,7 +174,22 @@
         {
             <span>Скоро здесь будут Ваши книги!</span>
         }
-        <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin: 15px">
+
+            <nav aria-label="Page navigation" class="pagination justify-content-center">
+                <ul class="pagination">
+                    <li class="page-item @(PageNumber > 1 ? "" : "disabled")">
+                        <button class="page-link" @onclick="GetLastPage">Предыдущая</button>
+                    </li>
+                    <li class="page-item disabled">
+                        <a class="page-link">@PageNumber</a>
+                    </li>
+                    <li class="page-item @(books.Value.Count == 10 ? "" : "disabled")">
+                        <button class="page-link" @onclick="GetNextPage">Следующая</button>
+                    </li>
+                </ul>
+            </nav>
+
+        @*         <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin: 15px">
             <div style="text-align: left; font-size:15pt; display: flex; flex-direction: row; align-items: center;">
                 @if (books.Value.Start > 0)
                 {
@@ -171,7 +211,7 @@
                     <button class="oi oi-arrow-right  btn btn-secondary" disabled style="background:#F8E9A1; border: none;  height: 100%"></button>
                 }
             </div>
-        </div>
+        </div> *@
     }
 </div>
 @code {
@@ -198,6 +238,40 @@
         catch (Exception ex)
         {
             navigation.NavigateTo("SignIn");
+        }
+    }
+
+    private bool HasPreviousPage() => PageNumber > 1;
+    private bool HasNextPage() => books?.Value.Count == count;
+
+    public async Task GetNextPage()
+    {
+        start += count;
+        PageNumber++;
+        if (IsPublished)
+        {
+            await GetBooks(true);
+        }
+        else
+        {
+            await GetBooks(false);
+        }
+    }
+
+    public async Task GetLastPage()
+    {
+        if (HasPreviousPage())
+        {
+            start -= count;
+            PageNumber--;
+            if (IsPublished)
+            {
+                await GetBooks(true);
+            }
+            else
+            {
+                await GetBooks(false);
+            }
         }
     }
 
@@ -230,32 +304,32 @@
     {
         navigation.NavigateTo("bookeditor/0");
     }
-    public async Task GetNextPage()
-    {
-        start += 10;
-        PageNumber++;
-        if (IsPublished)
-        {
-            await GetBooks(true);
-        }
-        else
-        {
-            await GetBooks(false);
-        }
-    }
-    public async Task GetLastPage()
-    {
-        start -= 10;
-        PageNumber--;
-        if (IsPublished)
-        {
-            await GetBooks(true);
-        }
-        else
-        {
-            await GetBooks(false);
-        }
-    }
+    // public async Task GetNextPage()
+    // {
+    //     start += 10;
+    //     PageNumber++;
+    //     if (IsPublished)
+    //     {
+    //         await GetBooks(true);
+    //     }
+    //     else
+    //     {
+    //         await GetBooks(false);
+    //     }
+    // }
+    // public async Task GetLastPage()
+    // {
+    //     start -= 10;
+    //     PageNumber--;
+    //     if (IsPublished)
+    //     {
+    //         await GetBooks(true);
+    //     }
+    //     else
+    //     {
+    //         await GetBooks(false);
+    //     }
+    // }
     public void GoToCycles()
     {
         navigation.NavigateTo("mycycles");

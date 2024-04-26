@@ -72,14 +72,22 @@ namespace OpenBook.Adapter.Repository
             var books = context.Books.Include(b => b.User)
                 .Include(b => b.Cycle).Where(b => b.IsPublished == isPublic).Skip(skip).Take(take);
 
-            if (name != null && name != "!-!")
-            {
-                books = books.Where(b => b.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
-            }
 
-            foreach (var item in books)
+            if (name != null)
             {
-                yield return item;
+                var str1 = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(name));
+                List<Book> newbook = books.Where(b => b.Name.Contains(name, StringComparison.CurrentCulture)).ToList();
+                foreach (var item in newbook)
+                {
+                    yield return item;
+                }
+            }
+            else
+            {
+                foreach (var item in books)
+                {
+                    yield return item;
+                }
             }
         }
 
