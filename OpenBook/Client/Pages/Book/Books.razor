@@ -80,7 +80,7 @@ else
 {
     <div class="book-list-container">
         <div class="search-section">
-            <input class="form-control search-input" @bind="name" placeholder="Введите название книги...">
+            <input class="form-control search-input" @bind="name" placeholder="Введите название книги..." @onkeydown="@SearchOnEnter">
             <button class="search-button btn btn-primary" @onclick="Search">
                 <i class="oi oi-magnifying-glass"></i>
             </button>
@@ -169,5 +169,13 @@ else
     private void ToBook(int id)
     {
         navigation.NavigateTo($"book/{id}");
+    }
+
+    private async Task SearchOnEnter(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SearchBooks();
+        }
     }
 }
