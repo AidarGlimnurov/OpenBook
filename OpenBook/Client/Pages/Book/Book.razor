@@ -1,4 +1,4 @@
-﻿@page "/book/{Id}"
+﻿@page "/book/{Id}/{action}"
 @using OpenBook.Shared.Dtos;
 @using OpenBook.Shared.OutputData;
 @using OpenBook.Shared.SupportData;
@@ -55,6 +55,14 @@
 }
 else
 {
+    @if (action == "0")
+    {
+        <a href="books">Назад</a>
+    }
+    else
+    {
+        <a href="favoritebook">Назад</a>
+    }
     <div class="columnContainer jumbotron rounded-2">
         <a href="Books">     </a>
         <div class="rowContainer">
@@ -147,6 +155,9 @@ else
 @code {
     [Parameter]
     public string Id { get; set; }
+
+    [Parameter]
+    public string action { get; set; }
 
     Response? response;
 
