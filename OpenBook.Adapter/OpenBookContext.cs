@@ -29,7 +29,7 @@ namespace OpenBook.Adapter
         public DbSet<Role> Roles { get; set; }
         public DbSet<Subscribe> Subscribes { get; set; }
         public DbSet<User> Users { get; set; }
-
+        public DbSet<Like> Likes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

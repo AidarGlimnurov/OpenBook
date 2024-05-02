@@ -67,7 +67,14 @@ else
         <a href="Books">     </a>
         <div class="rowContainer">
             <div>
-                <img style="width: 90%; height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Value.Cover)">
+            @if (book.Value.Cover.Length < 20)
+            {
+                <img style="width: 90%; height: 40vh" src="/image/DefaultCover.jpg" alt="Обложка книги">
+            }
+            else
+            {
+                <img style="width: 90%; height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Value.Cover)" alt="Обложка книги">
+            }
             </div>
             <div class="columnContainer">
                 <h2 style="word-wrap: break-word; white-space: pre-wrap">@book.Value.Name</h2>
@@ -76,10 +83,10 @@ else
     
                 <button class="btn btn-primary" @onclick="GoToBookReader" style="margin-top: 5px; margin-bottom: 5px; width: 30%">Читать</button>
     
-            @if (book.Value.Cycle != null)
-            {
-                        <a href="cycle/@book.Value.CycleId">@book.Value.Cycle.Name</a>
-            }
+                @if (book.Value.Cycle != null)
+                {
+                    <a href="cycle/@book.Value.CycleId">@book.Value.Cycle.Name</a>
+                }
                 <div class="newLineContainer">
                 @if (genres != null)
                 {
@@ -101,13 +108,13 @@ else
                 <h2>      </h2>
             @if (myReview == null)
             {
-                <button class="btn btn-secondary m-2" @onclick="AddReview">Отзыв</button>
+                    <button class="btn btn-secondary m-2" @onclick="AddReview">Отзыв</button>
             }
             </div>
     
         @if (myReview != null)
         {
-                <div style="background: #eef1f1"  class="review">
+            <div style="background: #eef1f1"  class="review">
                 @if (myReview.IsEdited)
                 {
                     <label style="font-size:smaller;">ред.</label>
@@ -122,11 +129,11 @@ else
                 }
                 else
                 {
-                     <div class="jumbotron rounded-1 border-primary" style="background: white">
-                         <p class="p-3 m-3 border-1 rounded-1">@myReview.Text</p>
-                     </div>
+                    <div class="jumbotron rounded-1 border-primary" style="background: white">
+                        <p class="p-3 m-3 border-1 rounded-1">@myReview.Text</p>
+                    </div>
                 }
-                        <button class="btn btn-secondary btn-sm m-3" @onclick="AddReview">@reviewChangerText</button>
+                <button class="btn btn-secondary btn-sm m-3" @onclick="AddReview">@reviewChangerText</button>
             </div>
         }
     

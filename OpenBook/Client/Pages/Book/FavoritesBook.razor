@@ -19,19 +19,27 @@ else
 {
     <div class="container mt-3 p-3 border rounded bg-light">
         <div class="row">
-            @foreach (var book in books.Value.Data)
-            {
-                <div class="col-md-3 mb-3 mr-1 ml-1">
-                    <div class="card h-100">
-                        <a href="book/@book.Id/1">
-                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" class="card-img-top" alt="Обложка">
-                        </a>
-                        <div class="card-body">
-                            <h5 class="card-title">@book.Name</h5>
-                        </div>
+        @foreach (var book in books.Value.Data)
+        {
+            <div class="col-md-3 mb-3 mr-1 ml-1">
+                <div class="card h-100">
+                    <a href="book/@book.Id/1">
+                    @if (book.Cover.Length < 20)
+                    {
+                        <img src="/image/DefaultCover.jpg" class="card-img-top" alt="Обложка">
+    
+                    }
+                    else
+                    {
+                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" class="card-img-top" alt="Обложка">
+                    }
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">@book.Name</h5>
                     </div>
                 </div>
-            }
+            </div>
+        }
         </div>
     
         <nav aria-label="Page navigation">

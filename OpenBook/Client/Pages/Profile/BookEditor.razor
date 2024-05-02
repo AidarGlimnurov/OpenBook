@@ -120,14 +120,14 @@ else
                 <br />
             </div>
             <div>
-                @if (Id == "0")
-                {
-                    <button class="btn btn-primary" style="margin: 3px;" @onclick="CreateBook">Создать</button>
-                }
-                else
-                {
-                    <button class="btn btn-primary" style="margin: 3px;" @onclick="UpdateBook">Сохранить</button>
-                }
+            @if (Id == "0")
+            {
+                <button class="btn btn-primary" style="margin: 3px;" @onclick="CreateBook">Создать</button>
+            }
+            else
+            {
+                <button class="btn btn-primary" style="margin: 3px;" @onclick="UpdateBook">Сохранить</button>
+            }
             </div>
         </div>
         <div class="box">
@@ -148,13 +148,13 @@ else
     
                     <div style="display: flex; flex-direction: column">
                         <select class="form-select" @onchange="HandleGenreChange">
-                            @if (Genres != null)
+                        @if (Genres != null)
+                        {
+                            @foreach (var genre in Genres.Value.Data)
                             {
-                                @foreach (var genre in Genres.Value.Data)
-                                {
-                                    <option value="@genre.Id">@genre.Name</option>
-                                }
+                                <option value="@genre.Id">@genre.Name</option>
                             }
+                        }
                         </select>
     
                     @if (BookGenres != null)
@@ -167,17 +167,17 @@ else
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var genre in BookGenres.Value.Data)
-                                {
-                                    <tr>
-                                        <td>
-                                            <label>@genre.Name</label>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-danger" @onclick="(()=>RemoveGenre(genre.Id))">Удалить</button>
-                                        </td>
-                                    </tr>
-                                }
+                            @foreach (var genre in BookGenres.Value.Data)
+                            {
+                                <tr>
+                                    <td>
+                                        <label>@genre.Name</label>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger" @onclick="(()=>RemoveGenre(genre.Id))">Удалить</button>
+                                    </td>
+                                </tr>
+                            }
                             </tbody>
                         </table>
                     }
@@ -235,7 +235,7 @@ else
                                 <td>
                                     @if (chapter.Number == 1)
                                     {
-                                    <button class="btn btn-outline-secondary p-1 oi oi-arrow-top" disabled></button>
+                                        <button class="btn btn-outline-secondary p-1 oi oi-arrow-top" disabled></button>
                                     }
                                     else
                                     {
@@ -337,6 +337,7 @@ else
 
     async Task CreateBook()
     {
+        book.Name = book.Name.ToLower();
         using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Book/Create", book);
         TestResponse.EnsureSuccessStatusCode();
         response = await TestResponse.Content.ReadFromJsonAsync<Response>();
