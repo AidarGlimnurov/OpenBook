@@ -82,7 +82,40 @@ else
                 <h4>Chapter count: Very many chapters</h4>
     
                 <button class="btn btn-primary" @onclick="GoToBookReader" style="margin-top: 5px; margin-bottom: 5px; width: 30%">Читать</button>
-    
+                <br>
+                @if (isLike)
+                {
+                    <div class="text-center" @onclick="LikeAction">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="btn-heart" style="width: 30px; height: 30px; fill: red; cursor: pointer;" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z">
+                                <animate attributeName="fill" attributeType="XML"
+                            from="gray" to="red"
+                            dur="0.3s" repeatCount="1"/>
+                            </path>
+                        </svg>
+                        @if (likes != null)
+                        {
+                            <label>@likes.Value.Count</label>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center" @onclick="LikeAction">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="btn-heart" style="width: 30px; height: 30px; fill: gray; cursor: pointer;" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z">
+                                <animate attributeName="fill" attributeType="XML"
+                            from="red" to="gray"
+                            dur="0.3s" repeatCount="1"/>
+                            </path>
+                        </svg>
+                        @if (likes != null)
+                        {
+                            <label>@likes.Value.Count</label>
+                        }
+                    </div>
+                }
+
                 @if (book.Value.Cycle != null)
                 {
                     <a href="cycle/@book.Value.CycleId">@book.Value.Cycle.Name</a>
@@ -108,7 +141,7 @@ else
                 <h2>      </h2>
             @if (myReview == null)
             {
-                    <button class="btn btn-secondary m-2" @onclick="AddReview">Отзыв</button>
+                <button class="btn btn-secondary m-2" @onclick="AddReview">Отзыв</button>
             }
             </div>
     
@@ -173,11 +206,15 @@ else
     Response<BookDto>? book;
     Response<DataPage<GenreDto>>? genres;
     Response<DataPage<ReviewDto>>? reviews;
+    Response<DataPage<LikeDto>>? likes;
     ReviewDto? myReview;
 
     string reviewChangerText = "Изменить";
 
     bool editMode = false;
+
+    bool isLike = false;
+    LikeDto like;
 
     protected override async Task OnInitializedAsync()
     {
@@ -186,6 +223,16 @@ else
             var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
             user = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+            likes = await client.GetFromJsonAsync<Response<DataPage<LikeDto>>>($"https://localhost:7190/api/Like/GetLikesForBook?bookId={Id}&isLastTime={false}");
+            if (user != null)
+            {
+                var lk = await client.GetFromJsonAsync<Response<LikeDto>>($"https://localhost:7190/api/Like/CheckLike?userId={user.Value.Id}&bookId={Id}");
+                if (lk.IsSuccess)
+                {
+                    like = lk.Value;
+                    isLike = true;
+                }
+            }
         }
         catch (Exception ex)
         {
@@ -251,5 +298,29 @@ else
             }
         }
         return true;
+    }
+
+    async Task LikeAction()
+    {
+        if (user.Value != null)
+        {
+            if (isLike)
+            {
+                await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Like/Delete?likeId={Id}");
+                isLike = false;
+            }
+            else
+            {
+                like = new()
+                {
+                    UserId = user.Value.Id,
+                    BookId = Convert.ToInt32(Id),                    
+                };
+
+                await client.PostAsJsonAsync($"https://localhost:7190/api/Like/Create", like);
+                isLike = true;
+                var lk = await client.GetFromJsonAsync<Response<LikeDto>>($"https://localhost:7190/api/Like/CheckLike?userId={user.Value.Id}&bookId={Id}");
+            }            
+        }
     }
 }

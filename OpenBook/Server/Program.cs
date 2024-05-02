@@ -58,6 +58,7 @@ builder.Services.AddScoped<ReviewInteractor>();
 builder.Services.AddScoped<RoleInteractor>();
 builder.Services.AddScoped<SubscribeInteractor>();
 builder.Services.AddScoped<UserInteractor>();
+builder.Services.AddScoped<LikeInteractor>();
 
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
@@ -70,6 +71,7 @@ builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<ISubscribeRepository, SubsriberRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ILikeRepository, LikeRepository>();
 
 //	Add Swagger
 builder.Services.AddSwaggerGen(options =>

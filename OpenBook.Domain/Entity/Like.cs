@@ -9,7 +9,7 @@ namespace OpenBook.Domain.Entity
     public class Like
     {
         public int Id { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; } = DateTime.Now;
         public int UserId { get; set; }
         public User? User { get; set; }
         public int BookId { get; set; }

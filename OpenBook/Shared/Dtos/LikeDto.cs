@@ -9,7 +9,7 @@ namespace OpenBook.Shared.Dtos
     public class LikeDto
     {
         public int Id { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; } = DateTime.Now;
         public int UserId { get; set; }
         public UserDto? User { get; set; }
         public int BookId { get; set; }
