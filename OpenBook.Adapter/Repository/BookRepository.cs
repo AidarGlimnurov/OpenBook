@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OpenBook.App.Storage;
 using OpenBook.Domain.Entity;
+using OpenBook.Shared.SupportData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -122,6 +123,43 @@ namespace OpenBook.Adapter.Repository
                 .Include(b => b.Cycle).Where(b => b.CycleId == cycleId).Skip(skip).Take(take);
 
             foreach (var item in books)
+            {
+                yield return item;
+            }
+        }
+
+        public async IAsyncEnumerable<Book> GetSortBooks(SortData sortData, int start, int? count)
+        {
+            if (count == null) count = 100;
+
+            int skip = start;
+            int take = count.Value;
+
+            var lastMonthDate = DateTime.Now.AddMonths(-1);
+            IQueryable<Book?>? books;
+            if (sortData.Action == 0)
+            {
+                books = context.Books.Skip(skip).Take(take);
+            }
+            if (sortData.Action == 1)
+            {
+                books = context.Likes.Include(l => l.Book).Include(l => l.User)
+                    .Where(l => l.Date >= lastMonthDate).GroupBy(l => l.Book).Select(g => new { Book = g.Key, Count = g.Count() })
+                    .OrderByDescending(l => l.Count).Skip(skip).Take(take).Select(l => l.Book);
+            }
+            if (sortData.Action == 2)
+            {
+                books = context.Likes.Include(l => l.Book).Include(l => l.User)
+                    .Where(l => l.Date >= lastMonthDate).GroupBy(l => l.Book).Select(g => new { Book = g.Key, Count = g.Count() })
+                    .OrderBy(l => l.Count).Skip(skip).Take(take).Select(l => l.Book);
+            }
+            if (sortData.Action == 2)
+            {
+                books = context.Books.Order().Skip(skip).Take(take);
+            }
+
+
+            foreach (var item in likes)
             {
                 yield return item;
             }

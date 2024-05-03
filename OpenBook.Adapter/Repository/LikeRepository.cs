@@ -98,7 +98,7 @@ namespace OpenBook.Adapter.Repository
 
             var likes = context.Likes.Include(l => l.Book).Include(l => l.User)
                 .Where(l => l.Date >= lastMonthDate).GroupBy(l => l.Book).Select(g => new { Book = g.Key, Count = g.Count() })
-                .OrderBy(l => l.Count)/*.Skip(skip).Take(take)*/;
+                .OrderBy(l => l.Count).Skip(skip).Take(take);
 
             foreach (var item in likes)
             {

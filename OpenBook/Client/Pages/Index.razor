@@ -64,24 +64,24 @@
                 {
                     @foreach (var book in books.Value.Data)
                     {
-                                <div class="carousel-item active">
+                        <div class="carousel-item active">
                             @if (book.Cover.Length < 20)
                             {
-                                            <img src="/image/DefaultCover.jpg" class="d-block" style="width: 100%; height:750px" alt="Обложка книги">
+                                <img src="/image/DefaultCover.jpg" class="d-block" style="width: 100%; height:750px" alt="Обложка книги">
                             }
                             else
                             {
-                                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" class="d-block" style="width: 100%; height:750px" alt="Обложка книги">
+                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" class="d-block" style="width: 100%; height:750px" alt="Обложка книги">
                             }
-                                    <div class="carousel-caption d-none d-md-block" style="background: black; opacity: 0.5">
-                                        <h5 style="color: transparent; opacity: 100%">@book.Name</h5>
-                                        <p style="color: transparent; opacity: 100%">@book.Author</p>
-                                    </div>
-                                    <div class="carousel-caption d-none d-md-block">
-                                        <h5>@book.Name</h5>
-                                        <p>@book.Author</p>
-                                    </div>
-                                </div>                    
+                            <div class="carousel-caption d-none d-md-block" style="background: black; opacity: 0.5">
+                                <h5 style="color: transparent; opacity: 100%">@book.Name</h5>
+                                <p style="color: transparent; opacity: 100%">@book.Author</p>
+                            </div>
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>@book.Name</h5>
+                                <p>@book.Author</p>
+                            </div>
+                        </div>                    
                     }                 
                 } 
             </div>

@@ -1,6 +1,7 @@
 ﻿@page "/books"
 @using OpenBook.Shared.Dtos
 @using OpenBook.Shared.OutputData
+@using OpenBook.Shared.SupportData;
 @inject HttpClient client
 @inject NavigationManager navigation
 
@@ -87,16 +88,36 @@ else
         </div>
     
         <p>
-            <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                Link with href
-            </a>
-            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                Button with data-bs-target
+            <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                Фильтры
             </button>
         </p>
         <div class="collapse" id="collapseExample">
             <div class="card card-body">
-                Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+                <button class="btn btn-success m-1">Искать</button>
+                <button class="btn btn-warning m-1">Очистить</button>
+                <select class="form-select m-1 w-25" @onchange="HandlePopChange">
+                    <option value="0"selected>Нет</option>
+                    <option value="1">Популярность возраст.</option>
+                    <option> value="2"Популярность убыв.</option>
+                    <option value="3">Новое</option>
+                </select>
+                <select class="form-select m-1 w-25" @onchange="HandleGenreChange">
+                    <option>Жанры</option>
+                    @if (genres != null)
+                    {
+                        @foreach (var genre in genres.Value.Data)
+                        {
+                            <option value="@genre.Id">@genre.Name</option>
+                        }                        
+                    }
+                </select>
+                <div class="row">
+                    @foreach (var genre in genreIds)
+                    {
+                        <button class="btn btn-outline-dark m-1 w-25" @onclick="(()=>DeleteGenre(genre))">@genres.Value.Data.FirstOrDefault(g=>g.Id==genre).Name</button>
+                    }
+                </div>
             </div>
         </div>
     
@@ -135,14 +156,20 @@ else
 
 @code {
     Response<DataPage<BookDto>>? books;
+    Response<DataPage<GenreDto>>? genres;
     int start = 0;
     int count = 10;
     public int PageNumber { get; set; } = 1;
     string name = string.Empty;
 
+    List<int> genreIds = new();
+
+    SortData sortData = new();
+
     protected override async Task OnInitializedAsync()
     {
         await SearchBooks();
+        await GetGenres();
     }
 
     private bool HasPreviousPage() => PageNumber > 1;
@@ -171,7 +198,10 @@ else
         PageNumber = 1;
         await SearchBooks();
     }
-
+    private async Task GetGenres()
+    {
+        genres = await client.GetFromJsonAsync<Response<DataPage<GenreDto>>>($"https://localhost:7190/api/Genre/GetAll?start={0}");
+    }
     private async Task SearchBooks()
     {
         books = await client.GetFromJsonAsync<Response<DataPage<BookDto>>>($"https://localhost:7190/api/Book/GetBooks?start={start}&count={count}&isPublic=true&name={name}");
@@ -187,6 +217,25 @@ else
         if (e.Key == "Enter")
         {
             await SearchBooks();
+        }
+    }
+    private void HandleGenreChange(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int genreId))
+        {
+            genreIds.Add(genreId);
+        }
+    }
+    async Task DeleteGenre(int id)
+    {
+        genreIds.Remove(id);
+    }
+
+    private void HandlePopChange(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int popId))
+        {
+            sortData.Action = popId;
         }
     }
 }

@@ -6,7 +6,20 @@
 @inject HttpClient client
 @inject NavigationManager navigation
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
+<style>
+    .book-card {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
 
+    .book-cover {
+        height: 200px; /* Выберите подходящую высоту */
+        object-fit: cover;
+    }
+</style>
 @if (books == null)
 {
     <div class="text-center m-3">
@@ -19,27 +32,26 @@ else
 {
     <div class="container mt-3 p-3 border rounded bg-light">
         <div class="row">
-        @foreach (var book in books.Value.Data)
-        {
-            <div class="col-md-3 mb-3 mr-1 ml-1">
-                <div class="card h-100">
-                    <a href="book/@book.Id/1">
-                    @if (book.Cover.Length < 20)
-                    {
-                        <img src="/image/DefaultCover.jpg" class="card-img-top" alt="Обложка">
-    
-                    }
-                    else
-                    {
-                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" class="card-img-top" alt="Обложка">
-                    }
-                    </a>
-                    <div class="card-body">
-                        <h5 class="card-title">@book.Name</h5>
+            @foreach (var book in books.Value.Data)
+            {
+                <div class="col-md-3 mb-3 mr-1 ml-1">
+                    <div class="card book-card">
+                        <a href="book/@book.Id/1">
+                            @if (book.Cover.Length < 20)
+                            {
+                                <img src="/image/DefaultCover.jpg" class="card-img-top book-cover" alt="Обложка">
+                            }
+                            else
+                            {
+                                 <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" class="card-img-top book-cover" alt="Обложка">
+                            }
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">@book.Name</h5>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
+            }
         </div>
     
         <nav aria-label="Page navigation">
