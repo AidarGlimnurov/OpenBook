@@ -63,7 +63,7 @@ else
                 else
                 {
                     <span style="color: red;">Ваш аккаунт не верифицирован!</span>
-                    <button class="btn btn-success">Пройти верификацию</button>
+                    <button class="btn btn-success" @onclick="GoToVerif">Пройти верификацию</button>
                 }
                 <button class="btn btn-secondary" @onclick="GoToPasswordChanger">Сменить пароль</button>
                 <button class="btn btn-primary" @onclick="() => GoToEditBooks(0)">Мои книги</button>
@@ -137,5 +137,9 @@ else
     void GoToPasswordChanger()
     {
         navigation.NavigateTo($"passwordChange");
+    }
+    void GoToVerif()
+    {
+        navigation.NavigateTo($"VerificationPage");
     }
 }

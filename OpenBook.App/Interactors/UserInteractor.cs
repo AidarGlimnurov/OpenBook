@@ -139,6 +139,10 @@ namespace OpenBook.App.Interactors
             try
             {
                 var user = await userRepository.GetByEmailPassword(email, password);
+                if (user==null)
+                {
+                    throw new Exception("Пользователь не найден!");
+                }
                 response.Value = user.ToDto();
                 response.IsSuccess = true;
             }

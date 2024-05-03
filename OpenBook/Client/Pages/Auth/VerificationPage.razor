@@ -57,15 +57,12 @@ else
     <div class="container">
         @if (isAuth == true)
         {
-            <div class="input-group">
-            <button @onclick="GetCode" class="btn btn-primary password-toggle">@codeMsg</button>
-                @if (codeResponse.IsSuccess)
-                {
-                    <p>@msg</p>
-                    <input class="form-control" id="code" @bind="code" placeholder="Введите код"/>
-                    <button class="btn btn-primary" @onclick="CheckCode">Проверить</button>                         
-                }
-            </div>
+            <button @onclick="GetCode" class="btn btn-primary">@codeMsg</button>
+            <p>@msg</p>
+            <br>
+            <input class="form-control" id="code" @bind="code" placeholder="Введите код"/>
+            <button class="btn btn-primary" @onclick="CheckCode">Проверить</button>                         
+
         }
     </div>
 }
@@ -77,8 +74,11 @@ else
     Response codeResponse = new() { IsSuccess = false };
 
     string code;
-    string msg = "Код отправлен на почту!";
+    string email;
+    string msg = "";
     string codeMsg = "Получить код на почту";
+
+    Response<UserDto> user= new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -86,6 +86,7 @@ else
         {
             var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
+            user = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
             if (cookieContent != null && await CheckAuth())
             {
                 isAuth = true;
@@ -99,21 +100,28 @@ else
 
     async Task<bool> CheckAuth()
     {
-        var resp = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+        var resp = await client.GetFromJsonAsync<Response<UserDto>>($"https://localhost:7190/api/Auth/GetUserInfo");
         return resp.IsSuccess;
     }
 
     private async Task GetCode()
     {
-        //ToDo создать нужную логику
-        msg = "Код отправлен на почту!";
-        codeMsg = "Получить код повторно";
+        codeResponse = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/User/SendVerifEmail?email={user.Value.Email}");
+        if (codeResponse.IsSuccess)
+        {
+            msg = "Код отправлен на почту!";
+            codeMsg = "Получить код повторно"; 
+        }
+        else
+        {
+            msg = "Не удалось отправить код!";
+            codeMsg = "Получить код повторно";
+        }
     }
     private async Task CheckCode()
     {
-        //ToDo создать нужную логику
-
-        if (response.IsSuccess)
+        codeResponse = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/User/VerifEmail?code={code}");
+        if (codeResponse.IsSuccess)
         {
             navigation.NavigateTo("profile");
         }

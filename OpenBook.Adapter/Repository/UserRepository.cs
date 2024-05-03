@@ -84,8 +84,9 @@ namespace OpenBook.Adapter.Repository
         public async Task Update(User user)
         {
             //var userChange = await context.Users.Include(u => u.Role).FirstOrDefaultAsync(u=>u.Id==user)
-            user.Role = await context.Roles.FirstOrDefaultAsync(r => r.Id == user.RoleId);
-            context.Update(user);
+            var userChange = await context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Id == user.Id);
+            userChange.Password = user.Password;
+            context.Update(userChange);
         }
     }
 }
