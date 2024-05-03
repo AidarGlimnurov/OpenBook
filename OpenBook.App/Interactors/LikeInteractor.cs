@@ -62,7 +62,31 @@ namespace OpenBook.App.Interactors
             var response = new Response<DataPage<BookDto>>();
             try
             {
-                var data = likeRepository.GetLikeBooksForUser( user);
+                var data = likeRepository.GetLikeBooksForUser(user);
+
+                List<BookDto> books = new();
+                await foreach (var item in data)
+                {
+                    books.Add(item.ToDto());
+                }
+                response.Value.Data = books.ToArray();
+                response.Value.Start = 0;
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
+        public async Task<Response<DataPage<BookDto>>> GetPopularBooks(int start, int? count)
+        {
+            var response = new Response<DataPage<BookDto>>();
+            try
+            {
+                var data = likeRepository.GetPopularBooks(start, count);
 
                 List<BookDto> books = new();
                 await foreach (var item in data)

@@ -47,7 +47,7 @@
         <br>
         @if (!checkEmail)
         {
-                <label style="color: red">Данный email уже зарегистрирован</label>
+            <label style="color: red">Данный email уже зарегистрирован</label>
         }
     </div>
 
@@ -56,7 +56,7 @@
                 <br>
         @if (!checkName)
         {
-                <label style="color: red">Данное имя уже занято</label>
+            <label style="color: red">Данное имя уже занято</label>
         }
     </div>
 
@@ -131,7 +131,7 @@
             }
             if (checkName && checkEmail)
             {
-                user.RoleId = 3;
+                user.RoleId = 2;
                 using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/User/CreateWithBasket", user);
                 TestResponse.EnsureSuccessStatusCode();
                 response = await TestResponse.Content.ReadFromJsonAsync<Response>();
@@ -154,7 +154,7 @@
     }
     private async Task<bool> CheckName()
     {
-        var nameChecker = await client.GetFromJsonAsync<Response<UserDto>>($"https://localhost:7190/api/User/GetByNamel?name={user.Name}");
+        var nameChecker = await client.GetFromJsonAsync<Response<UserDto>>($"https://localhost:7190/api/User/GetByName?name={user.Name}");
         if (nameChecker.Value == null) return false;
         return true;
     }

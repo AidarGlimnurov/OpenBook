@@ -62,8 +62,8 @@ else
                 @if (codeResponse.IsSuccess)
                 {
                     <p>@msg</p>
-                    <input id="code" @bind="code" placeholder="Введите код"/>
-                    <button @onclick="CheckCode" class="password-toggle">Проверить</button>                         
+                    <input class="form-control" id="code" @bind="code" placeholder="Введите код"/>
+                    <button class="btn btn-primary" @onclick="CheckCode">Проверить</button>                         
                 }
             </div>
         }

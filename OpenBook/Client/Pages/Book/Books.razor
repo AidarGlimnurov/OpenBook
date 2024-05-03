@@ -86,20 +86,24 @@ else
             </button>
         </div>
     
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                Link with href
+            </a>
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                Button with data-bs-target
+            </button>
+        </p>
+        <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+                Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+            </div>
+        </div>
+    
         <div class="book-grid">
             @foreach (var book in books.Value.Data)
             {
-            @*                 <div class="col-md-3 mb-3">
-            <div class="card h-100">
-                <a href="book/@book.Id">
-                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" class="card-img-top" alt="Обложка">
-                </a>
-                <div class="card-body">
-                    <h5 class="card-title">@book.Name</h5>
-                </div>
-            </div>
-        </div> *@
-                    <div class="book-card" @onclick="() => ToBook(book.Id)">
+                <div class="book-card" @onclick="() => ToBook(book.Id)">
                     @if (book.Cover.Length < 20)
                     {
                         <img class="rounded-1" src="/image/DefaultCover.jpg" alt="Обложка книги">

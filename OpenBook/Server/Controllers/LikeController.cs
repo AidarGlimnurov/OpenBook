@@ -49,5 +49,10 @@ namespace OpenBook.Server.Controllers
         {
             return await interactor.Delete(likeId);
         }
+        [HttpGet("GetPopularBooks")]
+        public async Task<Response<DataPage<BookDto>>> GetPopularBooks(int start, int? count)
+        {
+            return await interactor.GetPopularBooks(start, count);
+        }
     }
 }

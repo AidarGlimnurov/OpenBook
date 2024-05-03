@@ -89,8 +89,8 @@ else
                         <svg xmlns="http://www.w3.org/2000/svg" class="btn-heart" style="width: 30px; height: 30px; fill: red; cursor: pointer;" viewBox="0 0 24 24">
                             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z">
                                 <animate attributeName="fill" attributeType="XML"
-                            from="gray" to="red"
-                            dur="0.3s" repeatCount="1"/>
+                                        from="gray" to="red"
+                                        dur="0.3s" repeatCount="1"/>
                             </path>
                         </svg>
                         @if (likes != null)
@@ -105,8 +105,8 @@ else
                         <svg xmlns="http://www.w3.org/2000/svg" class="btn-heart" style="width: 30px; height: 30px; fill: gray; cursor: pointer;" viewBox="0 0 24 24">
                             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z">
                                 <animate attributeName="fill" attributeType="XML"
-                            from="red" to="gray"
-                            dur="0.3s" repeatCount="1"/>
+                                        from="red" to="gray"
+                                        dur="0.3s" repeatCount="1"/>
                             </path>
                         </svg>
                         @if (likes != null)
@@ -115,19 +115,19 @@ else
                         }
                     </div>
                 }
-
+    
                 @if (book.Value.Cycle != null)
                 {
                     <a href="cycle/@book.Value.CycleId">@book.Value.Cycle.Name</a>
                 }
                 <div class="newLineContainer">
-                @if (genres != null)
-                {
-                    @foreach (var genre in genres.Value.Data)
+                    @if (genres != null)
                     {
-                        <a href="genre/{@genre.Id}">@genre.Name | </a>
-                    }                    
-                }
+                        @foreach (var genre in genres.Value.Data)
+                        {
+                            <a href="genre/{@genre.Id}">@genre.Name | </a>
+                        }                    
+                    }
                 </div>
                 <div>
                     <p>@book.Value.Description</p>
@@ -138,37 +138,37 @@ else
     
         <div class="innerColumnContainer">
             <div style="text-align:center">
-                <h2>      </h2>
-            @if (myReview == null)
-            {
-                <button class="btn btn-secondary m-2" @onclick="AddReview">Отзыв</button>
-            }
+                <h2>Отзывы</h2>
+                @if (myReview == null)
+                {
+                    <button class="btn btn-secondary m-2" @onclick="AddReview">Отзыв</button>
+                }
             </div>
     
-        @if (myReview != null)
-        {
-            <div style="background: #eef1f1"  class="review">
-                @if (myReview.IsEdited)
-                {
-                    <label style="font-size:smaller;">ред.</label>
-                }
-                <h4 class="m-1">@myReview.User.Name</h4>
-                @if (editMode)
-                {
-                    <div class="form-group">
-                        <textarea class="form-control" @bind="@myReview.Text" placeholder="Отзыв"></textarea>
-                    </div>
-                    @*<input type="text" @bind="@myReview.Text"> *@
-                }
-                else
-                {
-                    <div class="jumbotron rounded-1 border-primary" style="background: white">
-                        <p class="p-3 m-3 border-1 rounded-1">@myReview.Text</p>
-                    </div>
-                }
-                <button class="btn btn-secondary btn-sm m-3" @onclick="AddReview">@reviewChangerText</button>
-            </div>
-        }
+            @if (myReview != null)
+            {
+                <div style="background: #eef1f1"  class="review">
+                    @if (myReview.IsEdited)
+                    {
+                        <label style="font-size:smaller;">ред.</label>
+                    }
+                    <h4 class="m-1">@myReview.User.Name</h4>
+                    @if (editMode)
+                    {
+                        <div class="form-group">
+                            <textarea class="form-control" @bind="@myReview.Text" placeholder="Отзыв"></textarea>
+                        </div>
+                        @*<input type="text" @bind="@myReview.Text"> *@
+                    }
+                    else
+                    {
+                        <div class="jumbotron rounded-1 border-primary" style="background: white">
+                            <p class="p-3 m-3 border-1 rounded-1">@myReview.Text</p>
+                        </div>
+                    }
+                    <button class="btn btn-secondary btn-sm m-3" @onclick="AddReview">@reviewChangerText</button>
+                </div>
+            }
     
         @if (reviews != null)
         {
@@ -230,7 +230,7 @@ else
                 if (lk.IsSuccess)
                 {
                     like = lk.Value;
-                    isLike = true;
+                    isLike = like != null ? true : false;
                 }
             }
         }
@@ -312,15 +312,15 @@ else
             else
             {
                 like = new()
-                {
-                    UserId = user.Value.Id,
-                    BookId = Convert.ToInt32(Id),                    
-                };
+                    {
+                        UserId = user.Value.Id,
+                        BookId = Convert.ToInt32(Id),
+                    };
 
                 await client.PostAsJsonAsync($"https://localhost:7190/api/Like/Create", like);
                 isLike = true;
                 var lk = await client.GetFromJsonAsync<Response<LikeDto>>($"https://localhost:7190/api/Like/CheckLike?userId={user.Value.Id}&bookId={Id}");
-            }            
+            }
         }
     }
 }

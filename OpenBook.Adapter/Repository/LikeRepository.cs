@@ -86,5 +86,24 @@ namespace OpenBook.Adapter.Repository
             var like = await context.Likes.FirstOrDefaultAsync(l => l.Id == likeId);
             context.Remove(like);
         }
+
+        public async IAsyncEnumerable<Book> GetPopularBooks(int start, int? count)
+        {
+            if (count == null) count = 100;
+
+            int skip = start;
+            int take = count.Value;
+
+            var lastMonthDate = DateTime.Now.AddMonths(-1);
+
+            var likes = context.Likes.Include(l => l.Book).Include(l => l.User)
+                .Where(l => l.Date >= lastMonthDate).GroupBy(l => l.Book).Select(g => new { Book = g.Key, Count = g.Count() })
+                .OrderBy(l => l.Count)/*.Skip(skip).Take(take)*/;
+
+            foreach (var item in likes)
+            {
+                yield return item.Book;
+            }
+        }
     }
 }

@@ -14,6 +14,7 @@ namespace OpenBook.App.Storage
         Task<Like> CheckLike(int userId, int bookId);
         IAsyncEnumerable<Like> GetLikesForBook(int bookId, bool isLastTime);
         IAsyncEnumerable<Book> GetLikeBooksForUser(int user);
+        IAsyncEnumerable<Book> GetPopularBooks(int start, int? count);
         Task<int> GetCountLikesForBook(int bookId, bool isLastTime = false);
         Task Delete(int likeId);
     }
