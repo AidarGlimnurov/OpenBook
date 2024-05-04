@@ -10,5 +10,7 @@ namespace OpenBook.Shared.SupportData
     {
         public int[]? GenreIds{ get; set; }
         public int Action { get; set; } = 0;
+        public int? Start { get; set; }
+        public int? Count { get; set; }
     }
 }

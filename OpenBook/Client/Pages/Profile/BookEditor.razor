@@ -148,13 +148,14 @@ else
     
                     <div style="display: flex; flex-direction: column">
                         <select class="form-select" @onchange="HandleGenreChange">
-                        @if (Genres != null)
-                        {
-                            @foreach (var genre in Genres.Value.Data)
+                            <option>Нет</option>
+                            @if (Genres != null)
                             {
-                                <option value="@genre.Id">@genre.Name</option>
+                                @foreach (var genre in Genres.Value.Data)
+                                {
+                                    <option value="@genre.Id">@genre.Name</option>
+                                }
                             }
-                        }
                         </select>
     
                     @if (BookGenres != null)

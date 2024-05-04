@@ -4,6 +4,7 @@ using OpenBook.App.Storage;
 using OpenBook.Domain.Entity;
 using OpenBook.Shared.Dtos;
 using OpenBook.Shared.OutputData;
+using OpenBook.Shared.SupportData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -279,6 +280,30 @@ namespace OpenBook.App.Interactors
             try
             {
                 var data = bookRepository.GetAllBooks(start, count);
+
+                List<BookDto> books = new();
+                await foreach (var item in data)
+                {
+                    books.Add(item.ToDto());
+                }
+                response.Value.Data = books.ToArray();
+                response.Value.Start = start;
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
+        public async Task<Response<DataPage<BookDto>>> GetSortBooks(SortData sortData, int start, int? count)
+        {
+            var response = new Response<DataPage<BookDto>>();
+            try
+            {
+                var data = bookRepository.GetSortBooks(sortData, start, count);
 
                 List<BookDto> books = new();
                 await foreach (var item in data)

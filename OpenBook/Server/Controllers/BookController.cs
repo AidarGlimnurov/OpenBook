@@ -6,6 +6,7 @@ using OpenBook.App.Interactors;
 using OpenBook.App.Mappers;
 using OpenBook.Shared.Dtos;
 using OpenBook.Shared.OutputData;
+using OpenBook.Shared.SupportData;
 
 namespace OpenBook.Server.Controllers
 {
@@ -87,6 +88,11 @@ namespace OpenBook.Server.Controllers
         public async Task<Response<DataPage<BookDto>>> GetAllBooks(int start, int? count)
         {
             return await interactor.GetAllBooks(start, count);
+        }
+        [HttpPost("GetSortBooks")]
+        public async Task<Response<DataPage<BookDto>>> GetSortBooks([FromBody] SortData sortData)
+        {
+            return await interactor.GetSortBooks(sortData, sortData.Start.Value, sortData.Count);
         }
     }
 }

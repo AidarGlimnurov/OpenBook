@@ -94,13 +94,13 @@ else
         </p>
         <div class="collapse" id="collapseExample">
             <div class="card card-body">
-                <button class="btn btn-success m-1">Искать</button>
-                <button class="btn btn-warning m-1">Очистить</button>
+                <button class="btn btn-success m-1 w-25" @onclick="GetSortBook">Искать</button>
+                <button class="btn btn-warning m-1 w-25" @onclick="Clear">Очистить</button>
                 <select class="form-select m-1 w-25" @onchange="HandlePopChange">
                     <option value="0"selected>Нет</option>
                     <option value="1">Популярность возраст.</option>
-                    <option> value="2"Популярность убыв.</option>
-                    <option value="3">Новое</option>
+                    <option value="2">Популярность убыв.</option>
+@*                    <option value="3">Новое</option>*@
                 </select>
                 <select class="form-select m-1 w-25" @onchange="HandleGenreChange">
                     <option>Жанры</option>
@@ -237,5 +237,18 @@ else
         {
             sortData.Action = popId;
         }
+    }
+    void Clear()
+    {
+        sortData = new();
+    }
+    async Task GetSortBook()
+    {
+        sortData.Count = count;
+        sortData.Start = start;
+        sortData.GenreIds = genreIds.ToArray();
+        using HttpResponseMessage TestResponse = await client.PostAsJsonAsync($"https://localhost:7190/api/Book/GetSortBooks", sortData);
+
+        books = await TestResponse.Content.ReadFromJsonAsync<Response<DataPage<BookDto>>>();
     }
 }

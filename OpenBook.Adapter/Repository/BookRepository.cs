@@ -136,30 +136,46 @@ namespace OpenBook.Adapter.Repository
             int take = count.Value;
 
             var lastMonthDate = DateTime.Now.AddMonths(-1);
-            IQueryable<Book?>? books;
-            if (sortData.Action == 0)
+            IQueryable<Book?>? books = context.Books.Skip(skip).Take(take);
+            switch (sortData.Action)
             {
-                books = context.Books.Skip(skip).Take(take);
-            }
-            if (sortData.Action == 1)
-            {
-                books = context.Likes.Include(l => l.Book).Include(l => l.User)
-                    .Where(l => l.Date >= lastMonthDate).GroupBy(l => l.Book).Select(g => new { Book = g.Key, Count = g.Count() })
-                    .OrderByDescending(l => l.Count).Skip(skip).Take(take).Select(l => l.Book);
-            }
-            if (sortData.Action == 2)
-            {
-                books = context.Likes.Include(l => l.Book).Include(l => l.User)
-                    .Where(l => l.Date >= lastMonthDate).GroupBy(l => l.Book).Select(g => new { Book = g.Key, Count = g.Count() })
-                    .OrderBy(l => l.Count).Skip(skip).Take(take).Select(l => l.Book);
-            }
-            if (sortData.Action == 2)
-            {
-                books = context.Books.Order().Skip(skip).Take(take);
+                case 1:
+                    books = context.Likes.Include(l => l.Book).Include(l => l.User)
+                        .Where(l => l.Date >= lastMonthDate)
+                        .GroupBy(l => l.Book)
+                        .Select(g => new { Book = g.Key, Count = g.Count() })
+                        .OrderByDescending(l => l.Count)
+                        .Skip(skip)
+                        .Take(take)
+                        .Select(l => l.Book);
+                    break;
+                case 2:
+                    books = context.Likes.Include(l => l.Book).Include(l => l.User)
+                        .Where(l => l.Date >= lastMonthDate)
+                        .GroupBy(l => l.Book)
+                        .Select(g => new { Book = g.Key, Count = g.Count() })
+                        .OrderBy(l => l.Count)
+                        .Skip(skip)
+                        .Take(take)
+                        .Select(l => l.Book);
+                    break;
+                case 3:
+                    books = context.Books.Order().Skip(skip).Take(take);
+                    break;
             }
 
+            if (books != null && sortData.GenreIds != null && sortData.GenreIds.Length > 0)
+            {
+                var genreIds = sortData.GenreIds;
+                books = books.Join(context.BookGenres,
+                                   book => book.Id,
+                                   bookGenre => bookGenre.BookId,
+                                   (book, bookGenre) => new { Book = book, BookGenre = bookGenre })
+                             .Where(b => sortData.GenreIds.ToList().Contains(b.BookGenre.GenreId.Value))
+                             .Select(b => b.Book);
+            }
 
-            foreach (var item in likes)
+            foreach (var item in books)
             {
                 yield return item;
             }
