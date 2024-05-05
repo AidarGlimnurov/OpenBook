@@ -9,16 +9,22 @@
 @inject HttpClient client
 
 <style>
+
     .flexContainer {
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
         width: 100%;
         align-items: center;
+        background: url('../image/Book.svg');
+        background-repeat: repeat;
+        justify-content:center;
     }
     .innerContainer {
         min-height: 50vh;
-        width: 100%;
+        width: 80%;
+        justify-content:center;
+        align-content: center;
         text-align: center;
         position: relative; /* Добавляем позиционирование для псевдоэлемента */
         color: white;
@@ -52,72 +58,83 @@
 </style>
 
 <div class="flexContainer">
-    <div class="text-center w-50 m-5" style="height:750px">
-        <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
-            </div>
-            <div class="carousel-inner">
-                @if (books != null)
-                {
-                    @foreach (var book in books.Value.Data)
-                    {
-                        <div class="carousel-item active">
-                            @if (book.Cover.Length < 20)
-                            {
-                                <img src="/image/DefaultCover.jpg" class="d-block" style="width: 100%; height:750px" alt="Обложка книги">
-                            }
-                            else
-                            {
-                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" class="d-block" style="width: 100%; height:750px" alt="Обложка книги">
-                            }
-                            <div class="carousel-caption d-none d-md-block" style="background: black; opacity: 0.5">
-                                <h5 style="color: transparent; opacity: 100%">@book.Name</h5>
-                                <p style="color: transparent; opacity: 100%">@book.Author</p>
-                            </div>
-                            <div class="carousel-caption d-none d-md-block">
-                                <h5>@book.Name</h5>
-                                <p>@book.Author</p>
-                            </div>
-                        </div>                    
-                    }                 
-                } 
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev" style="background: black; opacity: 0.3" onmouseover="this.style.opacity='0.5';" onmouseout="this.style.opacity='0.3';">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next" style="background: black; opacity: 0.3" onmouseover="this.style.opacity='0.5';" onmouseout="this.style.opacity='0.3';">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
+    <div class="innerContainer img3">
+        <div class="innerContent p-5">
+            <h2 class="m-1" style="margin-bottom: auto;">ДОБРО ПОЖАЛОВАТЬ!</h2>
+            <p style="margin-top: 15%; margin-bottom: 15%;">ПОПУЛЯРНЫЕ КНИГИ</p>
         </div>
     </div>
-    <div class="innerContainer img1">
-        <div class="innerContent">
-            <div style="padding: 15px;">
-                <h2 style="margin-bottom: auto;">Безграничный мир</h2>
-                <p style="margin-top: 15%; margin-bottom: 15%;">Какой-то текст</p>
-                <button class="btn btn-primary" @onclick="GoToBooks">Читать</button>
+    <div class="w-50 align-content-center m-5" style="height:700px;">
+        @if (books != null)
+        {
+            <div id="carouselExampleCaptions" class="carousel slide w-100" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    @for (int i = 1; i < books.Value.Data.Count(); i++)
+                    {
+                        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="@i" aria-label="Slide @(i+1)"></button>                           
+                    }
+                </div>
+                <div class="carousel-inner">
+                    @if (books != null)
+                    {
+                        @foreach (var book in books.Value.Data)
+                        {
+                            <div class="carousel-item active" @onclick="(()=>GoToBook(book.Id))">
+                                @if (book.Cover.Length < 20)
+                                {
+                                    <img src="/image/DefaultCover.jpg" class="d-block" style="width: 50%; height:375px" alt="Обложка книги">
+                                }
+                                else
+                                {
+                                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(book.Cover)" class="d-block" style="width: 100%; height:750px" alt="Обложка книги">
+                                }
+                                <div class="carousel-caption d-none d-md-block" style="background: black; opacity: 0.5">
+                                    <h5 style="color: transparent; opacity: 100%">@book.Name</h5>
+                                    <p style="color: transparent; opacity: 100%">@book.Author</p>
+                                </div>
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h5>@book.Name</h5>
+                                    <p>@book.Author</p>
+                                </div>
+                            </div>                    
+                        }                 
+                    } 
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev" style="background: black; opacity: 0.3" onmouseover="this.style.opacity='0.5';" onmouseout="this.style.opacity='0.3';">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next" style="background: black; opacity: 0.3" onmouseover="this.style.opacity='0.5';" onmouseout="this.style.opacity='0.3';">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
-        </div>
+        }
     </div>
     <div class="innerContainer img2">
         <div class="innerContent">
             <div style="padding: 15px;">
-                <h2>Безграничное творчество</h2>
-                <p style="margin-top: 15%; margin-bottom: 15%;">Какой-то текст</p>
-                <button class="btn btn-primary" @onclick="GoToMyBooks">Стать автором</button>
+                <h2>О ПРОЕКТЕ</h2>
+                <div class="w-100 text-center">
+                    <p style="margin-top: 25%; margin-bottom: 25%; width: 100%">
+                        OpenBook - это электронная библиотека самиздата,<br>
+                        предназначенная для публикации и чтения литературы, <br>
+                        созданной независимыми авторами. <br>
+                        Мы стремимся создать уникальное пространство,<br> 
+                        где каждый автор может делиться своим творчеством,<br> 
+                        а читатели могут находить увлекательные произведения на любой вкус.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
     <div class="innerContainer img3">
         <div class="innerContent">
             <div style="padding: 15px;">
-                <h2>О проекте</h2>
-                <p style="margin-top: 15%; margin-bottom: 15%;">Какой-то текст</p>
+                <h2>БЕЗГРАНИЧНОЕ ТВОРЧЕСТВО</h2>
+                <p style="margin-top: 15%; margin-bottom: 15%;">Раскройте свой творческий потенциал с OpenBook!</p>
+                <button class="btn btn-primary" @onclick="GoToMyBooks">Стать автором</button>
             </div>
         </div>
     </div>
@@ -140,5 +157,9 @@
     void GoToMyBooks()
     {
         navigation.NavigateTo("mybooks");
+    }
+    private void GoToBook(int id)
+    {
+        navigation.NavigateTo($"book/{id}/0");
     }
 }
