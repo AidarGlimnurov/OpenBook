@@ -69,11 +69,11 @@ else
             <div>
             @if (book.Value.Cover.Length < 20)
             {
-                <img style="width: 90%; height: 40vh" src="/image/DefaultCover.jpg" alt="Обложка книги">
+                <img style="width: 100%; height: 60vh" src="/image/DefaultCover.jpg" alt="Обложка книги">
             }
             else
             {
-                <img style="width: 90%; height: 40vh" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Value.Cover)" alt="Обложка книги">
+                <img style="width: 100%; height: 60vh" src="data:image/jpeg;base64,@Convert.ToBase64String(book.Value.Cover)" alt="Обложка книги">
             }
             </div>
             <div class="columnContainer">
@@ -129,13 +129,13 @@ else
                         }                    
                     }
                 </div>
-                <div>
-                    <p>@book.Value.Description</p>
-                @* <button>             </button> *@
-                </div>
+
             </div>
         </div>
-    
+        <div class="jumbotron bg-light m-1 p-2">
+            <h3>Описание</h3>
+            <p>@book.Value.Description</p>
+        </div>
         <div class="innerColumnContainer">
             <div style="text-align:center">
                 <h2>Отзывы</h2>
