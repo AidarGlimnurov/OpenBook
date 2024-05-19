@@ -18,7 +18,7 @@ namespace OpenBook.Adapter.Repository
 
         public async Task<Like> CheckLike(int userId, int bookId)
         {
-            return await context.Likes.Include(l => l.User).Include(l => l.Book).FirstOrDefaultAsync() ?? throw new NotImplementedException("Лайк не найден");
+            return await context.Likes.Include(l => l.User).Include(l => l.Book).FirstOrDefaultAsync(l => l.UserId == userId && l.BookId == bookId) ?? throw new NotImplementedException("Лайк не найден");
         }
         public async Task Create(Like like)
         {

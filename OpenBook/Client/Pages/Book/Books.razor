@@ -124,7 +124,7 @@ else
         <div class="book-grid">
             @foreach (var book in books.Value.Data)
             {
-                <div class="book-card m-2" @onclick="() => ToBook(book.Id)">
+                <div class="book-card m-5" style="margin-bottom: 25px" @onclick="() => ToBook(book.Id)">
                     @if (book.Cover.Length < 20)
                     {
                         <img class="rounded-1 m-1" src="/image/DefaultCover.jpg" alt="Обложка книги">
