@@ -19,8 +19,8 @@ else
 {
     <div class="jumbotron p-3 m-3 border-1 rounded-1" style="background: #f3f3f3; min-height: 60vh;">
 
-        <a href="book/@Id">Назад</a>
-        <H1>@book.Value.Name</H1>
+        <a href="book/@Id/0">Назад</a>       
+        <H1>@book.Value.Name[0].ToString().ToUpper()@book.Value.Name.Substring(1, book.Value.Name.Length-1)</H1>
         <button class="btn btn-secondary" @onclick="FavoriteAction" style="background: @actionColor">
             @if (favoriteBook.IsSuccess)
             {

@@ -77,10 +77,10 @@ else
             }
             </div>
             <div class="columnContainer">
-                <h2 style="word-wrap: break-word; white-space: pre-wrap">@book.Value.Name</h2>
+                <h2 style="word-wrap: break-word; white-space: pre-wrap">@book.Value.Name[0].ToString().ToUpper()@book.Value.Name.Substring(1, book.Value.Name.Length-1)</h2>
                 <h3>@book.Value.Author</h3>
     
-                <button class="btn btn-primary" @onclick="GoToBookReader" style="margin-top: 5px; margin-bottom: 5px; width: 30%">Читать</button>
+                <button class="btn btn-primary" @onclick="GoToBookReader" style="margin-top: 5px; margin-bottom: 5px; width: 50%">Читать</button>
                 <br>
                 @if (isLike)
                 {
@@ -258,7 +258,7 @@ else
             {
                 //myReview.IsEdited = true;
                 using HttpResponseMessage TestResponse = await client.PostAsJsonAsync("https://localhost:7190/api/Review/Update", myReview);
-                reviewChangerText = "Сохранить";
+                reviewChangerText = "Изменить";
                 editMode = false;
             }
             else
@@ -275,7 +275,7 @@ else
                     var rev = await client.GetFromJsonAsync<Response<ReviewDto>>($"https://localhost:7190/api/Review/GetForUserBook?bookId={Id}&userId={user.Value.Id}");
                     myReview = rev.Value;
                 }
-                reviewChangerText = "Изменить";
+                reviewChangerText = "Сохранить";
             }
         }
         else

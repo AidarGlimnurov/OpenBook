@@ -47,7 +47,7 @@ else
                             }
                         </a>
                         <div class="card-body">
-                            <h5 class="card-title">@book.Name</h5>
+                            <h5 class="card-title">@book.Name[0].ToString().ToUpper()@book.Name.Substring(1, book.Name.Length-1)</h5>
                         </div>
                     </div>
                 </div>
