@@ -1,0 +1,40 @@
+﻿<style>
+    .alert {
+    transition: opacity 0.5s ease-out;
+}
+
+.alert.fade-out {
+    opacity: 0;
+}
+</style>
+
+@if (IsVisible)
+{
+    <div class="alert alert-@AlertType @FadeOutClass" role="alert">
+        @Message
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Message { get; set; }
+
+    [Parameter]
+    public string AlertType { get; set; } = "info";
+
+    [Parameter]
+    public int Duration { get; set; } = 3000;
+
+    private bool IsVisible { get; set; } = true;
+    private string FadeOutClass { get; set; } = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        IsVisible = true;
+        FadeOutClass = string.Empty;
+        await Task.Delay(Duration);
+        FadeOutClass = "fade-out";
+        await Task.Delay(500); // Duration of the fade-out transition
+        IsVisible = false;
+    }
+}

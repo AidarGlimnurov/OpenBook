@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Content Remove="Pages\PasswordReset.razor" />
+    <Content Remove="Shared\Notification.razor" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,10 +36,16 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Pages\PasswordReset.razor" />
+    <_ContentIncludedByDefault Remove="Shared\Notification.razor" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="Pages\Auth\PasswordReset.razor" />
+    <None Include="Shared\Notification.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Shared\Notification.razor" />
   </ItemGroup>
 
 </Project>
