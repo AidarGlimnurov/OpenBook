@@ -12,5 +12,8 @@ namespace OpenBook.App.Storage
         Task Create(Post post);
         IAsyncEnumerable<Post> GetAll(int start, int? count);
         IAsyncEnumerable<Post> GetForUser(int userId, int start, int? count);
+        Task AddView(int userId, int chapterId);
+        Task<int> GetViewForChapter(int chapterId);
+        Task<int> GetUnicViewForChapter(int chapterId);
     }
 }

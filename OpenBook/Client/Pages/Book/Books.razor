@@ -96,10 +96,10 @@ else
             <div class="card card-body">
                 <button class="btn btn-success m-1 w-25" @onclick="GetSortBook">Искать</button>
                 <button class="btn btn-warning m-1 w-25" @onclick="Clear">Очистить</button>
-                <select class="form-select m-1 w-25" @onchange="HandlePopChange">
-                    <option value="0"selected>Нет</option>
-                    <option value="1">Популярность возраст.</option>
-                    <option value="2">Популярность убыв.</option>
+                <select class="form-select m-1 w-25" @bind="sortData.Action"> @*@onchange="HandlePopChange">*@
+                    <option value="0">Нет</option>
+                    <option value="1">Популярность &gt;</option>
+                    <option value="2">Популярность &lt;</option>
 @*                    <option value="3">Новое</option>*@
                 </select>
                 <select class="form-select m-1 w-25" @onchange="HandleGenreChange">
@@ -164,7 +164,7 @@ else
 
     List<int> genreIds = new();
 
-    SortData sortData = new();
+    SortData sortData = new() { Action = 0  };
 
     protected override async Task OnInitializedAsync()
     {
@@ -240,7 +240,8 @@ else
     }
     void Clear()
     {
-        sortData = new();
+        sortData = new() { Action = 0 };
+        genreIds = new();
     }
     async Task GetSortBook()
     {

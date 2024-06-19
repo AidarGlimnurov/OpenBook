@@ -39,7 +39,7 @@ else
             {
                 @if (chapter.IsPublic == true)
                 {
-                    <a href="bookReader/@chapter.Id" link="#3e3e3e" vlink="#000000" alink="#8c8c8c">@chapter.Number @chapter.Name</a>
+                    <button class="btn btn-link btn-lg m-1" @onclick="() => NavigateToChapter(chapter.Id)">@chapter.Number @chapter.Name</button>
                     <br>                    
                 }
             }        
@@ -109,5 +109,9 @@ else
         {
             navigation.NavigateTo("SignIn");
         }
+    }
+    private void NavigateToChapter(int chapterId)
+    {
+        navigation.NavigateTo($"bookReader/{chapterId}");
     }
 }

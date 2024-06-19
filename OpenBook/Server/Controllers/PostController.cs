@@ -51,5 +51,20 @@ namespace OpenBook.Server.Controllers
         {
             return await interactor.GetForUser(userId, start, count);
         }
+        [HttpGet("AddView")]
+        public async Task<Response> AddView(int userId, int chapterId)
+        {
+            return await interactor.AddView(userId, chapterId);
+        }
+        [HttpGet("GetUnicViewForChapter")]
+        public async Task<Response> GetUnicViewForChapter(int chapterId)
+        {
+            return await interactor.GetUnicViewForChapter(chapterId);
+        }
+        [HttpGet("GetViewForChapter")]
+        public async Task<Response> GetViewForChapter(int chapterId)
+        {
+            return await interactor.GetViewForChapter(chapterId);
+        }
     }
 }

@@ -55,12 +55,26 @@ else
 @code {
     [Parameter]
     public string Id { get; set; }
-
+    Response<UserDto>? user = new();
     string markdownHtml;
     string path;
     ChapterDto chapter;
     protected override async Task OnInitializedAsync()
     {
+        try
+        {
+            var cookieContent = await localStorage.GetItemAsync<AuthInfo>(AuthInfo.CookieName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cookieContent.Key);
+            user = await client.GetFromJsonAsync<Response<UserDto>>("https://localhost:7190/api/Auth/GetUserInfo");
+            if (user != null)
+            {
+                var rs = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Post/AddView?userId={user.Value.Id}&chapterId={Id}");
+            }
+        }
+        catch (Exception ex)
+        {
+            //navigation.NavigateTo("SignIn");
+        }
         var resp = await client.GetFromJsonAsync<Response<ChapterDto>>($"https://localhost:7190/api/Chapter/Read?id={Id}");
         chapter = resp.Value;
         markdownHtml = Markdown.ToHtml(chapter.Content);

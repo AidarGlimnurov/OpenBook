@@ -141,7 +141,7 @@ namespace OpenBook.Adapter.Repository
             {
                 case 1:
                     books = context.Likes.Include(l => l.Book).Include(l => l.User)
-                        .Where(l => l.Date >= lastMonthDate)
+                        .Where(l => l.Date >= lastMonthDate && l.Book.IsPublished)
                         .GroupBy(l => l.Book)
                         .Select(g => new { Book = g.Key, Count = g.Count() })
                         .OrderByDescending(l => l.Count)
@@ -151,7 +151,7 @@ namespace OpenBook.Adapter.Repository
                     break;
                 case 2:
                     books = context.Likes.Include(l => l.Book).Include(l => l.User)
-                        .Where(l => l.Date >= lastMonthDate)
+                        .Where(l => l.Date >= lastMonthDate && l.Book.IsPublished)
                         .GroupBy(l => l.Book)
                         .Select(g => new { Book = g.Key, Count = g.Count() })
                         .OrderBy(l => l.Count)
@@ -160,6 +160,9 @@ namespace OpenBook.Adapter.Repository
                         .Select(l => l.Book);
                     break;
                 case 3:
+                    books = context.Books.Order().Skip(skip).Take(take);
+                    break;
+                default:
                     books = context.Books.Order().Skip(skip).Take(take);
                     break;
             }
@@ -171,7 +174,7 @@ namespace OpenBook.Adapter.Repository
                                    book => book.Id,
                                    bookGenre => bookGenre.BookId,
                                    (book, bookGenre) => new { Book = book, BookGenre = bookGenre })
-                             .Where(b => sortData.GenreIds.ToList().Contains(b.BookGenre.GenreId.Value))
+                             .Where(b => sortData.GenreIds.ToList().Contains(b.BookGenre.GenreId.Value) && b.Book.IsPublished)
                              .Select(b => b.Book);
             }
 

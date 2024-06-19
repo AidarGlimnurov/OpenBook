@@ -155,5 +155,59 @@ namespace OpenBook.App.Interactors
             }
             return response;
         }
+
+        public async Task<Response> AddView(int userId, int chapterId)
+        {
+            var response = new Response<PostDto>();
+            try
+            {
+                await postRepository.AddView(userId, chapterId);
+                response.IsSuccess = true;
+                await unitWork.Commit();
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
+        public async Task<Response> GetUnicViewForChapter(int chapterId)
+        {
+            var response = new Response<PostDto>();
+            try
+            {
+                var count = await postRepository.GetUnicViewForChapter(chapterId);
+                response.Info = count.ToString();
+                response.IsSuccess = true;
+                await unitWork.Commit();
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
+        public async Task<Response> GetViewForChapter(int chapterId)
+        {
+            var response = new Response<PostDto>();
+            try
+            {
+                var count = await postRepository.GetViewForChapter(chapterId);
+                response.Info = count.ToString();
+                response.IsSuccess = true;
+                await unitWork.Commit();
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Внутренняя ошибка!";
+                response.IsSuccess = false;
+                response.ErrorInfo = ex.Message;
+            }
+            return response;
+        }
     }
 }

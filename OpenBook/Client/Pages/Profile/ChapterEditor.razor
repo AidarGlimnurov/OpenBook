@@ -16,6 +16,32 @@
         <p>Номер главы: @chapter.Number</p>
         <p><a href="bookeditor/@BookId">Вернуться к книге</a></p>
     </div>
+    @if (Id != "0" && unicView?.Info != null && allView?.Info != null)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><strong>Статистика*</strong></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Количество уникальных просмотров:</td>
+                    <td>@unicView?.Info</td>
+                </tr>
+                <tr>
+                    <td>Количество просмотров:</td>
+                    <td>@allView?.Info</td>
+                </tr>
+                <tr >
+                    <td colspan="2"><small>*в статистике учитываются только авторизованные пользователей</small></td>
+                </tr>
+            </tbody>
+        </table>
+    }
+    <div>
+        <h3></h3>
+    </div>
     @if (Id != "0" && !isLoadChpter)
     {
         <div>Загрузка...</div>
@@ -74,7 +100,8 @@
             }
         }
     }
-
+    Response unicView;
+    Response allView;
     protected override async Task OnInitializedAsync()
     {
         if (Id == "0")
@@ -83,6 +110,8 @@
         }
         else
         {
+            unicView = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Post/GetUnicViewForChapter?chapterId={Id}");
+            allView = await client.GetFromJsonAsync<Response>($"https://localhost:7190/api/Post/GetViewForChapter?chapterId={Id}");
             var resp = await client.GetFromJsonAsync<Response<ChapterDto>>($"https://localhost:7190/api/Chapter/Read?id={Id}");
             chapter = resp.Value;
             OnMarkdownValueHTMLChanged(chapter.Content);
