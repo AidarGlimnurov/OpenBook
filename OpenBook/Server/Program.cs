@@ -44,6 +44,8 @@ var connectDBStringPostgre = builder.Configuration.GetConnectionString("PostgreD
 
 //	временно SQLite DB для Swaggera
 builder.Services.AddDbContext<OpenBookContext>(options => options.UseSqlite(connectDBStringSQLite));
+//	Postgre DB
+//builder.Services.AddDbContext<OpenBookContext>(options => options.UseNpgsql(connectDBStringPostgre));
 
 builder.Services.AddTransient<IUnitWork, UnitWork>();
 

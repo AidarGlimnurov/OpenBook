@@ -23,6 +23,7 @@ namespace OpenBook.Adapter.Repository
                 Code = code,
                 IsAcivate = false,
             };
+            //emailVerif.CreatAt = emailVerif.CreatAt.ToUniversalTime();
             await context.AddAsync(emailVerif);
         }
 
